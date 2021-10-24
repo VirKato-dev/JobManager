@@ -22,7 +22,9 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
 
-
+/***
+ * Страница авторизации/регистрации
+ */
 public class AuthActivity extends AppCompatActivity {
 
 

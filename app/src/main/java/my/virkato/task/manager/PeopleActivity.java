@@ -24,7 +24,9 @@ import java.util.HashMap;
 import my.virkato.task.manager.adapter.Lv_peopleAdapter;
 import my.virkato.task.manager.adapter.NetWork;
 
-
+/***
+ * Страница со списком пользователей
+ */
 public class PeopleActivity extends AppCompatActivity {
 
 
@@ -72,7 +74,7 @@ public class PeopleActivity extends AppCompatActivity {
 
         lv_people.setOnItemClickListener((_param1, _param2, _position, _param4) -> {
             tasks.setClass(getApplicationContext(), HomeActivity.class);
-            tasks.putExtra("fio", lm_people.get(_position).get("fio").toString());
+            tasks.putExtra("uid", lm_people.get(_position).get("uid").toString());
             startActivity(tasks);
         });
 

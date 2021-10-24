@@ -5,7 +5,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
+/***
+ * Здесь может быть стартовая заставка
+ */
 public class MainActivity extends  AppCompatActivity  { 
 
 	@Override

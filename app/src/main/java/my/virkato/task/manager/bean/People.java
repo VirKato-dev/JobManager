@@ -35,6 +35,10 @@ public class People {
         }
     }
 
+    public People() {
+        // для получения имеющегося списка
+    }
+
 
     public void setListener(OnUpdatedListener listener) {
         this.listener = listener;
@@ -94,5 +98,20 @@ public class People {
 
     private void note(Man man) {
         if (listener != null) listener.onUpdated(listMap, man);
+    }
+
+
+    public Man findManById(String uid) {
+        for (Man man : people) {
+            if (man.uid.equals(uid)) {
+                return man;
+            }
+        }
+        return null;
+    }
+
+
+    public ArrayList<Man> getList() {
+        return people;
     }
 }

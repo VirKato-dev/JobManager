@@ -20,7 +20,9 @@ import java.util.HashMap;
 
 import my.virkato.task.manager.adapter.NetWork;
 
-
+/***
+ * Страница профиля пользователя
+ */
 public class ProfileActivity extends AppCompatActivity {
 
 

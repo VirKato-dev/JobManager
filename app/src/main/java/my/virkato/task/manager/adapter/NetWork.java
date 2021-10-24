@@ -25,6 +25,9 @@ import java.util.HashMap;
 
 import my.virkato.task.manager.bean.People;
 
+/***
+ * Работа с базой данных и хранилищем
+ */
 public class NetWork {
 
     private FirebaseDatabase _firebase = FirebaseDatabase.getInstance();
@@ -51,7 +54,7 @@ public class NetWork {
         db = _firebase.getReference(folder);
         store = _firebase_storage.getReference(folder);
         auth = FirebaseAuth.getInstance();
-        people = new People(new ArrayList<>());
+        people = new People();
 
         // получаем данные о пользователях
         _db_child_listener = new ChildEventListener() {
