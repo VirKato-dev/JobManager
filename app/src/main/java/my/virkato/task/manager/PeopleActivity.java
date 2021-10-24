@@ -137,6 +137,7 @@ public class PeopleActivity extends AppCompatActivity {
                 tasks.setClass(getApplicationContext(), HomeActivity.class);
                 tasks.putExtra("uid", auth.getCurrentUser().getUid());
                 startActivity(tasks);
+                finish();
             }
             // только Админ может остаться на экране списка пользователей
             lv_people.setVisibility(View.VISIBLE);
