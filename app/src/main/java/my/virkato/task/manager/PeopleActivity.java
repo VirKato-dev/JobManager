@@ -89,7 +89,7 @@ public class PeopleActivity extends AppCompatActivity {
         lm_people = netWork.getPeople().toListMap();
         lv_people.setAdapter(new Lv_peopleAdapter(this, lm_people));
         ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
-        netWork.getPeople().setListener((list,man) -> {
+        netWork.getPeople().setListener((list, man) -> {
             lm_people = list;
             if (man.uid.equals(auth.getCurrentUser().getUid())) {
                 sp.edit().putString("account", man.toJson()).commit();
