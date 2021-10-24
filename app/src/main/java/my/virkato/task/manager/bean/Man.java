@@ -34,7 +34,8 @@ public class Man {
 
     public String toJson() {
         String json;
-        json = String.format("{\"uid\":\"%s\", \"fio\":\"%s\", \"spec\":\"%s\", \"phone\":\"%s\", \"avatar\":\"%s\",",
+        json = String.format(
+                "{\"uid\":\"%s\", \"fio\":\"%s\", \"spec\":\"%s\", \"phone\":\"%s\", \"avatar\":\"%s\",",
                 uid, fio, spec, phone, avatar);
         return json;
     }

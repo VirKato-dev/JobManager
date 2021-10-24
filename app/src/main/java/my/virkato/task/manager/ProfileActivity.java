@@ -24,7 +24,7 @@ import my.virkato.task.manager.adapter.NetWork;
 public class ProfileActivity extends AppCompatActivity {
 
 
-    private HashMap<String, Object> man = new HashMap<>();
+    private HashMap<String, Object> manMap = new HashMap<>();
 
     private TextView t_phone;
     private EditText e_fio;
@@ -49,28 +49,30 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void initialize(Bundle _savedInstanceState) {
 
-        t_phone = (TextView) findViewById(R.id.t_phone);
-        e_fio = (EditText) findViewById(R.id.e_fio);
-        e_spec = (EditText) findViewById(R.id.e_spec);
-        b_save = (Button) findViewById(R.id.b_save);
+        t_phone = findViewById(R.id.t_phone);
+        e_fio = findViewById(R.id.e_fio);
+        e_spec = findViewById(R.id.e_spec);
+        b_save = findViewById(R.id.b_save);
         sp = getSharedPreferences("data", Activity.MODE_PRIVATE);
 
         b_save.setOnClickListener(_view -> {
-            man.put("fio", e_fio.getText().toString());
-            man.put("spec", e_spec.getText().toString());
-            if (man.get("uid").toString().equals(auth.getCurrentUser().getUid())) {
-                if (!man.containsKey("phone")) {
-                    man.put("phone", sp.getString("phone", ""));
+            manMap.put("fio", e_fio.getText().toString());
+            manMap.put("spec", e_spec.getText().toString());
+            if (manMap.get("uid").toString().equals(auth.getCurrentUser().getUid())) {
+                if (!manMap.containsKey("phone")) {
+                    manMap.put("phone", sp.getString("phone", ""));
                 }
             }
-            netWork.getDB().child(man.get("uid").toString()).updateChildren(man);
+            netWork.getDB().child(manMap.get("uid").toString()).updateChildren(manMap);
         });
 
         netWork.getPeople().setListener((list, man) -> {
-            if (man.uid.equals(auth.getCurrentUser().getUid())) {
-                e_fio.setText(man.fio);
-                e_spec.setText(man.spec);
-                t_phone.setText(man.phone);
+            if (manMap != null) {
+                if (man.uid.equals(manMap.get("uid").toString())) {
+                    e_fio.setText(man.fio);
+                    e_spec.setText(man.spec);
+                    t_phone.setText(man.phone);
+                }
             }
         });
 
@@ -78,19 +80,19 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private void initializeLogic() {
-        if ((auth.getCurrentUser() != null)) {
+        if ((auth.getCurrentUser() == null)) {
+            finish();
+        } else {
             if ("".equals(getIntent().getStringExtra("man"))) {
-                man.put("uid", auth.getCurrentUser().getUid());
+                manMap.put("uid", auth.getCurrentUser().getUid());
             } else {
-                man = new Gson().fromJson(getIntent().getStringExtra("man"), new TypeToken<HashMap<String, Object>>() {
+                manMap = new Gson().fromJson(getIntent().getStringExtra("man"), new TypeToken<HashMap<String, Object>>() {
                 }.getType());
-                e_fio.setText(man.get("fio").toString());
-                e_spec.setText(man.get("spec").toString());
-                t_phone.setText(man.get("phone").toString());
+                e_fio.setText(manMap.get("fio").toString());
+                e_spec.setText(manMap.get("spec").toString());
+                t_phone.setText(manMap.get("phone").toString());
             }
             _initDesign();
-        } else {
-            finish();
         }
     }
 
@@ -108,10 +110,12 @@ public class ProfileActivity extends AppCompatActivity {
     public void _initDesign() {
         e_fio.setEnabled(false);
         e_spec.setEnabled(false);
+        b_save.setVisibility(View.GONE);
         if ((auth.getCurrentUser() != null)) {
-            if (auth.getCurrentUser().getUid().equals(man.get("uid").toString())) {
+            if (auth.getCurrentUser().getUid().equals(manMap.get("uid").toString())) {
                 e_fio.setEnabled(true);
                 e_spec.setEnabled(true);
+                b_save.setVisibility(View.VISIBLE);
             }
         }
     }
