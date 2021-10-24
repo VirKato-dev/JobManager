@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.FirebaseApp;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -21,7 +23,7 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.report);
         initialize(_savedInstanceState);
-        com.google.firebase.FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(this);
         initializeLogic();
     }
 

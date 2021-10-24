@@ -3,26 +3,23 @@ package my.virkato.task.manager;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 
@@ -63,7 +60,7 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.auth);
         initialize(_savedInstanceState);
-        com.google.firebase.FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(this);
         initializeLogic();
     }
 
@@ -83,22 +80,14 @@ public class AuthActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         sp = getSharedPreferences("data", Activity.MODE_PRIVATE);
 
-        b_verify_phone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View _view) {
-                String str = "+" + e_num.getText().toString().replaceAll("[+.*#()/,\\- ]", "");
-                e_num.setText(str);
-                PhoneAuthProvider.getInstance().verifyPhoneNumber(e_num.getText().toString(), 60, TimeUnit.SECONDS, AuthActivity.this, auth_phone);
-                l_phone.setVisibility(View.GONE);
-            }
+        b_verify_phone.setOnClickListener(_view -> {
+            String str = "+" + e_num.getText().toString().replaceAll("[+.*#()/,\\- ]", "");
+            e_num.setText(str);
+            PhoneAuthProvider.getInstance().verifyPhoneNumber(e_num.getText().toString(), 60, TimeUnit.SECONDS, AuthActivity.this, auth_phone);
+            l_phone.setVisibility(View.GONE);
         });
 
-        b_send_otp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View _view) {
-                FirebaseAuth.getInstance().signInWithCredential(PhoneAuthProvider.getCredential(verificationId, e_otp.getText().toString())).addOnCompleteListener(auth_phoneAuthListener);
-            }
-        });
+        b_send_otp.setOnClickListener(_view -> FirebaseAuth.getInstance().signInWithCredential(PhoneAuthProvider.getCredential(verificationId, e_otp.getText().toString())).addOnCompleteListener(auth_phoneAuthListener));
 
         auth_phone = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
@@ -122,114 +111,68 @@ public class AuthActivity extends AppCompatActivity {
             }
         };
 
-        auth_updateEmailListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
+        auth_updateEmailListener = _param1 -> {
+            final boolean _success = _param1.isSuccessful();
+            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
+        };
+
+        auth_updatePasswordListener = _param1 -> {
+            final boolean _success = _param1.isSuccessful();
+            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
+        };
+
+        auth_emailVerificationSentListener = _param1 -> {
+            final boolean _success = _param1.isSuccessful();
+            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
+        };
+
+        auth_deleteUserListener = _param1 -> {
+            final boolean _success = _param1.isSuccessful();
+            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
+        };
+
+        auth_phoneAuthListener = task -> {
+            final boolean _success = task.isSuccessful();
+            final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
+            if (_success) {
+                sp.edit().putString("phone", e_num.getText().toString()).commit();
+                finish();
+            } else {
+                l_reg.setVisibility(View.VISIBLE);
+                l_phone.setVisibility(View.VISIBLE);
+                l_otp.setVisibility(View.GONE);
+                AppUtil.showMessage(getApplicationContext(), _errorMessage);
             }
         };
 
-        auth_updatePasswordListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-            }
+        auth_updateProfileListener = _param1 -> {
+            final boolean _success = _param1.isSuccessful();
+            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
         };
 
-        auth_emailVerificationSentListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-            }
+        auth_googleSignInListener = task -> {
+            final boolean _success = task.isSuccessful();
+            final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
         };
 
-        auth_deleteUserListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-            }
+        _auth_create_user_listener = _param1 -> {
+            final boolean _success = _param1.isSuccessful();
+            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
         };
 
-        auth_phoneAuthListener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                final boolean _success = task.isSuccessful();
-                final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
-                if (_success) {
-                    sp.edit().putString("phone", e_num.getText().toString()).commit();
-                    finish();
-                } else {
-                    l_reg.setVisibility(View.VISIBLE);
-                    l_phone.setVisibility(View.VISIBLE);
-                    l_otp.setVisibility(View.GONE);
-                    AppUtil.showMessage(getApplicationContext(), _errorMessage);
-                }
-            }
+        _auth_sign_in_listener = _param1 -> {
+            final boolean _success = _param1.isSuccessful();
+            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
         };
 
-        auth_updateProfileListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-            }
-        };
-
-        auth_googleSignInListener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                final boolean _success = task.isSuccessful();
-                final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
-            }
-        };
-
-        _auth_create_user_listener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-            }
-        };
-
-        _auth_sign_in_listener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-            }
-        };
-
-        _auth_reset_password_listener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-            }
+        _auth_reset_password_listener = _param1 -> {
+            final boolean _success = _param1.isSuccessful();
         };
     }
 
     private void initializeLogic() {
         l_auth.setVisibility(View.GONE);
         l_otp.setVisibility(View.GONE);
-    }
-
-    @Deprecated
-    public void showMessage(String _s) {
-        Toast.makeText(getApplicationContext(), _s, Toast.LENGTH_SHORT).show();
-    }
-
-    @Deprecated
-    public int getRandom(int _min, int _max) {
-        Random random = new Random();
-        return random.nextInt(_max - _min + 1) + _min;
-    }
-
-    @Deprecated
-    public float getDip(int _input) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, _input, getResources().getDisplayMetrics());
     }
 
 }

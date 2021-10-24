@@ -10,8 +10,8 @@ import java.util.HashMap;
  */
 public class People {
 
-    private ArrayList<HashMap<String, Object>> listMap = new ArrayList<>();
-    private ArrayList<Man> people = new ArrayList();
+    private static ArrayList<HashMap<String, Object>> listMap = new ArrayList<>();
+    private static ArrayList<Man> people = new ArrayList();
     private OnUpdatedListener listener;
     private boolean after = false;
 
@@ -20,7 +20,7 @@ public class People {
      * Следим за изменениями списка
      */
     public interface OnUpdatedListener {
-        void onUpdated(ArrayList<HashMap<String, Object>> list);
+        void onUpdated(ArrayList<HashMap<String, Object>> list, Man man);
     }
 
 
@@ -36,16 +36,6 @@ public class People {
     }
 
 
-    /***
-     * Получить данные на одного пользователя
-     * @param pos номер в списке
-     * @return Man
-     */
-    public Man get(int pos) {
-        return people.get(pos);
-    }
-
-
     public void setListener(OnUpdatedListener listener) {
         this.listener = listener;
     }
@@ -56,10 +46,12 @@ public class People {
      * @param man пользователь
      */
     public void remove(Man man) {
-        for (Man m : people) {
-            if (m.uid.equals(man.uid)) people.remove(m);
+        for (int i = people.size()-1; i >= 0; i--) {
+            if (people.get(i).uid.equals(man.uid)) {
+                people.remove(i);
+            }
         }
-        if (!after) note();
+        if (!after) note(man);
     }
 
 
@@ -78,7 +70,7 @@ public class People {
         remove(man);
         people.add(man);
         toListMap();
-        note();
+        note(man);
     }
 
 
@@ -100,7 +92,7 @@ public class People {
     }
 
 
-    private void note() {
-        if (listener != null) listener.onUpdated(listMap);
+    private void note(Man man) {
+        if (listener != null) listener.onUpdated(listMap, man);
     }
 }

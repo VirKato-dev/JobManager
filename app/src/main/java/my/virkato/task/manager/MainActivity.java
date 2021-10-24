@@ -12,7 +12,6 @@ public class MainActivity extends  AppCompatActivity  {
 	protected void onCreate(Bundle _savedInstanceState) {
 		super.onCreate(_savedInstanceState);
 		setContentView(R.layout.main);
-		com.google.firebase.FirebaseApp.initializeApp(this);
 		Intent intent = new Intent().setClass(getApplicationContext(), PeopleActivity.class);
 		startActivity(intent);
 		finish();

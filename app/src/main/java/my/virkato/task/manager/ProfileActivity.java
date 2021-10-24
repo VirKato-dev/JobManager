@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -33,6 +34,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import my.virkato.task.manager.adapter.NetWork;
+import my.virkato.task.manager.bean.Man;
+import my.virkato.task.manager.bean.People;
+
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -40,50 +45,46 @@ public class ProfileActivity extends AppCompatActivity {
 
     private HashMap<String, Object> man = new HashMap<>();
 
-    private LinearLayout linear1;
-    private TextView textview2;
     private TextView t_phone;
-    private TextView textview3;
     private EditText e_fio;
-    private TextView textview4;
     private EditText e_spec;
     private Button b_save;
 
-    private FirebaseAuth auth;
-    private OnCompleteListener<Void> auth_updateEmailListener;
-    private OnCompleteListener<Void> auth_updatePasswordListener;
-    private OnCompleteListener<Void> auth_emailVerificationSentListener;
-    private OnCompleteListener<Void> auth_deleteUserListener;
-    private OnCompleteListener<Void> auth_updateProfileListener;
-    private OnCompleteListener<AuthResult> auth_phoneAuthListener;
-    private OnCompleteListener<AuthResult> auth_googleSignInListener;
-    private OnCompleteListener<AuthResult> _auth_create_user_listener;
-    private OnCompleteListener<AuthResult> _auth_sign_in_listener;
-    private OnCompleteListener<Void> _auth_reset_password_listener;
+//    private FirebaseAuth auth;
+//    private OnCompleteListener<Void> auth_updateEmailListener;
+//    private OnCompleteListener<Void> auth_updatePasswordListener;
+//    private OnCompleteListener<Void> auth_emailVerificationSentListener;
+//    private OnCompleteListener<Void> auth_deleteUserListener;
+//    private OnCompleteListener<Void> auth_updateProfileListener;
+//    private OnCompleteListener<AuthResult> auth_phoneAuthListener;
+//    private OnCompleteListener<AuthResult> auth_googleSignInListener;
+//    private OnCompleteListener<AuthResult> _auth_create_user_listener;
+//    private OnCompleteListener<AuthResult> _auth_sign_in_listener;
+//    private OnCompleteListener<Void> _auth_reset_password_listener;
     private SharedPreferences sp;
-    private DatabaseReference dbu = _firebase.getReference("users");
+//    private DatabaseReference dbu = _firebase.getReference("users");
     private ChildEventListener _dbu_child_listener;
+
+    private NetWork netWork = new NetWork("users");
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+
 
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.profile);
         initialize(_savedInstanceState);
-        com.google.firebase.FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(this);
         initializeLogic();
     }
 
     private void initialize(Bundle _savedInstanceState) {
 
-        linear1 = (LinearLayout) findViewById(R.id.linear1);
-        textview2 = (TextView) findViewById(R.id.textview2);
         t_phone = (TextView) findViewById(R.id.t_phone);
-        textview3 = (TextView) findViewById(R.id.textview3);
         e_fio = (EditText) findViewById(R.id.e_fio);
-        textview4 = (TextView) findViewById(R.id.textview4);
         e_spec = (EditText) findViewById(R.id.e_spec);
         b_save = (Button) findViewById(R.id.b_save);
-        auth = FirebaseAuth.getInstance();
+//        auth = FirebaseAuth.getInstance();
         sp = getSharedPreferences("data", Activity.MODE_PRIVATE);
 
         b_save.setOnClickListener(new View.OnClickListener() {
@@ -91,151 +92,29 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View _view) {
                 man.put("fio", e_fio.getText().toString());
                 man.put("spec", e_spec.getText().toString());
-                if (man.get("uid").toString().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                if (man.get("uid").toString().equals(auth.getCurrentUser().getUid())) {
                     if (!man.containsKey("phone")) {
                         man.put("phone", sp.getString("phone", ""));
                     }
                 }
-                dbu.child(man.get("uid").toString()).updateChildren(man);
+                netWork.getDB().child(man.get("uid").toString()).updateChildren(man);
             }
         });
 
-        _dbu_child_listener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot _param1, String _param2) {
-                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                };
-                final String _childKey = _param1.getKey();
-                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
-
+        netWork.getPeople().setListener((list, man) -> {
+            if (man.uid.equals(auth.getCurrentUser().getUid())) {
+                e_fio.setText(man.fio);
+                e_spec.setText(man.spec);
+                t_phone.setText(man.phone);
             }
+        });
 
-            @Override
-            public void onChildChanged(DataSnapshot _param1, String _param2) {
-                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                };
-                final String _childKey = _param1.getKey();
-                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot _param1, String _param2) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot _param1) {
-                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                };
-                final String _childKey = _param1.getKey();
-                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError _param1) {
-                final int _errorCode = _param1.getCode();
-                final String _errorMessage = _param1.getMessage();
-
-            }
-        };
-        dbu.addChildEventListener(_dbu_child_listener);
-
-        auth_updateEmailListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-
-            }
-        };
-
-        auth_updatePasswordListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-
-            }
-        };
-
-        auth_emailVerificationSentListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-
-            }
-        };
-
-        auth_deleteUserListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-
-            }
-        };
-
-        auth_phoneAuthListener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> task) {
-                final boolean _success = task.isSuccessful();
-                final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
-
-            }
-        };
-
-        auth_updateProfileListener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-
-            }
-        };
-
-        auth_googleSignInListener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> task) {
-                final boolean _success = task.isSuccessful();
-                final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
-
-            }
-        };
-
-        _auth_create_user_listener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-
-            }
-        };
-
-        _auth_sign_in_listener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> _param1) {
-                final boolean _success = _param1.isSuccessful();
-                final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-
-            }
-        };
-
-        _auth_reset_password_listener = new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(Task<Void> _param1) {
-                final boolean _success = _param1.isSuccessful();
-
-            }
-        };
     }
 
     private void initializeLogic() {
-        if ((FirebaseAuth.getInstance().getCurrentUser() != null)) {
+        if ((auth.getCurrentUser() != null)) {
             if ("".equals(getIntent().getStringExtra("man"))) {
-                man.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                man.put("uid", auth.getCurrentUser().getUid());
             } else {
                 man = new Gson().fromJson(getIntent().getStringExtra("man"), new TypeToken<HashMap<String, Object>>() {
                 }.getType());
@@ -264,64 +143,12 @@ public class ProfileActivity extends AppCompatActivity {
     public void _initDesign() {
         e_fio.setEnabled(false);
         e_spec.setEnabled(false);
-        if ((FirebaseAuth.getInstance().getCurrentUser() != null)) {
-            if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(man.get("uid").toString())) {
+        if ((auth.getCurrentUser() != null)) {
+            if (auth.getCurrentUser().getUid().equals(man.get("uid").toString())) {
                 e_fio.setEnabled(true);
                 e_spec.setEnabled(true);
             }
         }
-    }
-
-
-    @Deprecated
-    public void showMessage(String _s) {
-        Toast.makeText(getApplicationContext(), _s, Toast.LENGTH_SHORT).show();
-    }
-
-    @Deprecated
-    public int getLocationX(View _v) {
-        int _location[] = new int[2];
-        _v.getLocationInWindow(_location);
-        return _location[0];
-    }
-
-    @Deprecated
-    public int getLocationY(View _v) {
-        int _location[] = new int[2];
-        _v.getLocationInWindow(_location);
-        return _location[1];
-    }
-
-    @Deprecated
-    public int getRandom(int _min, int _max) {
-        Random random = new Random();
-        return random.nextInt(_max - _min + 1) + _min;
-    }
-
-    @Deprecated
-    public ArrayList<Double> getCheckedItemPositionsToArray(ListView _list) {
-        ArrayList<Double> _result = new ArrayList<Double>();
-        SparseBooleanArray _arr = _list.getCheckedItemPositions();
-        for (int _iIdx = 0; _iIdx < _arr.size(); _iIdx++) {
-            if (_arr.valueAt(_iIdx))
-                _result.add((double) _arr.keyAt(_iIdx));
-        }
-        return _result;
-    }
-
-    @Deprecated
-    public float getDip(int _input) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, _input, getResources().getDisplayMetrics());
-    }
-
-    @Deprecated
-    public int getDisplayWidthPixels() {
-        return getResources().getDisplayMetrics().widthPixels;
-    }
-
-    @Deprecated
-    public int getDisplayHeightPixels() {
-        return getResources().getDisplayMetrics().heightPixels;
     }
 
 }

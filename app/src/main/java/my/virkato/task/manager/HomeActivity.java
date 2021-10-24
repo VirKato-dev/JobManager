@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
@@ -61,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.home);
         initialize(_savedInstanceState);
-        com.google.firebase.FirebaseApp.initializeApp(this);
+        FirebaseApp.initializeApp(this);
         initializeLogic();
     }
 

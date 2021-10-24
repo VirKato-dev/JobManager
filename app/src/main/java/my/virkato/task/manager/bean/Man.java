@@ -30,4 +30,12 @@ public class Man {
         map.put("avatar", avatar);
         return map;
     }
+
+
+    public String toJson() {
+        String json;
+        json = String.format("{\"uid\":\"%s\", \"fio\":\"%s\", \"spec\":\"%s\", \"phone\":\"%s\", \"avatar\":\"%s\",",
+                uid, fio, spec, phone, avatar);
+        return json;
+    }
 }
