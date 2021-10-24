@@ -2,12 +2,7 @@ package my.virkato.task.manager;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -54,7 +49,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private TimerTask delay;
     private AlertDialog.Builder d_wait;
-    private AlertDialog adv;
     private Intent detail = new Intent();
 
 
@@ -100,7 +94,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initializeLogic() {
-        _system_wait(true);
+        AppUtil.showSystemWait(this,true);
         _initList();
         _separateTasks();
         delay = new TimerTask() {
@@ -109,7 +103,7 @@ public class HomeActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     lv_tasks.setAdapter(new Lv_tasksAdapter(lv_tasks.getContext(), lm_progress));
                     ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
-                    _system_wait(false);
+                    AppUtil.showSystemWait(lv_tasks.getContext(),false);
                 });
             }
         };
@@ -140,7 +134,7 @@ public class HomeActivity extends AppCompatActivity {
         for (int n = 0; n < 100; n++) {
             task = new HashMap<>();
             task.put("text", "text" + (long) (n));
-            task.put("uid", fio.get(n % fio.size()).uid);
+            task.put("uid", fio.get(AppUtil.getRandom(0, fio.size()-1)).uid);
             task.put("finished", AppUtil.getRandom(0,1));
             task.put("id", new DecimalFormat("00000000").format(AppUtil.getRandom(0, 99999999)));
             lm_tasks.add(task);
@@ -161,29 +155,6 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 }
             }
-        }
-    }
-
-
-    public void _system_wait(final boolean _show) {
-        if (_show) {
-            LayoutInflater design = getLayoutInflater();
-
-            View convertView = design.inflate(R.layout.loader, null);
-            d_wait.setView(convertView);
-            d_wait.setCancelable(false);
-            adv = d_wait.create();
-            adv.show();
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-            lp.copyFrom(adv.getWindow().getAttributes());
-            int size = (int) AppUtil.getDip(this, 100);
-            lp.width = size;
-            lp.height = size;
-            adv.getWindow().setAttributes(lp);
-            adv.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        } else {
-            adv.hide();
-            adv.dismiss();
         }
     }
 

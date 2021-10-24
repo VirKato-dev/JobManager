@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
@@ -23,6 +24,7 @@ import java.util.HashMap;
 
 import my.virkato.task.manager.adapter.Lv_peopleAdapter;
 import my.virkato.task.manager.adapter.NetWork;
+import my.virkato.task.manager.bean.People;
 
 /***
  * Страница со списком пользователей
@@ -39,7 +41,8 @@ public class PeopleActivity extends AppCompatActivity {
     private final Intent tasks = new Intent();
     private final Intent profile = new Intent();
     private final Intent authentication = new Intent();
-    private final NetWork netWork = new NetWork("users");
+    private NetWork netWork = new NetWork("users");
+    ;
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private SharedPreferences sp;
 
@@ -91,7 +94,7 @@ public class PeopleActivity extends AppCompatActivity {
         lm_people = netWork.getPeople().toListMap();
         lv_people.setAdapter(new Lv_peopleAdapter(this, lm_people));
         ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
-        netWork.getPeople().setListener((list, man) -> {
+        netWork.getPeople().setPeopleListener((list, man) -> {
             lm_people = list;
             if (man.uid.equals(auth.getCurrentUser().getUid())) {
                 sp.edit().putString("account", man.toJson()).commit();
@@ -105,8 +108,22 @@ public class PeopleActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if ((auth.getCurrentUser() != null)) {
-            if ("".equals(sp.getString("account", ""))) {
+        lv_people.setVisibility(View.GONE);
+        // перезапускаем проверку пользователей
+        netWork = new NetWork("users");
+        // сначала получаем список Админов
+        netWork.getPeople().setAdminsListener(adminsUpdatedListener);
+    }
+
+    People.OnAdminsUpdatedListener adminsUpdatedListener = new People.OnAdminsUpdatedListener() {
+        @Override
+        public void onAdminsUpdated() {
+            if ((auth.getCurrentUser() == null)) {
+                // требуется авторизация
+                authentication.setClass(getApplicationContext(), AuthActivity.class);
+                startActivity(authentication);
+            } else if ("".equals(sp.getString("account", ""))) {
+                // при первом входе в аккаунт создаётся бланк профиля
                 man = new HashMap<>();
                 man.put("uid", auth.getCurrentUser().getUid());
                 man.put("phone", sp.getString("phone", ""));
@@ -115,11 +132,15 @@ public class PeopleActivity extends AppCompatActivity {
                 profile.setClass(getApplicationContext(), ProfileActivity.class);
                 profile.putExtra("man", new Gson().toJson(man));
                 startActivity(profile);
+            } else if (!netWork.isAdmin()) {
+                // обычные пользователи идут на экран своих заданий
+                tasks.setClass(getApplicationContext(), HomeActivity.class);
+                tasks.putExtra("uid", auth.getCurrentUser().getUid());
+                startActivity(tasks);
             }
-        } else {
-            authentication.setClass(getApplicationContext(), AuthActivity.class);
-            startActivity(authentication);
+            // только Админ может остаться на экране списка пользователей
+            lv_people.setVisibility(View.VISIBLE);
         }
-    }
+    };
 
 }

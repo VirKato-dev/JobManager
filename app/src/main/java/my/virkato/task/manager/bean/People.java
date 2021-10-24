@@ -11,16 +11,27 @@ import java.util.HashMap;
 public class People {
 
     private static ArrayList<HashMap<String, Object>> listMap = new ArrayList<>();
-    private static ArrayList<Man> people = new ArrayList();
-    private OnUpdatedListener listener;
+    private static ArrayList<Man> people = new ArrayList<>();
+    private static ArrayList<Man> admins = new ArrayList<>();
+
+    private OnPeopleUpdatedListener peopleListener;
+    private OnAdminsUpdatedListener adminsListener;
+
     private boolean after = false;
 
 
     /***
-     * Следим за изменениями списка
+     * Следим за изменениями списка всех пользователей
      */
-    public interface OnUpdatedListener {
-        void onUpdated(ArrayList<HashMap<String, Object>> list, Man man);
+    public interface OnPeopleUpdatedListener {
+        void onPeopleUpdated(ArrayList<HashMap<String, Object>> list, Man man);
+    }
+
+    /***
+     * Следим за изменением списка админов
+     */
+    public interface OnAdminsUpdatedListener {
+        void onAdminsUpdated();
     }
 
 
@@ -40,8 +51,16 @@ public class People {
     }
 
 
-    public void setListener(OnUpdatedListener listener) {
-        this.listener = listener;
+    public void setPeopleListener(OnPeopleUpdatedListener listener) {
+        peopleListener = listener;
+    }
+
+    public void setAdminsListener(OnAdminsUpdatedListener listener) {
+        adminsListener = listener;
+    }
+
+    public OnAdminsUpdatedListener getAdminsListener() {
+        return adminsListener;
     }
 
 
@@ -97,7 +116,7 @@ public class People {
 
 
     private void note(Man man) {
-        if (listener != null) listener.onUpdated(listMap, man);
+        if (peopleListener != null) peopleListener.onPeopleUpdated(listMap, man);
     }
 
 
@@ -114,4 +133,9 @@ public class People {
     public ArrayList<Man> getList() {
         return people;
     }
+
+    public ArrayList<Man> getAdmins() {
+        return admins;
+    }
+
 }

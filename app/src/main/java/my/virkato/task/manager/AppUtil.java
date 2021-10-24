@@ -1,9 +1,12 @@
 package my.virkato.task.manager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,7 +14,9 @@ import android.net.Uri;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -218,4 +223,31 @@ public class AppUtil {
             output.add(((Map.Entry) entry).getKey().toString());
         }
     }
+
+    private static AlertDialog adv;
+    private static AlertDialog.Builder d_wait;
+
+    public static void showSystemWait(Context context, boolean _show) {
+        if (_show) {
+            d_wait = new AlertDialog.Builder(context);
+            LayoutInflater design = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            View convertView = design.inflate(R.layout.loader, null);
+            d_wait.setView(convertView);
+            d_wait.setCancelable(false);
+            adv = d_wait.create();
+            adv.show();
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(adv.getWindow().getAttributes());
+            int size = (int) AppUtil.getDip(context, 100);
+            lp.width = size;
+            lp.height = size;
+            adv.getWindow().setAttributes(lp);
+            adv.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        } else {
+            adv.hide();
+            adv.dismiss();
+        }
+    }
+
 }

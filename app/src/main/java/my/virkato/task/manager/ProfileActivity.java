@@ -68,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
             netWork.getDB().child(manMap.get("uid").toString()).updateChildren(manMap);
         });
 
-        netWork.getPeople().setListener((list, man) -> {
+        netWork.getPeople().setPeopleListener((list, man) -> {
             if (manMap != null) {
                 if (man.uid.equals(manMap.get("uid").toString())) {
                     e_fio.setText(man.fio);

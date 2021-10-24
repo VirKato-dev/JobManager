@@ -1,6 +1,7 @@
 package my.virkato.task.manager.adapter;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -14,6 +15,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -23,6 +25,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import my.virkato.task.manager.bean.Man;
 import my.virkato.task.manager.bean.People;
 
 /***
@@ -56,6 +59,8 @@ public class NetWork {
         auth = FirebaseAuth.getInstance();
         people = new People();
 
+        receiveAdmins();
+
         // получаем данные о пользователях
         _db_child_listener = new ChildEventListener() {
             @Override
@@ -67,8 +72,10 @@ public class NetWork {
                 _childValue.put("uid", _childKey);
                 if ((auth.getCurrentUser() != null)) {
                     if (folder.equals("users")) people.update(_childValue);
-                    if (folder.equals("reports")) {} //reports.update(_childValue);
-                    if (folder.equals("tasks")) {} //tasks.update(_childValue);
+                    if (folder.equals("reports")) {
+                    } //reports.update(_childValue);
+                    if (folder.equals("tasks")) {
+                    } //tasks.update(_childValue);
                 }
             }
 
@@ -81,8 +88,10 @@ public class NetWork {
                 _childValue.put("uid", _childKey);
                 if ((auth.getCurrentUser() != null)) {
                     if (folder.equals("users")) people.update(_childValue);
-                    if (folder.equals("reports")) {} //reports.update(_childValue);
-                    if (folder.equals("tasks")) {} //tasks.update(_childValue);
+                    if (folder.equals("reports")) {
+                    } //reports.update(_childValue);
+                    if (folder.equals("tasks")) {
+                    } //tasks.update(_childValue);
                 }
             }
 
@@ -95,8 +104,10 @@ public class NetWork {
                 _childValue.put("uid", _childKey);
                 if ((auth.getCurrentUser() != null)) {
                     if (folder.equals("users")) people.remove(_childValue);
-                    if (folder.equals("reports")) {} //reports.remove(_childValue);
-                    if (folder.equals("tasks")) {} //tasks.remove(_childValue);
+                    if (folder.equals("reports")) {
+                    } //reports.remove(_childValue);
+                    if (folder.equals("tasks")) {
+                    } //tasks.remove(_childValue);
                 }
             }
 
@@ -150,5 +161,39 @@ public class NetWork {
 
     public StorageReference getStore() {
         return store;
+    }
+
+
+    private void receiveAdmins() {
+        ValueEventListener dba_listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                people.getAdmins().clear();
+                try {
+                    GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
+                    };
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        HashMap<String, Object> map = dataSnapshot.getValue(ind);
+                        people.getAdmins().add(new Man(map));
+                    }
+                    if (people.getAdminsListener() != null) people.getAdminsListener().onAdminsUpdated();
+                } catch (Exception e) {
+                    Log.i("getAdmins", e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        };
+        DatabaseReference dba = _firebase.getReference("admins");
+        dba.addListenerForSingleValueEvent(dba_listener);
+    }
+
+
+    public boolean isAdmin() {
+        String uid = auth.getCurrentUser().getUid();
+        for (Man man : people.getAdmins()) if (man.uid.equals(uid)) return true;
+        return false;
     }
 }
