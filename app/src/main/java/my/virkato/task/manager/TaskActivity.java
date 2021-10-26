@@ -179,11 +179,11 @@ public class TaskActivity extends AppCompatActivity {
             }.getType()));
             e_description.setText(task.description);
         }
-        b_approve.setVisibility(View.GONE);
-        if ((auth.getCurrentUser() != null)) {
-            b_approve.setVisibility(View.VISIBLE);
-            b_add_report.setVisibility(View.GONE);
-        }
+//        b_approve.setVisibility(View.GONE);
+//        if ((auth.getCurrentUser() != null)) {
+//            b_approve.setVisibility(View.VISIBLE);
+//            b_add_report.setVisibility(View.GONE);
+//        }
 
         People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {
             spec.clear();
