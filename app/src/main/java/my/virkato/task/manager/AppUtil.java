@@ -216,16 +216,15 @@ public class AppUtil {
 
     public static void getAllKeysFromMap(Map<String, Object> map, ArrayList<String> output) {
         if (output == null) return;
+//        output.clear();
         if (map == null || map.isEmpty()) return;
-
-        output.clear();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            output.add(((Map.Entry) entry).getKey().toString());
+            output.add(entry.getKey());
         }
     }
 
-    private static AlertDialog adv;
     private static AlertDialog.Builder d_wait;
+    private static AlertDialog adv;
 
     public static void showSystemWait(Context context, boolean _show) {
         if (_show) {

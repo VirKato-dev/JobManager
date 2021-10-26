@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,133 +25,99 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-import my.virkato.task.manager.bean.Man;
-import my.virkato.task.manager.bean.People;
+import my.virkato.task.manager.AppUtil;
+import my.virkato.task.manager.entity.People;
+import my.virkato.task.manager.entity.Tasks;
 
 /***
  * Работа с базой данных и хранилищем
  */
 public class NetWork {
 
-    private FirebaseDatabase _firebase = FirebaseDatabase.getInstance();
-    private FirebaseStorage _firebase_storage = FirebaseStorage.getInstance();
-    private FirebaseAuth auth;
+    public enum Info {
+        USERS("users"), TASKS("tasks"), ADMINS("admins");
+
+        String path;
+
+        Info(String path) {
+            this.path = path;
+        }
+    }
+
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseDatabase fb_db = FirebaseDatabase.getInstance();
+    private FirebaseStorage fb_storage = FirebaseStorage.getInstance();
+    private FirebaseUser user = user();
     private DatabaseReference db;
-    private ChildEventListener _db_child_listener;
+    private ChildEventListener db_child_listener;
     private StorageReference store;
-    private OnCompleteListener<Uri> _store_upload_success_listener;
-    private OnSuccessListener<FileDownloadTask.TaskSnapshot> _store_download_success_listener;
-    private OnSuccessListener _store_delete_success_listener;
-    private OnProgressListener _store_upload_progress_listener;
-    private OnProgressListener _store_download_progress_listener;
-    private OnFailureListener _store_failure_listener;
+    private OnCompleteListener<Uri> store_upload_success_listener;
+    private OnSuccessListener<FileDownloadTask.TaskSnapshot> store_download_success_listener;
+    private OnSuccessListener store_delete_success_listener;
+    private OnProgressListener store_upload_progress_listener;
+    private OnProgressListener store_download_progress_listener;
+    private OnFailureListener store_failure_listener;
 
-    private People people;
-    private String folder;
+    private static People people;
+    private static Tasks tasks;
+    private Info folder;
 
 
-    public NetWork(String folder) {
-
+    public NetWork(Info folder) {
         this.folder = folder;
+        db = fb_db.getReference(folder.path);
 
-        db = _firebase.getReference(folder);
-        store = _firebase_storage.getReference(folder);
-        auth = FirebaseAuth.getInstance();
-        people = new People();
+        switch (folder) {
+            case USERS:
+                people = new People();
+                store = fb_storage.getReference(folder.path);
+                receiveFromFolder();
+                break;
+            case TASKS:
+                tasks = new Tasks();
+                receiveFromFolder();
+                break;
+            case ADMINS:
+                people = new People();
+                receiveAdmins();
+        }
 
-        receiveAdmins();
-
-        // получаем данные о пользователях
-        _db_child_listener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot _param1, String _param2) {
-                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                };
-                final String _childKey = _param1.getKey();
-                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
-                _childValue.put("uid", _childKey);
-                if ((auth.getCurrentUser() != null)) {
-                    if (folder.equals("users")) people.update(_childValue);
-                    if (folder.equals("reports")) {
-                    } //reports.update(_childValue);
-                    if (folder.equals("tasks")) {
-                    } //tasks.update(_childValue);
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot _param1, String _param2) {
-                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                };
-                final String _childKey = _param1.getKey();
-                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
-                _childValue.put("uid", _childKey);
-                if ((auth.getCurrentUser() != null)) {
-                    if (folder.equals("users")) people.update(_childValue);
-                    if (folder.equals("reports")) {
-                    } //reports.update(_childValue);
-                    if (folder.equals("tasks")) {
-                    } //tasks.update(_childValue);
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot _param1) {
-                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                };
-                final String _childKey = _param1.getKey();
-                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
-                _childValue.put("uid", _childKey);
-                if ((auth.getCurrentUser() != null)) {
-                    if (folder.equals("users")) people.remove(_childValue);
-                    if (folder.equals("reports")) {
-                    } //reports.remove(_childValue);
-                    if (folder.equals("tasks")) {
-                    } //tasks.remove(_childValue);
-                }
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot _param1, String _param2) {
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError _param1) {
-                final int _errorCode = _param1.getCode();
-                final String _errorMessage = _param1.getMessage();
-            }
-        };
-        db.addChildEventListener(_db_child_listener);
-
-        _store_upload_progress_listener = (OnProgressListener<UploadTask.TaskSnapshot>) _param1 -> {
+        store_upload_progress_listener = (OnProgressListener<UploadTask.TaskSnapshot>) _param1 -> {
             double _progressValue = (100.0 * _param1.getBytesTransferred()) / _param1.getTotalByteCount();
         };
 
-        _store_download_progress_listener = (OnProgressListener<FileDownloadTask.TaskSnapshot>) _param1 -> {
+        store_download_progress_listener = (OnProgressListener<FileDownloadTask.TaskSnapshot>) _param1 -> {
             double _progressValue = (100.0 * _param1.getBytesTransferred()) / _param1.getTotalByteCount();
         };
 
-        _store_upload_success_listener = _param1 -> {
+        store_upload_success_listener = _param1 -> {
             final String _downloadUrl = _param1.getResult().toString();
         };
 
-        _store_download_success_listener = _param1 -> {
+        store_download_success_listener = _param1 -> {
             final long _totalByteCount = _param1.getTotalByteCount();
         };
 
-        _store_delete_success_listener = _param1 -> {
+        store_delete_success_listener = _param1 -> {
         };
 
-        _store_failure_listener = _param1 -> {
+        store_failure_listener = _param1 -> {
             final String _message = _param1.getMessage();
         };
-
     }
 
+    private FirebaseUser user() {
+        return auth.getCurrentUser();
+    }
 
     public People getPeople() {
         return people;
+    }
+
+    public Tasks getTasks() {
+        return tasks;
     }
 
 
@@ -164,36 +131,109 @@ public class NetWork {
     }
 
 
+    public boolean isAdmin() {
+        if (user() == null) return false;
+        ArrayList<String> users = people.getAdmins();
+        return users.contains(user().getUid());
+    }
+
+
+    /***
+     * Получить список UID Админов
+     */
     private void receiveAdmins() {
+        people = new People();
+
         ValueEventListener dba_listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 people.getAdmins().clear();
-                try {
-                    GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                    };
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        HashMap<String, Object> map = dataSnapshot.getValue(ind);
-                        people.getAdmins().add(new Man(map));
-                    }
-                    if (people.getAdminsListener() != null) people.getAdminsListener().onAdminsUpdated();
-                } catch (Exception e) {
-                    Log.i("getAdmins", e.getMessage());
+                GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
+                };
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    AppUtil.getAllKeysFromMap(dataSnapshot.getValue(ind), people.getAdmins());
                 }
+                if (people.getAdminsListener() != null)
+                    people.getAdminsListener().onUpdated();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         };
-        DatabaseReference dba = _firebase.getReference("admins");
-        dba.addListenerForSingleValueEvent(dba_listener);
+        db.addListenerForSingleValueEvent(dba_listener);
     }
 
+    /***
+     * Получать данные о пользователях
+     */
+    private void receiveFromFolder() {
+        db_child_listener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot _param1, String _param2) {
+                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
+                };
+                final String _childKey = _param1.getKey();
+                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
+                _childValue.put("id", _childKey);
+                if ((user != null)) {
+                    switch (folder) {
+                        case USERS:
+                            people.update(_childValue);
+                            break;
+                        case TASKS:
+                            tasks.update(_childValue, true);
+                    }
+                }
+            }
 
-    public boolean isAdmin() {
-        String uid = auth.getCurrentUser().getUid();
-        for (Man man : people.getAdmins()) if (man.uid.equals(uid)) return true;
-        return false;
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot _param1, String _param2) {
+                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
+                };
+                final String _childKey = _param1.getKey();
+                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
+                _childValue.put("id", _childKey);
+                if ((user != null)) {
+                    switch (folder) {
+                        case USERS:
+                            people.update(_childValue);
+                            break;
+                        case TASKS:
+                            tasks.update(_childValue, true);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot _param1) {
+                GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
+                };
+                final String _childKey = _param1.getKey();
+                final HashMap<String, Object> _childValue = _param1.getValue(_ind);
+                _childValue.put("id", _childKey);
+                if ((user != null)) {
+                    switch (folder) {
+                        case USERS:
+                            people.remove(_childValue);
+                            break;
+                        case TASKS:
+                            tasks.remove(_childValue, true);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot _param1, String _param2) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError _param1) {
+                final int _errorCode = _param1.getCode();
+                final String _errorMessage = _param1.getMessage();
+            }
+        };
+        db.addChildEventListener(db_child_listener);
     }
+
 }

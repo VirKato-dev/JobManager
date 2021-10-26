@@ -1,4 +1,4 @@
-package my.virkato.task.manager.bean;
+package my.virkato.task.manager.entity;
 
 import androidx.annotation.NonNull;
 
@@ -10,9 +10,9 @@ import java.util.HashMap;
  */
 public class People {
 
-    private static ArrayList<HashMap<String, Object>> listMap = new ArrayList<>();
-    private static ArrayList<Man> people = new ArrayList<>();
-    private static ArrayList<Man> admins = new ArrayList<>();
+    private static ArrayList<HashMap<String, Object>> listMap;
+    private static ArrayList<Man> people;
+    private static ArrayList<String> admins;
 
     private OnPeopleUpdatedListener peopleListener;
     private OnAdminsUpdatedListener adminsListener;
@@ -24,14 +24,14 @@ public class People {
      * Следим за изменениями списка всех пользователей
      */
     public interface OnPeopleUpdatedListener {
-        void onPeopleUpdated(ArrayList<HashMap<String, Object>> list, Man man);
+        void onUpdated(ArrayList<HashMap<String, Object>> list, Man man);
     }
 
     /***
      * Следим за изменением списка админов
      */
     public interface OnAdminsUpdatedListener {
-        void onAdminsUpdated();
+        void onUpdated();
     }
 
 
@@ -40,6 +40,7 @@ public class People {
      * @param list список ListMap
      */
     public People(@NonNull ArrayList<HashMap<String, Object>> list) {
+        this();
         listMap.addAll(list);
         for (HashMap<String, Object> map : list) {
             people.add(new Man(map));
@@ -47,7 +48,9 @@ public class People {
     }
 
     public People() {
-        // для получения имеющегося списка
+        if (people == null) people = new ArrayList<>();
+        if (admins == null) admins = new ArrayList<>();
+        if (listMap == null) listMap = new ArrayList<>();
     }
 
 
@@ -69,8 +72,8 @@ public class People {
      * @param man пользователь
      */
     public void remove(Man man) {
-        for (int i = people.size()-1; i >= 0; i--) {
-            if (people.get(i).uid.equals(man.uid)) {
+        for (int i = people.size() - 1; i >= 0; i--) {
+            if (people.get(i).id.equals(man.id)) {
                 people.remove(i);
             }
         }
@@ -80,7 +83,7 @@ public class People {
 
     public void remove(HashMap<String, Object> map) {
         remove(new Man(map));
-        toListMap();
+        asListMap();
     }
 
 
@@ -92,7 +95,7 @@ public class People {
         after = true; // callback after addidng
         remove(man);
         people.add(man);
-        toListMap();
+        asListMap();
         note(man);
     }
 
@@ -106,23 +109,23 @@ public class People {
      * конвертировать список в ListMap
      * @return ListMap
      */
-    public ArrayList<HashMap<String, Object>> toListMap() {
+    public ArrayList<HashMap<String, Object>> asListMap() {
         listMap.clear();
         for (Man m : people) {
-            listMap.add(m.toMap());
+            listMap.add(m.asMap());
         }
         return listMap;
     }
 
 
     private void note(Man man) {
-        if (peopleListener != null) peopleListener.onPeopleUpdated(listMap, man);
+        if (peopleListener != null) peopleListener.onUpdated(listMap, man);
     }
 
 
-    public Man findManById(String uid) {
+    public Man findManById(String id) {
         for (Man man : people) {
-            if (man.uid.equals(uid)) {
+            if (man.id.equals(id)) {
                 return man;
             }
         }
@@ -134,7 +137,7 @@ public class People {
         return people;
     }
 
-    public ArrayList<Man> getAdmins() {
+    public ArrayList<String> getAdmins() {
         return admins;
     }
 

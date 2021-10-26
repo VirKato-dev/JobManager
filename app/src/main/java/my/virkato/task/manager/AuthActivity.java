@@ -76,7 +76,7 @@ public class AuthActivity extends AppCompatActivity {
         textview1 = (TextView) findViewById(R.id.textview1);
         e_num = (EditText) findViewById(R.id.e_num);
         b_verify_phone = (Button) findViewById(R.id.b_verify_phone);
-        textview2 = (TextView) findViewById(R.id.textview2);
+        textview2 = (TextView) findViewById(R.id.e_task_description);
         e_otp = (EditText) findViewById(R.id.e_otp);
         b_send_otp = (Button) findViewById(R.id.b_send_otp);
         auth = FirebaseAuth.getInstance();

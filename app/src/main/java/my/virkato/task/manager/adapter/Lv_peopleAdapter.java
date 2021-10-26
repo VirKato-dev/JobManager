@@ -48,7 +48,7 @@ public class Lv_peopleAdapter extends BaseAdapter {
         }
 
         final TextView textview1 = _view.findViewById(R.id.textview1);
-        final TextView textview2 = _view.findViewById(R.id.textview2);
+        final TextView textview2 = _view.findViewById(R.id.e_task_description);
 
         textview1.setText(_data.get(_position).get("fio").toString());
         textview2.setText(_data.get(_position).get("spec").toString());

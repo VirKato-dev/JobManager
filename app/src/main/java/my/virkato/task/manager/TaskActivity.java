@@ -3,9 +3,11 @@ package my.virkato.task.manager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,33 +16,44 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import my.virkato.task.manager.adapter.NetWork;
-import my.virkato.task.manager.bean.People;
+import my.virkato.task.manager.entity.Man;
+import my.virkato.task.manager.entity.People;
+import my.virkato.task.manager.entity.Task;
+import my.virkato.task.manager.entity.Tasks;
 
 /***
  * Информация о задании
  */
 public class TaskActivity extends AppCompatActivity {
 
+    private Task task;
+    private NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
+    private Tasks tasks = dbTasks.getTasks();
+    private NetWork dbPeople = new NetWork(NetWork.Info.USERS);
+    private People people = dbPeople.getPeople();
+    private ArrayList<String> masters = new ArrayList<>();
+    private ArrayList<String> spec = new ArrayList<>();
 
-    private HashMap<String, Object> task = new HashMap<>();
-//    private NetWork netWork = new NetWork("users");
-    private People people = new People();
-
-    private LinearLayout linear1;
-    private TextView t_fio;
-    private TextView t_task_id;
-    private TextView t_task_text;
+    private TextView e_description;
+    private Spinner spin_master;
+    private Spinner spin_spec;
     private Button b_approve;
+    private Button b_create;
     private ListView lv_reports;
     private Button b_add_report;
 
     private FirebaseAuth auth;
+    private FirebaseDatabase fb_db = FirebaseDatabase.getInstance();
+    private DatabaseReference dbt = fb_db.getReference("tasks");
     private OnCompleteListener<Void> auth_updateEmailListener;
     private OnCompleteListener<Void> auth_updatePasswordListener;
     private OnCompleteListener<Void> auth_emailVerificationSentListener;
@@ -65,16 +78,35 @@ public class TaskActivity extends AppCompatActivity {
 
     private void initialize(Bundle _savedInstanceState) {
 
-        linear1 = findViewById(R.id.linear1);
-        t_fio = findViewById(R.id.textview1);
-        t_task_id = findViewById(R.id.textview2);
-        t_task_text = findViewById(R.id.textview3);
+        e_description = findViewById(R.id.e_task_description);
+        spin_master = findViewById(R.id.spin_master);
+        spin_spec = findViewById(R.id.spin_spec);
         b_approve = findViewById(R.id.b_approve);
+        b_create = findViewById(R.id.b_create);
         lv_reports = findViewById(R.id.lv_reports);
         b_add_report = findViewById(R.id.b_add_report);
         auth = FirebaseAuth.getInstance();
 
+        spin_master.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, masters));
+        ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
+
+        spin_spec.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, spec));
+        ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
+        spin_spec.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateMastersBySpec();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         b_approve.setOnClickListener(_view -> {
+        });
+
+        b_create.setOnClickListener(_view -> {
         });
 
         b_add_report.setOnClickListener(_view -> {
@@ -133,18 +165,50 @@ public class TaskActivity extends AppCompatActivity {
 
     private void initializeLogic() {
         if ("".equals(getIntent().getStringExtra("task"))) {
-
+            // создать новое задание
+            b_approve.setVisibility(View.GONE);
+            HashMap<String, Object> taskMap = new HashMap<>();
+            taskMap.put("id", dbt.push().getKey());
+            task = new Task(taskMap);
         } else {
-            task = new Gson().fromJson(getIntent().getStringExtra("task"), new TypeToken<HashMap<String, Object>>() {
-            }.getType());
-            t_fio.setText(people.findManById(task.get("uid").toString()).fio);
-            t_task_id.setText(task.get("id").toString());
-            t_task_text.setText(task.get("text").toString());
+            // изменить/просмотреть задание
+            b_create.setVisibility(View.GONE);
+//            spin_master.setClickable(false);
+//            spin_spec.setClickable(false);
+            task = new Task(new Gson().fromJson(getIntent().getStringExtra("task"), new TypeToken<HashMap<String, Object>>() {
+            }.getType()));
+            e_description.setText(task.description);
         }
         b_approve.setVisibility(View.GONE);
         if ((auth.getCurrentUser() != null)) {
             b_approve.setVisibility(View.VISIBLE);
             b_add_report.setVisibility(View.GONE);
+        }
+
+        People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {
+            spec.clear();
+            for (HashMap<String, Object> map : list) {
+                String cvalif = map.get("spec").toString();
+                if (!cvalif.equals("admin") && !spec.contains(cvalif)) spec.add(cvalif);
+            }
+            ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
+            updateMastersBySpec();
+        };
+        dbPeople.getPeople().setPeopleListener(onPeopleUpdatedListener);
+    }
+
+
+    private void updateMastersBySpec() {
+        if (spec.size()>0 && spin_spec.getSelectedItemPosition()>=0) {
+            ArrayList<String> selected = new ArrayList<>();
+            for (Man m : dbPeople.getPeople().getList()) {
+                if (m.spec.equals(spec.get(spin_spec.getSelectedItemPosition()))) {
+                    selected.add(m.fio);
+                }
+            }
+            masters.clear();
+            masters.addAll(selected);
+            ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
         }
     }
 

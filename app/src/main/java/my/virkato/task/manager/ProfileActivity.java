@@ -35,7 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private SharedPreferences sp;
 
-    private final NetWork netWork = new NetWork("users");
+    private final NetWork netWork = new NetWork(NetWork.Info.USERS);
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
 
 
@@ -70,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         netWork.getPeople().setPeopleListener((list, man) -> {
             if (manMap != null) {
-                if (man.uid.equals(manMap.get("uid").toString())) {
+                if (man.id.equals(manMap.get("uid").toString())) {
                     e_fio.setText(man.fio);
                     e_spec.setText(man.spec);
                     t_phone.setText(man.phone);

@@ -21,10 +21,12 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import my.virkato.task.manager.adapter.Lv_peopleAdapter;
 import my.virkato.task.manager.adapter.NetWork;
-import my.virkato.task.manager.bean.People;
+import my.virkato.task.manager.entity.People;
 
 /***
  * Страница со списком пользователей
@@ -32,7 +34,7 @@ import my.virkato.task.manager.bean.People;
 public class PeopleActivity extends AppCompatActivity {
 
 
-    private HashMap<String, Object> man = new HashMap<>();
+    private HashMap<String, Object> manMap = new HashMap<>();
 
     private ArrayList<HashMap<String, Object>> lm_people = new ArrayList<>();
 
@@ -41,7 +43,7 @@ public class PeopleActivity extends AppCompatActivity {
     private final Intent tasks = new Intent();
     private final Intent profile = new Intent();
     private final Intent authentication = new Intent();
-    private NetWork netWork = new NetWork("users");
+    private NetWork netWork = new NetWork(NetWork.Info.USERS);
     ;
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private SharedPreferences sp;
@@ -76,7 +78,7 @@ public class PeopleActivity extends AppCompatActivity {
         sp = getSharedPreferences("data", Activity.MODE_PRIVATE);
 
         lv_people.setOnItemClickListener((_param1, _param2, _position, _param4) -> {
-            tasks.setClass(getApplicationContext(), HomeActivity.class);
+            tasks.setClass(getApplicationContext(), TasksActivity.class);
             tasks.putExtra("uid", lm_people.get(_position).get("uid").toString());
             startActivity(tasks);
         });
@@ -91,56 +93,78 @@ public class PeopleActivity extends AppCompatActivity {
 
 
     private void initializeLogic() {
-        lm_people = netWork.getPeople().toListMap();
-        lv_people.setAdapter(new Lv_peopleAdapter(this, lm_people));
-        ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
-        netWork.getPeople().setPeopleListener((list, man) -> {
-            lm_people = list;
-            if (man.uid.equals(auth.getCurrentUser().getUid())) {
-                sp.edit().putString("account", man.toJson()).commit();
-                AppUtil.showMessage(getApplicationContext(), "Ваши данные обновленны");
-            }
-            ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
-        });
     }
 
+
+    TimerTask delay;
 
     @Override
     public void onResume() {
         super.onResume();
+        AppUtil.showSystemWait(this, true);
+        delay = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(() -> {
+                    // отправляемся на заполнение профиля
+                    AppUtil.showSystemWait(lv_people.getContext(), false);
+                    profile.setClass(getApplicationContext(), ProfileActivity.class);
+                    profile.putExtra("man", new Gson().toJson(manMap));
+                    startActivity(profile);
+                });
+            }
+        };
+        new Timer().schedule(delay, 5000);
+
         lv_people.setVisibility(View.GONE);
-        // перезапускаем проверку пользователей
-        netWork = new NetWork("users");
-        // сначала получаем список Админов
-        netWork.getPeople().setAdminsListener(adminsUpdatedListener);
+
+        if ((auth.getCurrentUser() == null)) {
+            // требуется авторизация
+            authentication.setClass(getApplicationContext(), AuthActivity.class);
+            startActivity(authentication);
+        } else {
+            // при первом входе в аккаунт создаётся бланк профиля
+            manMap = new HashMap<>();
+            manMap.put("uid", auth.getCurrentUser().getUid());
+            manMap.put("phone", sp.getString("phone", ""));
+            manMap.put("fio", "");
+            manMap.put("spec", "");
+
+            // перезапускаем проверку пользователей
+            netWork = new NetWork(NetWork.Info.USERS);
+            // сначала получаем список Админов
+            netWork.getPeople().setAdminsListener(adminsUpdatedListener);
+        }
+
     }
 
     People.OnAdminsUpdatedListener adminsUpdatedListener = new People.OnAdminsUpdatedListener() {
         @Override
-        public void onAdminsUpdated() {
-            if ((auth.getCurrentUser() == null)) {
-                // требуется авторизация
-                authentication.setClass(getApplicationContext(), AuthActivity.class);
-                startActivity(authentication);
-            } else if ("".equals(sp.getString("account", ""))) {
-                // при первом входе в аккаунт создаётся бланк профиля
-                man = new HashMap<>();
-                man.put("uid", auth.getCurrentUser().getUid());
-                man.put("phone", sp.getString("phone", ""));
-                man.put("fio", "");
-                man.put("spec", "");
-                profile.setClass(getApplicationContext(), ProfileActivity.class);
-                profile.putExtra("man", new Gson().toJson(man));
-                startActivity(profile);
-            } else if (!netWork.isAdmin()) {
-                // обычные пользователи идут на экран своих заданий
-                tasks.setClass(getApplicationContext(), HomeActivity.class);
-                tasks.putExtra("uid", auth.getCurrentUser().getUid());
-                startActivity(tasks);
-                finish();
-            }
-            // только Админ может остаться на экране списка пользователей
-            lv_people.setVisibility(View.VISIBLE);
+        public void onUpdated() {
+            lm_people = netWork.getPeople().asListMap();
+            lv_people.setAdapter(new Lv_peopleAdapter(lv_people.getContext(), lm_people));
+            ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
+            netWork.getPeople().setPeopleListener((list, man) -> {
+                lm_people = list;
+                if (man.id.equals(auth.getCurrentUser().getUid())) {
+                    sp.edit().putString("account", man.asJson()).commit();
+                    AppUtil.showMessage(getApplicationContext(), "Ваши данные получены");
+
+                    delay.cancel();
+                    if (!netWork.isAdmin()) {
+                        // обычные пользователи идут на экран своих заданий
+                        tasks.setClass(getApplicationContext(), TasksActivity.class);
+                        tasks.putExtra("uid", auth.getCurrentUser().getUid());
+                        startActivity(tasks);
+                        finish();
+                    } else {
+                        // только Админ может остаться на экране списка пользователей
+                        lv_people.setVisibility(View.VISIBLE);
+                        AppUtil.showMessage(lv_people.getContext(), "Вы Админ");
+                    }
+                }
+                ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
+            });
         }
     };
 
