@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import my.virkato.task.manager.R;
+import my.virkato.task.manager.entity.People;
 
 /***
  * Список всех заданий для конкретного мастера
@@ -47,9 +48,12 @@ public class Lv_tasksAdapter extends BaseAdapter {
             _view = _inflater.inflate(R.layout.a_task, null);
         }
 
-        final TextView textview1 = _view.findViewById(R.id.textview1);
+        TextView t_description = _view.findViewById(R.id.t_description);
+        TextView t_fio = _view.findViewById(R.id.t_fio);
 
-        textview1.setText(_data.get(_position).get("text").toString());
+        HashMap<String, Object> map = _data.get(_position);
+        t_fio.setText(new People().findManById(map.get("master_uid").toString()).fio);
+        t_description.setText(map.get("description").toString());
 
         return _view;
     }

@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
 
-
+/***
+ * оформить отчёт о ходе работ
+ */
 public class ReportActivity extends AppCompatActivity {
 
 

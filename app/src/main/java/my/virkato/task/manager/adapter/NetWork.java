@@ -39,7 +39,7 @@ public class NetWork {
     public enum Info {
         USERS("users"), TASKS("tasks"), ADMINS("admins");
 
-        String path;
+        public String path;
 
         Info(String path) {
             this.path = path;
@@ -165,7 +165,7 @@ public class NetWork {
     }
 
     /***
-     * Получать данные о пользователях
+     * Получать данные из выбранной папки (folder)
      */
     private void receiveFromFolder() {
         db_child_listener = new ChildEventListener() {

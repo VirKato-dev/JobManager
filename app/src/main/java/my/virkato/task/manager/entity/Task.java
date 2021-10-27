@@ -1,7 +1,20 @@
 package my.virkato.task.manager.entity;
 
+import android.app.Application;
+import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.HashMap;
 import java.util.Locale;
+
+import my.virkato.task.manager.AppUtil;
+import my.virkato.task.manager.adapter.NetWork;
 
 
 public class Task {
@@ -41,4 +54,13 @@ public class Task {
                 id, master_uid, description, date_start, date_finish, finished?"1":"0");
     }
 
+    public void send(Context context, DatabaseReference db) {
+        AppUtil.showSystemWait(context, true);
+        db.child(master_uid).child(id).updateChildren(this.asMap(), new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                AppUtil.showSystemWait(context, false);
+            }
+        });
+    }
 }

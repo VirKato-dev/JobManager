@@ -47,7 +47,7 @@ public class Lv_peopleAdapter extends BaseAdapter {
             _view = _inflater.inflate(R.layout.a_man, null);
         }
 
-        final TextView textview1 = _view.findViewById(R.id.textview1);
+        final TextView textview1 = _view.findViewById(R.id.t_description);
         final TextView textview2 = _view.findViewById(R.id.e_task_description);
 
         textview1.setText(_data.get(_position).get("fio").toString());

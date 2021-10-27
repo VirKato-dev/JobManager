@@ -73,7 +73,7 @@ public class AuthActivity extends AppCompatActivity {
         l_auth = (LinearLayout) findViewById(R.id.l_auth);
         l_phone = (LinearLayout) findViewById(R.id.l_phone);
         l_otp = (LinearLayout) findViewById(R.id.l_otp);
-        textview1 = (TextView) findViewById(R.id.textview1);
+        textview1 = (TextView) findViewById(R.id.t_description);
         e_num = (EditText) findViewById(R.id.e_num);
         b_verify_phone = (Button) findViewById(R.id.b_verify_phone);
         textview2 = (TextView) findViewById(R.id.e_task_description);

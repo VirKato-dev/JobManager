@@ -12,16 +12,6 @@
 		android:padding="8dp"
 		android:orientation="vertical">
 
-		<EditText
-			android:id="@+id/e_task_description"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:hint="Описание задания"
-			android:minHeight="48dp"
-			android:padding="8dp"
-			android:textColor="#000000"
-			android:textSize="16sp" />
-
 		<Spinner
 			android:id="@+id/spin_master"
 			style="@style/Widget.AppCompat.Spinner.DropDown"
@@ -37,6 +27,16 @@
 			android:contentDescription="Специальзация мастера"
 			android:minHeight="48dp"
 			tools:ignore="SpeakableTextPresentCheck" />
+
+		<EditText
+			android:id="@+id/e_task_description"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Описание задания"
+			android:minHeight="48dp"
+			android:padding="8dp"
+			android:textColor="#000000"
+			android:textSize="16sp" />
 
 		<Button
 			android:id="@+id/b_approve"

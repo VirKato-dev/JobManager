@@ -41,15 +41,16 @@ public class TaskActivity extends AppCompatActivity {
     private NetWork dbPeople = new NetWork(NetWork.Info.USERS);
     private People people = dbPeople.getPeople();
     private ArrayList<String> masters = new ArrayList<>();
+    private ArrayList<String> masters_uid = new ArrayList<>();
     private ArrayList<String> spec = new ArrayList<>();
 
-    private TextView e_description;
-    private Spinner spin_master;
-    private Spinner spin_spec;
-    private Button b_approve;
-    private Button b_create;
-    private ListView lv_reports;
-    private Button b_add_report;
+    private TextView e_description; // текст задание
+    private Spinner spin_master; // специалисты
+    private Spinner spin_spec; // специальности
+    private Button b_approve; // завершение работ
+    private Button b_create; // новое задание
+    private ListView lv_reports; // список отчётов по заданию
+    private Button b_add_report; // отчитаться
 
     private FirebaseDatabase fb_db = FirebaseDatabase.getInstance();
     private DatabaseReference dbt = fb_db.getReference("tasks");
@@ -107,10 +108,17 @@ public class TaskActivity extends AppCompatActivity {
 
         b_create.setOnClickListener(_view -> {
             // отправить новое задание в базу
+            Task newTask = new Task(new HashMap<>());
+            newTask.id = task.id;
+            newTask.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
+            newTask.description = e_description.getText().toString();
+            newTask.send(b_create.getContext(), dbTasks.getDB());
+            finish();
         });
 
         b_add_report.setOnClickListener(_view -> {
             // перейти к странице создания отчёта о ходе работ
+            startActivity(new Intent(this, ReportActivity.class));
         });
 
         auth_updateEmailListener = _param1 -> {
@@ -180,9 +188,8 @@ public class TaskActivity extends AppCompatActivity {
             lv_reports.setVisibility(View.GONE);
             b_add_report.setVisibility(View.GONE);
 
-            HashMap<String, Object> taskMap = new HashMap<>();
-            taskMap.put("id", dbt.push().getKey());
-            task = new Task(taskMap);
+            task = new Task(new HashMap<>());
+            task.id =dbt.push().getKey();
         } else {
             // изменить/просмотреть задание
             task = new Task(new Gson().fromJson(getIntent().getStringExtra("task"), new TypeToken<HashMap<String, Object>>() {
@@ -211,9 +218,11 @@ public class TaskActivity extends AppCompatActivity {
     private void updateMastersBySpec() {
         if (spec.size()>0 && spin_spec.getSelectedItemPosition()>=0) {
             ArrayList<String> selected = new ArrayList<>();
+            masters_uid = new ArrayList<>();
             for (Man m : dbPeople.getPeople().getList()) {
                 if (m.spec.equals(spec.get(spin_spec.getSelectedItemPosition()))) {
                     selected.add(m.fio);
+                    masters_uid.add(m.id);
                 }
             }
             masters.clear();
