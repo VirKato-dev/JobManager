@@ -161,6 +161,15 @@ public class TaskActivity extends AppCompatActivity {
     }
 
 
+    private void showViewsForUser(boolean admin) {
+        spin_master.setClickable(admin);
+        spin_spec.setClickable(admin);
+        e_description.setEnabled(admin);
+        b_approve.setVisibility(admin?View.VISIBLE:View.GONE);
+        b_add_report.setVisibility(admin?View.GONE:View.VISIBLE);
+    }
+
+
     private void initializeLogic() {
         if ("".equals(getIntent().getStringExtra("task"))) {
             // создать новое задание
@@ -179,11 +188,8 @@ public class TaskActivity extends AppCompatActivity {
             b_create.setVisibility(View.GONE);
 
             if ((NetWork.user() != null)) {
-                b_approve.setVisibility(View.VISIBLE);
-                b_add_report.setVisibility(View.GONE);
+                showViewsForUser(dbPeople.isAdmin());
             }
-            spin_master.setClickable(false);
-            spin_spec.setClickable(false);
         }
 
         People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {
