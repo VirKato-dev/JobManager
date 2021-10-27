@@ -30,8 +30,8 @@ public class Task {
         if (map.containsKey("id")) id = map.get("id").toString();
         if (map.containsKey("master_uid")) master_uid = map.get("master_uid").toString();
         if (map.containsKey("description")) description = map.get("description").toString();
-        if (map.containsKey("date_start")) date_start = (long) map.get("date_start");
-        if (map.containsKey("date_finish")) date_finish = (long) map.get("date_finish");
+        if (map.containsKey("date_start")) date_start = (long)map.get("date_start");
+        if (map.containsKey("date_finish")) date_finish = (long)map.get("date_finish");
         if (map.containsKey("finished")) finished = map.get("finished").toString().equals("1")?true:false;
     }
 
@@ -56,7 +56,7 @@ public class Task {
 
     public void send(Context context, DatabaseReference db) {
         AppUtil.showSystemWait(context, true);
-        db.child(master_uid).child(id).updateChildren(this.asMap(), new DatabaseReference.CompletionListener() {
+        db.child(id).updateChildren(this.asMap(), new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                 AppUtil.showSystemWait(context, false);

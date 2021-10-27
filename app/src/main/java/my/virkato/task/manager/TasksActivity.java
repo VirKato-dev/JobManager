@@ -23,6 +23,7 @@ import java.util.TimerTask;
 
 import my.virkato.task.manager.adapter.Lv_tasksAdapter;
 import my.virkato.task.manager.adapter.NetWork;
+import my.virkato.task.manager.entity.Man;
 import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Task;
 import my.virkato.task.manager.entity.Tasks;
@@ -48,7 +49,6 @@ public class TasksActivity extends AppCompatActivity {
 
     private ArrayList<HashMap<String, Object>> lm_progress;
     private ArrayList<HashMap<String, Object>> lm_finished;
-    private HashMap<String, Object> task;
     private String UID;
     private boolean finished = false;
 
@@ -61,6 +61,7 @@ public class TasksActivity extends AppCompatActivity {
         initVariables();
         initDesign();
         receiveTasks();
+        receiveUsers();
 
         if (dbAdmins.getPeople().getAdminsListener() == null) {
             dbAdmins.getPeople().setAdminsListener(() -> {
@@ -94,12 +95,12 @@ public class TasksActivity extends AppCompatActivity {
      */
     private void initVariables() {
         dbAdmins = new NetWork(NetWork.Info.ADMINS); // заодно обновит состояние авторизации
+        dbUsers = new NetWork(NetWork.Info.USERS);
         dbTasks = new NetWork(NetWork.Info.TASKS);
         tasks = dbTasks.getTasks();
         detail = new Intent();
         lm_progress = new ArrayList<>();
         lm_finished = new ArrayList<>();
-        task = new HashMap<>();
         _timer = new Timer();
         UID = getIntent().getStringExtra("uid"); // для какого пользователя
         if (UID == null) UID = "";
@@ -153,7 +154,7 @@ public class TasksActivity extends AppCompatActivity {
     /***
      * Слушаем(получаем актуальный) список заданий
      */
-    void receiveTasks() {
+    private void receiveTasks() {
         tasks.setOnTasksUpdatedListener(this::separateTasks); // сигнатура метода соответствует интерфейсу
     }
 
@@ -164,6 +165,8 @@ public class TasksActivity extends AppCompatActivity {
      * @param task текущее еффективное задание
      */
     public void separateTasks(ArrayList<Task> tasks, boolean removed, Task task) {
+        Log.e("ПОЛУЧЕНО ЗАДАНИЕ", task.master_uid + " : " + task.description);
+
         lm_progress.clear();
         lm_finished.clear();
         for (Task t : tasks) {
@@ -175,6 +178,16 @@ public class TasksActivity extends AppCompatActivity {
                 }
             }
         }
+        ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
+//        lv_tasks.invalidate();
+    }
+
+    private void receiveUsers() {
+        dbUsers.getPeople().setPeopleListener(
+                (list, man) -> {
+                    ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
+//                    lv_tasks.invalidate();
+                });
     }
 
 }

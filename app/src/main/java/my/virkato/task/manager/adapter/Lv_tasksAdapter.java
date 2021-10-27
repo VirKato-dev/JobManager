@@ -1,6 +1,7 @@
 package my.virkato.task.manager.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import my.virkato.task.manager.R;
+import my.virkato.task.manager.entity.Man;
 import my.virkato.task.manager.entity.People;
 
 /***
@@ -19,6 +21,7 @@ import my.virkato.task.manager.entity.People;
 public class Lv_tasksAdapter extends BaseAdapter {
     ArrayList<HashMap<String, Object>> _data;
     Context context;
+    People people = new People();
 
     public Lv_tasksAdapter(Context context, ArrayList<HashMap<String, Object>> _arr) {
         _data = _arr;
@@ -52,7 +55,11 @@ public class Lv_tasksAdapter extends BaseAdapter {
         TextView t_fio = _view.findViewById(R.id.t_fio);
 
         HashMap<String, Object> map = _data.get(_position);
-        t_fio.setText(new People().findManById(map.get("master_uid").toString()).fio);
+        String fio = "БЕЗ ИМЕНИ";
+        Man man = people.findManById(map.get("master_uid").toString());
+        if (man != null) fio = man.fio;
+        Log.e("LIST MAP", map.toString());
+        t_fio.setText(fio);
         t_description.setText(map.get("description").toString());
 
         return _view;
