@@ -102,12 +102,15 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         b_approve.setOnClickListener(_view -> {
+            // подтвердить выполнение задания
         });
 
         b_create.setOnClickListener(_view -> {
+            // отправить новое задание в базу
         });
 
         b_add_report.setOnClickListener(_view -> {
+            // перейти к странице создания отчёта о ходе работ
         });
 
         auth_updateEmailListener = _param1 -> {
