@@ -51,7 +51,6 @@ public class TaskActivity extends AppCompatActivity {
     private ListView lv_reports;
     private Button b_add_report;
 
-    private FirebaseAuth auth;
     private FirebaseDatabase fb_db = FirebaseDatabase.getInstance();
     private DatabaseReference dbt = fb_db.getReference("tasks");
     private OnCompleteListener<Void> auth_updateEmailListener;
@@ -85,7 +84,6 @@ public class TaskActivity extends AppCompatActivity {
         b_create = findViewById(R.id.b_create);
         lv_reports = findViewById(R.id.lv_reports);
         b_add_report = findViewById(R.id.b_add_report);
-        auth = FirebaseAuth.getInstance();
 
         spin_master.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, masters));
         ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
@@ -167,23 +165,26 @@ public class TaskActivity extends AppCompatActivity {
         if ("".equals(getIntent().getStringExtra("task"))) {
             // создать новое задание
             b_approve.setVisibility(View.GONE);
+            lv_reports.setVisibility(View.GONE);
+            b_add_report.setVisibility(View.GONE);
+
             HashMap<String, Object> taskMap = new HashMap<>();
             taskMap.put("id", dbt.push().getKey());
             task = new Task(taskMap);
         } else {
             // изменить/просмотреть задание
-            b_create.setVisibility(View.GONE);
-//            spin_master.setClickable(false);
-//            spin_spec.setClickable(false);
             task = new Task(new Gson().fromJson(getIntent().getStringExtra("task"), new TypeToken<HashMap<String, Object>>() {
             }.getType()));
             e_description.setText(task.description);
+            b_create.setVisibility(View.GONE);
+
+            if ((NetWork.user() != null)) {
+                b_approve.setVisibility(View.VISIBLE);
+                b_add_report.setVisibility(View.GONE);
+            }
+            spin_master.setClickable(false);
+            spin_spec.setClickable(false);
         }
-//        b_approve.setVisibility(View.GONE);
-//        if ((auth.getCurrentUser() != null)) {
-//            b_approve.setVisibility(View.VISIBLE);
-//            b_add_report.setVisibility(View.GONE);
-//        }
 
         People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {
             spec.clear();

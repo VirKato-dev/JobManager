@@ -37,7 +37,6 @@ public class TasksActivity extends AppCompatActivity {
     private Button b_finished;
     private FloatingActionButton fab_add_task;
 
-    private FirebaseAuth auth;
     private NetWork dbAdmins;
     private NetWork dbUsers;
     private NetWork dbTasks;
@@ -76,7 +75,7 @@ public class TasksActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (user() != null) {
+        if (NetWork.user() != null) {
             if (dbAdmins.isAdmin()) showFAB();
         } else startActivity(new Intent(this, AuthActivity.class));
     }
@@ -90,17 +89,11 @@ public class TasksActivity extends AppCompatActivity {
         });
     }
 
-
-    private FirebaseUser user() {
-        return auth.getCurrentUser();
-    }
-
     /***
      * Первоначальные настройки переменных
      */
     private void initVariables() {
-        auth = FirebaseAuth.getInstance();
-        dbAdmins = new NetWork(NetWork.Info.ADMINS);
+        dbAdmins = new NetWork(NetWork.Info.ADMINS); // заодно обновит состояние авторизации
         dbTasks = new NetWork(NetWork.Info.TASKS);
         tasks = dbTasks.getTasks();
         detail = new Intent();
@@ -108,7 +101,7 @@ public class TasksActivity extends AppCompatActivity {
         lm_finished = new ArrayList<>();
         task = new HashMap<>();
         _timer = new Timer();
-        UID = getIntent().getStringExtra("uid");
+        UID = getIntent().getStringExtra("uid"); // для какого пользователя
         if (UID == null) UID = "";
     }
 

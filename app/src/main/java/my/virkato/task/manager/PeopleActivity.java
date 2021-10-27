@@ -45,7 +45,6 @@ public class PeopleActivity extends AppCompatActivity {
     private final Intent authentication = new Intent();
     private NetWork netWork = new NetWork(NetWork.Info.USERS);
     ;
-    private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private SharedPreferences sp;
 
 
@@ -118,14 +117,14 @@ public class PeopleActivity extends AppCompatActivity {
 
         lv_people.setVisibility(View.GONE);
 
-        if ((auth.getCurrentUser() == null)) {
+        if ((NetWork.user() == null)) {
             // требуется авторизация
             authentication.setClass(getApplicationContext(), AuthActivity.class);
             startActivity(authentication);
         } else {
             // при первом входе в аккаунт создаётся бланк профиля
             manMap = new HashMap<>();
-            manMap.put("uid", auth.getCurrentUser().getUid());
+            manMap.put("uid", NetWork.user().getUid());
             manMap.put("phone", sp.getString("phone", ""));
             manMap.put("fio", "");
             manMap.put("spec", "");
@@ -146,7 +145,7 @@ public class PeopleActivity extends AppCompatActivity {
             ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
             netWork.getPeople().setPeopleListener((list, man) -> {
                 lm_people = list;
-                if (man.id.equals(auth.getCurrentUser().getUid())) {
+                if (man.id.equals(NetWork.user().getUid())) {
                     sp.edit().putString("account", man.asJson()).commit();
                     AppUtil.showMessage(getApplicationContext(), "Ваши данные получены");
 
@@ -154,7 +153,7 @@ public class PeopleActivity extends AppCompatActivity {
                     if (!netWork.isAdmin()) {
                         // обычные пользователи идут на экран своих заданий
                         tasks.setClass(getApplicationContext(), TasksActivity.class);
-                        tasks.putExtra("uid", auth.getCurrentUser().getUid());
+                        tasks.putExtra("uid", NetWork.user().getUid());
                         startActivity(tasks);
                         finish();
                     } else {

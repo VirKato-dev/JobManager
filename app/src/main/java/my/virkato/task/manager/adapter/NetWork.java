@@ -46,7 +46,7 @@ public class NetWork {
         }
     }
 
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private static FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseDatabase fb_db = FirebaseDatabase.getInstance();
     private FirebaseStorage fb_storage = FirebaseStorage.getInstance();
     private FirebaseUser user = user();
@@ -108,7 +108,7 @@ public class NetWork {
         };
     }
 
-    private FirebaseUser user() {
+    public static FirebaseUser user() {
         return auth.getCurrentUser();
     }
 
