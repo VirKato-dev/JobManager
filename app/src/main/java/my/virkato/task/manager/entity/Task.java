@@ -1,6 +1,5 @@
 package my.virkato.task.manager.entity;
 
-import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -8,13 +7,11 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Locale;
 
 import my.virkato.task.manager.AppUtil;
-import my.virkato.task.manager.adapter.NetWork;
 
 
 public class Task {
@@ -30,10 +27,13 @@ public class Task {
         if (map.containsKey("id")) id = map.get("id").toString();
         if (map.containsKey("master_uid")) master_uid = map.get("master_uid").toString();
         if (map.containsKey("description")) description = map.get("description").toString();
-        if (map.containsKey("date_start")) date_start = (long)map.get("date_start");
-        if (map.containsKey("date_finish")) date_finish = (long)map.get("date_finish");
+        if (map.containsKey("date_start")) date_start = (long) map.get("date_start");
+        if (map.containsKey("date_finish")) date_finish = (long) map.get("date_finish");
         if (map.containsKey("finished")) finished = map.get("finished").toString().equals("1")?true:false;
     }
+
+
+    public Task() {}
 
 
     public HashMap<String, Object> asMap() {

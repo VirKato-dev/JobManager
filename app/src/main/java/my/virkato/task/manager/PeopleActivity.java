@@ -26,6 +26,7 @@ import java.util.TimerTask;
 
 import my.virkato.task.manager.adapter.Lv_peopleAdapter;
 import my.virkato.task.manager.adapter.NetWork;
+import my.virkato.task.manager.entity.Man;
 import my.virkato.task.manager.entity.People;
 
 /***
@@ -36,7 +37,7 @@ public class PeopleActivity extends AppCompatActivity {
 
     private HashMap<String, Object> manMap = new HashMap<>();
 
-    private ArrayList<HashMap<String, Object>> lm_people = new ArrayList<>();
+    private ArrayList<Man> lm_people = new ArrayList<>();
 
     private ListView lv_people;
 
@@ -78,7 +79,7 @@ public class PeopleActivity extends AppCompatActivity {
 
         lv_people.setOnItemClickListener((_param1, _param2, _position, _param4) -> {
             tasks.setClass(getApplicationContext(), TasksActivity.class);
-            tasks.putExtra("uid", lm_people.get(_position).get("uid").toString());
+            tasks.putExtra("uid", lm_people.get(_position).id);
             startActivity(tasks);
         });
 
@@ -140,7 +141,7 @@ public class PeopleActivity extends AppCompatActivity {
     People.OnAdminsUpdatedListener adminsUpdatedListener = new People.OnAdminsUpdatedListener() {
         @Override
         public void onUpdated() {
-            lm_people = netWork.getPeople().asListMap();
+            lm_people = netWork.getPeople().getList();
             lv_people.setAdapter(new Lv_peopleAdapter(lv_people.getContext(), lm_people));
             ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
             netWork.getPeople().setPeopleListener((list, man) -> {

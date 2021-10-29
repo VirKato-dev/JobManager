@@ -4,27 +4,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import my.virkato.task.manager.adapter.Lv_tasksAdapter;
 import my.virkato.task.manager.adapter.NetWork;
-import my.virkato.task.manager.entity.Man;
-import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Task;
 import my.virkato.task.manager.entity.Tasks;
 
@@ -42,13 +37,11 @@ public class TasksActivity extends AppCompatActivity {
     private NetWork dbUsers;
     private NetWork dbTasks;
     private Tasks tasks;
-    private Intent detail;
+    private Intent detail = new Intent();
 
-    private Timer _timer;
-    private TimerTask delay;
-
-    private ArrayList<HashMap<String, Object>> lm_progress;
-    private ArrayList<HashMap<String, Object>> lm_finished;
+    private final ArrayList<Task> lm_progress = new ArrayList<>();
+    private final ArrayList<Task> lm_finished = new ArrayList<>();
+    private final ArrayList<Task> lm_tasks = new ArrayList<>();
     private String UID;
     private boolean finished = false;
 
@@ -60,8 +53,6 @@ public class TasksActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         initVariables();
         initDesign();
-        receiveTasks();
-        receiveUsers();
 
         if (dbAdmins.getPeople().getAdminsListener() == null) {
             dbAdmins.getPeople().setAdminsListener(() -> {
@@ -70,6 +61,8 @@ public class TasksActivity extends AppCompatActivity {
                 }
             });
         }
+        receiveTasks();
+        receiveUsers();
     }
 
 
@@ -94,14 +87,11 @@ public class TasksActivity extends AppCompatActivity {
      * Первоначальные настройки переменных
      */
     private void initVariables() {
-        dbAdmins = new NetWork(NetWork.Info.ADMINS); // заодно обновит состояние авторизации
+        // new NetWork() заодно обновит состояние авторизации при каждом создании объекта
+        dbAdmins = new NetWork(NetWork.Info.ADMINS);
         dbUsers = new NetWork(NetWork.Info.USERS);
         dbTasks = new NetWork(NetWork.Info.TASKS);
         tasks = dbTasks.getTasks();
-        detail = new Intent();
-        lm_progress = new ArrayList<>();
-        lm_finished = new ArrayList<>();
-        _timer = new Timer();
         UID = getIntent().getStringExtra("uid"); // для какого пользователя
         if (UID == null) UID = "";
     }
@@ -117,37 +107,48 @@ public class TasksActivity extends AppCompatActivity {
         fab_add_task = findViewById(R.id.fab_add_task);
         fab_add_task.setVisibility(View.GONE);
 
+        separateTasks(tasks.getList(), false, new Task());
+        setMainList();
+
+        ListAdapter adapter = new Lv_tasksAdapter(this, lm_tasks);
+        lv_tasks.setAdapter(adapter);
+        redrawListView();
+
         lv_tasks.setOnItemClickListener((_param1, _param2, _position, _param4) -> {
             detail.setClass(getApplicationContext(), TaskActivity.class);
             if (finished) {
-                detail.putExtra("task", new Gson().toJson(lm_finished.get(_position)));
+                detail.putExtra("task", lm_finished.get(_position).asJson());
             } else {
-                detail.putExtra("task", new Gson().toJson(lm_progress.get(_position)));
+                detail.putExtra("task", lm_progress.get(_position).asJson());
             }
             startActivity(detail);
         });
 
         b_work.setOnClickListener(_view -> {
             finished = false;
-            lv_tasks.setAdapter(new Lv_tasksAdapter(lv_tasks.getContext(), lm_progress));
-            ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
+            setMainList();
+            redrawListView();
         });
-        b_work.performClick();
 
         b_finished.setOnClickListener(_view -> {
             finished = true;
-            lv_tasks.setAdapter(new Lv_tasksAdapter(lv_tasks.getContext(), lm_finished));
-            ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
+            setMainList();
+            redrawListView();
         });
     }
 
 
-    @Override
-    protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
-        super.onActivityResult(_requestCode, _resultCode, _data);
-        switch (_requestCode) {
-            default:
-                break;
+    private void redrawListView() {
+        ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
+    }
+
+
+    private void setMainList() {
+        lm_tasks.clear();
+        if (finished) {
+            lm_tasks.addAll(lm_finished);
+        } else {
+            lm_tasks.addAll(lm_progress);
         }
     }
 
@@ -155,7 +156,10 @@ public class TasksActivity extends AppCompatActivity {
      * Слушаем(получаем актуальный) список заданий
      */
     private void receiveTasks() {
-        tasks.setOnTasksUpdatedListener(this::separateTasks); // сигнатура метода соответствует интерфейсу
+        tasks.setOnTasksUpdatedListener((tasks, removed, task) -> {
+            separateTasks(tasks, removed, task);
+            redrawListView();
+        });
     }
 
     /***
@@ -165,29 +169,28 @@ public class TasksActivity extends AppCompatActivity {
      * @param task текущее еффективное задание
      */
     public void separateTasks(ArrayList<Task> tasks, boolean removed, Task task) {
-        Log.e("ПОЛУЧЕНО ЗАДАНИЕ", task.master_uid + " : " + task.description);
-
         lm_progress.clear();
         lm_finished.clear();
         for (Task t : tasks) {
             if (dbAdmins.isAdmin() || t.master_uid.equals(UID)) {
                 if (t.finished) {
-                    lm_finished.add(t.asMap());
+                    lm_finished.add(t);
                 } else {
-                    lm_progress.add(t.asMap());
+                    lm_progress.add(t);
                 }
             }
         }
-        ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
-//        lv_tasks.invalidate();
+        setMainList();
     }
 
     private void receiveUsers() {
+
         dbUsers.getPeople().setPeopleListener(
                 (list, man) -> {
-                    ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
-//                    lv_tasks.invalidate();
-                });
+                    setMainList();
+                    redrawListView();
+                }
+        );
     }
 
 }

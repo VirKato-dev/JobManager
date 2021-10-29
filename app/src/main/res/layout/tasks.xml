@@ -44,7 +44,6 @@
 			android:id="@+id/lv_tasks"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:choiceMode="none"
 			android:divider="@null"
 			android:dividerHeight="0dp" />
 	</LinearLayout>

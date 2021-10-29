@@ -24,7 +24,7 @@ public class People {
      * Следим за изменениями списка всех пользователей
      */
     public interface OnPeopleUpdatedListener {
-        void onUpdated(ArrayList<HashMap<String, Object>> list, Man man);
+        void onUpdated(ArrayList<Man> list, Man man);
     }
 
     /***
@@ -119,7 +119,7 @@ public class People {
 
 
     private void note(Man man) {
-        if (peopleListener != null) peopleListener.onUpdated(listMap, man);
+        if (peopleListener != null) peopleListener.onUpdated(people, man);
     }
 
 

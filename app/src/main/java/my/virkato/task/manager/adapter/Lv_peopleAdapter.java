@@ -11,15 +11,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import my.virkato.task.manager.R;
+import my.virkato.task.manager.entity.Man;
 
 /***
  * Список всех пользователей
  */
 public class Lv_peopleAdapter extends BaseAdapter {
-    ArrayList<HashMap<String, Object>> _data;
+    ArrayList<Man> _data;
     Context context;
 
-    public Lv_peopleAdapter(Context context, ArrayList<HashMap<String, Object>> _arr) {
+    public Lv_peopleAdapter(Context context, ArrayList<Man> _arr) {
         _data = _arr;
         this.context = context;
     }
@@ -30,7 +31,7 @@ public class Lv_peopleAdapter extends BaseAdapter {
     }
 
     @Override
-    public HashMap<String, Object> getItem(int _index) {
+    public Man getItem(int _index) {
         return _data.get(_index);
     }
 
@@ -50,8 +51,8 @@ public class Lv_peopleAdapter extends BaseAdapter {
         final TextView textview1 = _view.findViewById(R.id.t_description);
         final TextView textview2 = _view.findViewById(R.id.e_task_description);
 
-        textview1.setText(_data.get(_position).get("fio").toString());
-        textview2.setText(_data.get(_position).get("spec").toString());
+        textview1.setText(_data.get(_position).fio);
+        textview2.setText(_data.get(_position).spec);
 
         return _view;
     }

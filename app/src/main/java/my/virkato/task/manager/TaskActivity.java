@@ -204,8 +204,8 @@ public class TaskActivity extends AppCompatActivity {
 
         People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {
             spec.clear();
-            for (HashMap<String, Object> map : list) {
-                String cvalif = map.get("spec").toString();
+            for (Man m : list) {
+                String cvalif = m.spec;
                 if (!cvalif.equals("admin") && !spec.contains(cvalif)) spec.add(cvalif);
             }
             ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();

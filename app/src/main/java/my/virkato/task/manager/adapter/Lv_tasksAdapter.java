@@ -9,43 +9,38 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import my.virkato.task.manager.R;
 import my.virkato.task.manager.entity.Man;
 import my.virkato.task.manager.entity.People;
+import my.virkato.task.manager.entity.Task;
 
 /***
  * Список всех заданий для конкретного мастера
  */
 public class Lv_tasksAdapter extends BaseAdapter {
-    ArrayList<HashMap<String, Object>> _data;
-    Context context;
-    People people = new People();
+    ArrayList<Task> _data;
+    Context _context;
 
-    public Lv_tasksAdapter(Context context, ArrayList<HashMap<String, Object>> _arr) {
+    public Lv_tasksAdapter(Context _context, ArrayList<Task> _arr) {
         _data = _arr;
-        this.context = context;
+        this._context = _context.getApplicationContext();
     }
 
-    @Override
     public int getCount() {
         return _data.size();
     }
 
-    @Override
-    public HashMap<String, Object> getItem(int _index) {
+    public Task getItem(int _index) {
         return _data.get(_index);
     }
 
-    @Override
     public long getItemId(int _index) {
         return _index;
     }
 
-    @Override
     public View getView(final int _position, View _v, ViewGroup _container) {
-        LayoutInflater _inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View _view = _v;
         if (_view == null) {
             _view = _inflater.inflate(R.layout.a_task, null);
@@ -54,13 +49,12 @@ public class Lv_tasksAdapter extends BaseAdapter {
         TextView t_description = _view.findViewById(R.id.t_description);
         TextView t_fio = _view.findViewById(R.id.t_fio);
 
-        HashMap<String, Object> map = _data.get(_position);
+        Task task = _data.get(_position);
         String fio = "БЕЗ ИМЕНИ";
-        Man man = people.findManById(map.get("master_uid").toString());
+        Man man = new People().findManById(task.master_uid);
         if (man != null) fio = man.fio;
-        Log.e("LIST MAP", map.toString());
         t_fio.setText(fio);
-        t_description.setText(map.get("description").toString());
+        t_description.setText(task.description);
 
         return _view;
     }

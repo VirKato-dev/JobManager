@@ -49,9 +49,8 @@ public class NetWork {
     private static FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseDatabase fb_db = FirebaseDatabase.getInstance();
     private FirebaseStorage fb_storage = FirebaseStorage.getInstance();
-    private FirebaseUser user = user();
     private DatabaseReference db;
-    private ChildEventListener db_child_listener;
+    private static ChildEventListener db_child_listener;
     private StorageReference store;
     private OnCompleteListener<Uri> store_upload_success_listener;
     private OnSuccessListener<FileDownloadTask.TaskSnapshot> store_download_success_listener;
@@ -71,16 +70,16 @@ public class NetWork {
 
         switch (folder) {
             case USERS:
-                people = new People();
+                if (people == null) people = new People();
                 store = fb_storage.getReference(folder.path);
                 receiveFromFolder();
                 break;
             case TASKS:
-                tasks = new Tasks();
+                if (tasks == null) tasks = new Tasks();
                 receiveFromFolder();
                 break;
             case ADMINS:
-                people = new People();
+                if (people==null) people = new People();
                 receiveAdmins();
         }
 
@@ -176,7 +175,7 @@ public class NetWork {
                 final String _childKey = _param1.getKey();
                 final HashMap<String, Object> _childValue = _param1.getValue(_ind);
                 _childValue.put("id", _childKey);
-                if ((user != null)) {
+                if ((user() != null)) {
                     switch (folder) {
                         case USERS:
                             people.update(_childValue);
@@ -194,7 +193,7 @@ public class NetWork {
                 final String _childKey = _param1.getKey();
                 final HashMap<String, Object> _childValue = _param1.getValue(_ind);
                 _childValue.put("id", _childKey);
-                if ((user != null)) {
+                if ((user() != null)) {
                     switch (folder) {
                         case USERS:
                             people.update(_childValue);
@@ -212,7 +211,7 @@ public class NetWork {
                 final String _childKey = _param1.getKey();
                 final HashMap<String, Object> _childValue = _param1.getValue(_ind);
                 _childValue.put("id", _childKey);
-                if ((user != null)) {
+                if ((user() != null)) {
                     switch (folder) {
                         case USERS:
                             people.remove(_childValue);
