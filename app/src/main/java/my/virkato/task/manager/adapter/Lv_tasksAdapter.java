@@ -1,5 +1,6 @@
 package my.virkato.task.manager.adapter;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,12 +20,16 @@ import my.virkato.task.manager.entity.Task;
  * Список всех заданий для конкретного мастера
  */
 public class Lv_tasksAdapter extends BaseAdapter {
-    ArrayList<Task> _data;
-    Context _context;
+    ArrayList<Task> _data = new ArrayList<>();
 
-    public Lv_tasksAdapter(Context _context, ArrayList<Task> _arr) {
-        _data = _arr;
-        this._context = _context.getApplicationContext();
+    public Lv_tasksAdapter(ArrayList<Task> _arr) {
+        setNewList(_arr);
+    }
+
+    public void setNewList(ArrayList<Task> list) {
+        _data.clear();
+        _data.addAll(list);
+        notifyDataSetChanged();
     }
 
     public int getCount() {
@@ -40,7 +45,7 @@ public class Lv_tasksAdapter extends BaseAdapter {
     }
 
     public View getView(final int _position, View _v, ViewGroup _container) {
-        LayoutInflater _inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater _inflater = LayoutInflater.from(_container.getContext());
         View _view = _v;
         if (_view == null) {
             _view = _inflater.inflate(R.layout.a_task, null);

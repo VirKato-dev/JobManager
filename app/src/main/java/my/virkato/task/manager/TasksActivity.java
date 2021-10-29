@@ -39,9 +39,10 @@ public class TasksActivity extends AppCompatActivity {
     private Tasks tasks;
     private Intent detail = new Intent();
 
+    private Lv_tasksAdapter adapter;
+
     private final ArrayList<Task> lm_progress = new ArrayList<>();
     private final ArrayList<Task> lm_finished = new ArrayList<>();
-    private final ArrayList<Task> lm_tasks = new ArrayList<>();
     private String UID;
     private boolean finished = false;
 
@@ -92,6 +93,7 @@ public class TasksActivity extends AppCompatActivity {
         dbUsers = new NetWork(NetWork.Info.USERS);
         dbTasks = new NetWork(NetWork.Info.TASKS);
         tasks = dbTasks.getTasks();
+        adapter = new Lv_tasksAdapter(lm_progress);
         UID = getIntent().getStringExtra("uid"); // для какого пользователя
         if (UID == null) UID = "";
     }
@@ -107,12 +109,10 @@ public class TasksActivity extends AppCompatActivity {
         fab_add_task = findViewById(R.id.fab_add_task);
         fab_add_task.setVisibility(View.GONE);
 
+        lv_tasks.setAdapter(adapter);
+
         separateTasks(tasks.getList(), false, new Task());
         setMainList();
-
-        ListAdapter adapter = new Lv_tasksAdapter(this, lm_tasks);
-        lv_tasks.setAdapter(adapter);
-        redrawListView();
 
         lv_tasks.setOnItemClickListener((_param1, _param2, _position, _param4) -> {
             detail.setClass(getApplicationContext(), TaskActivity.class);
@@ -127,39 +127,30 @@ public class TasksActivity extends AppCompatActivity {
         b_work.setOnClickListener(_view -> {
             finished = false;
             setMainList();
-            redrawListView();
         });
 
         b_finished.setOnClickListener(_view -> {
             finished = true;
             setMainList();
-            redrawListView();
         });
     }
 
 
-    private void redrawListView() {
-        ((BaseAdapter) lv_tasks.getAdapter()).notifyDataSetChanged();
-    }
-
-
-    private void setMainList() {
-        lm_tasks.clear();
-        if (finished) {
-            lm_tasks.addAll(lm_finished);
-        } else {
-            lm_tasks.addAll(lm_progress);
-        }
+    private synchronized void setMainList() {
+        runOnUiThread(() -> {
+            if (finished) {
+                adapter.setNewList(lm_finished);
+            } else {
+                adapter.setNewList(lm_progress);
+            }
+        });
     }
 
     /***
      * Слушаем(получаем актуальный) список заданий
      */
     private void receiveTasks() {
-        tasks.setOnTasksUpdatedListener((tasks, removed, task) -> {
-            separateTasks(tasks, removed, task);
-            redrawListView();
-        });
+        tasks.setOnTasksUpdatedListener(this::separateTasks);
     }
 
     /***
@@ -169,6 +160,7 @@ public class TasksActivity extends AppCompatActivity {
      * @param task текущее еффективное задание
      */
     public void separateTasks(ArrayList<Task> tasks, boolean removed, Task task) {
+        Log.e("ЗАДАНИЕ", task.description);
         lm_progress.clear();
         lm_finished.clear();
         for (Task t : tasks) {
@@ -184,11 +176,9 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void receiveUsers() {
-
         dbUsers.getPeople().setPeopleListener(
                 (list, man) -> {
                     setMainList();
-                    redrawListView();
                 }
         );
     }
