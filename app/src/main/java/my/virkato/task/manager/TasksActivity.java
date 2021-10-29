@@ -17,6 +17,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import my.virkato.task.manager.adapter.Lv_tasksAdapter;
 import my.virkato.task.manager.adapter.NetWork;
@@ -62,8 +64,26 @@ public class TasksActivity extends AppCompatActivity {
                 }
             });
         }
-        receiveTasks();
-        receiveUsers();
+        showWaitBanner(true);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        receiveTasks();
+                        receiveUsers();
+                        showWaitBanner(false);
+                    }
+                });
+            }
+        };
+        new Timer().schedule(timerTask, 1000);
+    }
+
+
+    private void showWaitBanner(boolean f) {
+        AppUtil.showSystemWait(this, f);
     }
 
 
@@ -111,9 +131,6 @@ public class TasksActivity extends AppCompatActivity {
 
         lv_tasks.setAdapter(adapter);
 
-        separateTasks(tasks.getList(), false, new Task());
-        setMainList();
-
         lv_tasks.setOnItemClickListener((_param1, _param2, _position, _param4) -> {
             detail.setClass(getApplicationContext(), TaskActivity.class);
             if (finished) {
@@ -136,13 +153,13 @@ public class TasksActivity extends AppCompatActivity {
     }
 
 
-    private synchronized void setMainList() {
+    private void setMainList() {
         runOnUiThread(() -> {
-            if (finished) {
-                adapter.setNewList(lm_finished);
-            } else {
-                adapter.setNewList(lm_progress);
-            }
+        if (finished) {
+            adapter.setNewList(lm_finished);
+        } else {
+            adapter.setNewList(lm_progress);
+        }
         });
     }
 

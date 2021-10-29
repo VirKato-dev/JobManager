@@ -37,9 +37,7 @@ public class TaskActivity extends AppCompatActivity {
 
     private Task task;
     private NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
-    private Tasks tasks = dbTasks.getTasks();
     private NetWork dbPeople = new NetWork(NetWork.Info.USERS);
-    private People people = dbPeople.getPeople();
     private ArrayList<String> masters = new ArrayList<>();
     private ArrayList<String> masters_uid = new ArrayList<>();
     private ArrayList<String> spec = new ArrayList<>();
@@ -108,7 +106,7 @@ public class TaskActivity extends AppCompatActivity {
 
         b_create.setOnClickListener(_view -> {
             // отправить новое задание в базу
-            Task newTask = new Task(new HashMap<>());
+            Task newTask = new Task();
             newTask.id = task.id;
             newTask.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
             newTask.description = e_description.getText().toString();
@@ -188,7 +186,7 @@ public class TaskActivity extends AppCompatActivity {
             lv_reports.setVisibility(View.GONE);
             b_add_report.setVisibility(View.GONE);
 
-            task = new Task(new HashMap<>());
+            task = new Task();
             task.id =dbt.push().getKey();
         } else {
             // изменить/просмотреть задание
