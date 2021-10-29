@@ -168,6 +168,7 @@ public class TasksActivity extends AppCompatActivity {
      */
     private void receiveTasks() {
         tasks.setOnTasksUpdatedListener(this::separateTasks);
+dbTasks.restartListening();
     }
 
     /***
@@ -198,6 +199,7 @@ public class TasksActivity extends AppCompatActivity {
                     setMainList();
                 }
         );
+dbUsers.restartListening();
     }
 
 }
