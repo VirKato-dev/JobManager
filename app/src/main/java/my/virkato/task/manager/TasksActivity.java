@@ -182,7 +182,7 @@ dbTasks.restartListening();
         lm_progress.clear();
         lm_finished.clear();
         for (Task t : tasks) {
-            if (dbAdmins.isAdmin() || t.master_uid.equals(UID)) {
+            if (NetWork.isAdmin() || t.master_uid.equals(UID)) {
                 if (t.finished) {
                     lm_finished.add(t);
                 } else {
