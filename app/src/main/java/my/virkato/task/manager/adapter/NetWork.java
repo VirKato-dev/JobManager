@@ -66,7 +66,7 @@ public class NetWork {
 
     public NetWork(Info folder) {
         this.folder = folder;
-        db = fb_db.getReference(folder.path);
+        restartListening();
 
         switch (folder) {
             case USERS:
@@ -123,6 +123,11 @@ public class NetWork {
     public DatabaseReference getDB() {
         return db;
     }
+
+
+public void restartListening() {
+    db = fb_db.getReference(folder.path);
+}
 
 
     public StorageReference getStore() {
