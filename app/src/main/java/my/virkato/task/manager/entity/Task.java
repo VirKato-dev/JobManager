@@ -27,8 +27,8 @@ public class Task {
         if (map.containsKey("id")) id = map.get("id").toString();
         if (map.containsKey("master_uid")) master_uid = map.get("master_uid").toString();
         if (map.containsKey("description")) description = map.get("description").toString();
-        if (map.containsKey("date_start")) date_start = (long) map.get("date_start");
-        if (map.containsKey("date_finish")) date_finish = (long) map.get("date_finish");
+        if (map.containsKey("date_start")) date_start = (long) Double.parseDouble(map.get("date_start").toString());
+        if (map.containsKey("date_finish")) date_finish = (long) Double.parseDouble(map.get("date_finish").toString());
         if (map.containsKey("finished")) finished = map.get("finished").toString().equals("1")?true:false;
     }
 

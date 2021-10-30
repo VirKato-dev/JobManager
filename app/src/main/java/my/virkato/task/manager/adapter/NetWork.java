@@ -67,18 +67,17 @@ public class NetWork {
     public NetWork(Info folder) {
         this.folder = folder;
         auth = FirebaseAuth.getInstance();
+        restartListening(folder);
 
         switch (folder) {
             case USERS:
                 if (people == null) people = new People();
                 receiveAdmins();
-                restartListening();
                 store = fb_storage.getReference(folder.path);
                 receiveFromFolder();
                 break;
             case TASKS:
                 if (tasks == null) tasks = new Tasks();
-                restartListening();
                 receiveFromFolder();
         }
 
@@ -123,8 +122,12 @@ public class NetWork {
         return db;
     }
 
+    public Info getFolder() {
+        return folder;
+    }
 
-    public void restartListening() {
+
+    public void restartListening(Info folder) {
         fb_db = FirebaseDatabase.getInstance();
         db = fb_db.getReference(folder.path);
     }
@@ -164,8 +167,7 @@ public class NetWork {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         };
-        fb_db = FirebaseDatabase.getInstance();
-        fb_db.getReference(Info.ADMINS.path).addListenerForSingleValueEvent(dba_listener);
+        FirebaseDatabase.getInstance().getReference(Info.ADMINS.path).addListenerForSingleValueEvent(dba_listener);
     }
 
     /***

@@ -166,7 +166,7 @@ public class TasksActivity extends AppCompatActivity {
      */
     private void receiveTasks() {
         tasks.setOnTasksUpdatedListener(this::separateTasks);
-        dbTasks.restartListening();
+        dbTasks.restartListening(dbTasks.getFolder());
     }
 
     /***
@@ -192,7 +192,7 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void receiveUsers() {
-        dbUsers.restartListening();
+        dbUsers.restartListening(dbUsers.getFolder());
         people.setPeopleListener(
                 (list, man) -> {
                     Log.e("ПОЛЬЗОВАТЕЛЬ", man.fio);
