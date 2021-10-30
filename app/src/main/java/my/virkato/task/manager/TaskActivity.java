@@ -205,8 +205,6 @@ public class TaskActivity extends AppCompatActivity {
             // изменить/просмотреть задание
             task = new Task(new Gson().fromJson(getIntent().getStringExtra("task"), new TypeToken<HashMap<String, Object>>() {
             }.getType()));
-            Log.e("status", (task.finished?"В":"Нев")+"ыполнено");
-            Log.e("состояние", getIntent().getStringExtra("task"));
         }
 
         People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {

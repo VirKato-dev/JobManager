@@ -1,22 +1,24 @@
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:background="#00BCD4"
 	android:orientation="vertical">
+
 	<LinearLayout
 		android:id="@+id/linear1"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:padding="8dp"
-		android:orientation="vertical">
+		android:orientation="vertical"
+		android:padding="8dp">
 
 		<Spinner
 			android:id="@+id/spin_master"
 			style="@style/Widget.AppCompat.Spinner.DropDown"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 			android:contentDescription="Имя мастера"
 			android:minHeight="48dp" />
 
@@ -24,6 +26,7 @@
 			android:id="@+id/spin_spec"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 			android:contentDescription="Специальзация мастера"
 			android:minHeight="48dp"
 			tools:ignore="SpeakableTextPresentCheck" />
@@ -32,6 +35,7 @@
 			android:id="@+id/e_task_description"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 			android:hint="Описание задания"
 			android:minHeight="48dp"
 			android:padding="8dp"
@@ -58,8 +62,8 @@
 			android:id="@+id/lv_reports"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:choiceMode="none"
-			android:layout_weight="1"/>
+			android:layout_weight="1"
+			android:choiceMode="none" />
 
 		<Button
 			android:id="@+id/b_add_report"
