@@ -54,6 +54,8 @@ public class TasksActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.tasks);
+        FirebaseApp.initializeApp(this);
+
         initVariables();
         initDesign();
 
@@ -84,22 +86,29 @@ public class TasksActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (NetWork.user() == null)
-            startActivity(new Intent(this, AuthActivity.class));
         if (NetWork.isAdmin()) {
             showFAB();
             separateTasks(dbTasks.getTasks().getList(), false, new Task());
         }
+        dbUsers.restartListening(dbUsers.getFolder());
+        dbTasks.restartListening(dbTasks.getFolder());
     }
 
 
     private void showFAB() {
         fab_add_task.setVisibility(View.VISIBLE);
         fab_add_task.setOnClickListener(v -> {
-            // запустить просмотр пустого задания
+            // запустить просмотр пустого задания (создание нового)
             startActivity(new Intent(v.getContext(), TaskActivity.class).putExtra("task", ""));
         });
     }
+
+
+    People.OnAdminsUpdatedListener adminsListener = () -> {
+        if (NetWork.user() == null) startActivity(new Intent(getApplicationContext(), AuthActivity.class));
+        AppUtil.showSystemWait(getApplicationContext(),false);
+    };
+
 
     /***
      * Первоначальные настройки переменных
@@ -108,13 +117,12 @@ public class TasksActivity extends AppCompatActivity {
         // new NetWork() заодно обновит состояние авторизации при каждом создании объекта
         dbUsers = new NetWork(NetWork.Info.USERS);
         people = dbUsers.getPeople();
-        people.setAdminsListener(this::onResume);
+        people.setAdminsListener(adminsListener);
 
         dbTasks = new NetWork(NetWork.Info.TASKS);
         tasks = dbTasks.getTasks();
         adapter = new Lv_tasksAdapter(lm_progress);
         UID = getIntent().getStringExtra("uid"); // для какого пользователя
-        if (UID == null) UID = "";
     }
 
 
@@ -153,13 +161,11 @@ public class TasksActivity extends AppCompatActivity {
 
 
     private void setMainList() {
-//        runOnUiThread(() -> {
         if (finished) {
             adapter.setNewList(lm_finished);
         } else {
             adapter.setNewList(lm_progress);
         }
-//        });
     }
 
     /***
@@ -195,6 +201,7 @@ public class TasksActivity extends AppCompatActivity {
         dbUsers.restartListening(dbUsers.getFolder());
         people.setPeopleListener(
                 (list, man) -> {
+                    if (NetWork.user() != null) UID = NetWork.user().getUid();
                     setMainList();
                     showWaitBanner(false);
                 }

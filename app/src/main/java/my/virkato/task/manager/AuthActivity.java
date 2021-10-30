@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class AuthActivity extends AppCompatActivity {
 
-
     private String verificationId = "";
 
     private LinearLayout linear1;
@@ -54,12 +53,13 @@ public class AuthActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.auth);
+        FirebaseApp.initializeApp(this);
+
         initialize(_savedInstanceState);
         initializeLogic();
     }
 
     private void initialize(Bundle _savedInstanceState) {
-
         linear1 = findViewById(R.id.linear1);
         l_reg = findViewById(R.id.l_reg);
         l_auth = findViewById(R.id.l_auth);
@@ -89,7 +89,6 @@ public class AuthActivity extends AppCompatActivity {
         auth_phone = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential _credential) {
-                Log.e("АВТОРИЗАЦИЯ", "НОМЕР ПРОВЕРЕН");
                 FirebaseAuth.getInstance()
                         .signInWithCredential(_credential)
                         .addOnCompleteListener(auth_phoneAuthListener);
@@ -98,14 +97,12 @@ public class AuthActivity extends AppCompatActivity {
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
-                Log.e("АВТОРИЗАЦИЯ", "СОРВАЛАСЬ");
                 final String _exception = e.getMessage();
                 AppUtil.showMessage(getApplicationContext(), _exception);
             }
 
             @Override
             public void onCodeSent(@NonNull String _verificationId, @NonNull PhoneAuthProvider.ForceResendingToken _token) {
-                Log.e("КОД ПРОВЕРКИ", "ОТПРАВЛЕН");
                 verificationId = _verificationId;
                 auth_phone_resendToken = _token;
                 l_otp.setVisibility(View.VISIBLE);
@@ -122,11 +119,9 @@ public class AuthActivity extends AppCompatActivity {
             final boolean _success = task.isSuccessful();
             final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
             if (_success) {
-                Log.e("ВХОД", "УСПЕШНО");
                 sp.edit().putString("phone", e_num.getText().toString()).commit();
                 finish();
             } else {
-                Log.e("ВХОД", "СОРВАЛСЯ");
                 l_reg.setVisibility(View.VISIBLE);
                 l_phone.setVisibility(View.VISIBLE);
                 l_otp.setVisibility(View.GONE);

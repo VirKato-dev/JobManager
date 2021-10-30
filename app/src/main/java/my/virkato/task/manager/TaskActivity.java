@@ -69,6 +69,8 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.task);
+        FirebaseApp.initializeApp(this);
+
         initialize(_savedInstanceState);
         initializeLogic();
     }
@@ -183,8 +185,8 @@ public class TaskActivity extends AppCompatActivity {
 
 
     private void showViewsForUser(boolean admin) {
-        spin_master.setClickable(admin);
-        spin_spec.setClickable(admin);
+        spin_master.setEnabled(admin);
+        spin_spec.setEnabled(admin);
         e_description.setEnabled(admin);
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);

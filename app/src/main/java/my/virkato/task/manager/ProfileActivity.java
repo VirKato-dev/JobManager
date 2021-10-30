@@ -43,6 +43,8 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.profile);
+        FirebaseApp.initializeApp(this);
+
         initialize(_savedInstanceState);
         initializeLogic();
     }

@@ -144,28 +144,30 @@ public class NetWork {
     }
 
 
+    private final ValueEventListener dba_listener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            people.getAdmins().clear();
+            GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
+            };
+            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                AppUtil.getAllKeysFromMap(dataSnapshot.getValue(ind), people.getAdmins());
+            }
+            if (people.getAdminsListener() != null) {
+                people.getAdminsListener().onUpdated();
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+        }
+    };
+
+
     /***
      * Получить список UID Админов
      */
     private void receiveAdmins() {
-        ValueEventListener dba_listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                people.getAdmins().clear();
-                GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                };
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    AppUtil.getAllKeysFromMap(dataSnapshot.getValue(ind), people.getAdmins());
-                }
-                if (people.getAdminsListener() != null) {
-                    people.getAdminsListener().onUpdated();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        };
         FirebaseDatabase.getInstance().getReference(Info.ADMINS.path).addListenerForSingleValueEvent(dba_listener);
     }
 
@@ -238,6 +240,7 @@ public class NetWork {
                 final String _errorMessage = _param1.getMessage();
             }
         };
+        db.removeEventListener(db_child_listener);
         db.addChildEventListener(db_child_listener);
     }
 
