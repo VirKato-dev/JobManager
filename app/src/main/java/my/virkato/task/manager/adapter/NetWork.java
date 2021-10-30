@@ -158,7 +158,6 @@ public class NetWork {
                     AppUtil.getAllKeysFromMap(dataSnapshot.getValue(ind), people.getAdmins());
                 }
                 if (people.getAdminsListener() != null) {
-                    Log.e("АДМИНЫ", people.getAdmins().toString());
                     people.getAdminsListener().onUpdated();
                 }
             }

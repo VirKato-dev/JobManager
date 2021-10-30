@@ -57,6 +57,9 @@ public class TasksActivity extends AppCompatActivity {
         initVariables();
         initDesign();
 
+        receiveTasks();
+        receiveUsers();
+
         showWaitBanner(true);
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -64,9 +67,7 @@ public class TasksActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        receiveTasks();
-                        receiveUsers();
-                        showWaitBanner(false);
+                        //
                     }
                 });
             }
@@ -176,7 +177,6 @@ public class TasksActivity extends AppCompatActivity {
      * @param task текущее еффективное задание
      */
     public void separateTasks(ArrayList<Task> tasks, boolean removed, Task task) {
-        Log.e("ЗАДАНИЕ", task.description);
         lm_progress.clear();
         lm_finished.clear();
         for (Task t : tasks) {
@@ -195,8 +195,8 @@ public class TasksActivity extends AppCompatActivity {
         dbUsers.restartListening(dbUsers.getFolder());
         people.setPeopleListener(
                 (list, man) -> {
-                    Log.e("ПОЛЬЗОВАТЕЛЬ", man.fio);
                     setMainList();
+                    showWaitBanner(false);
                 }
         );
     }

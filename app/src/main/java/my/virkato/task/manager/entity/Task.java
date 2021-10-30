@@ -29,7 +29,7 @@ public class Task {
         if (map.containsKey("description")) description = map.get("description").toString();
         if (map.containsKey("date_start")) date_start = (long) Double.parseDouble(map.get("date_start").toString());
         if (map.containsKey("date_finish")) date_finish = (long) Double.parseDouble(map.get("date_finish").toString());
-        if (map.containsKey("finished")) finished = map.get("finished").toString().equals("1")?true:false;
+        if (map.containsKey("finished")) finished = map.get("finished").toString().equals("1");
     }
 
 
@@ -50,7 +50,7 @@ public class Task {
 
     public String asJson() {
         return String.format(Locale.US,
-                "{\"id\":\"%s\", \"master_uid\":\"%s\", \"description\":\"%s\", \"date_start\":%d, \"date_finish\":%d, \"finished\":%s}",
+                "{\"id\":\"%s\", \"master_uid\":\"%s\", \"description\":\"%s\", \"date_start\":%d, \"date_finish\":%d, \"finished\":\"%s\"}",
                 id, master_uid, description, date_start, date_finish, finished?"1":"0");
     }
 

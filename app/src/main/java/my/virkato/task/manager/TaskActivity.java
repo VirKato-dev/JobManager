@@ -2,6 +2,7 @@ package my.virkato.task.manager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -50,8 +51,6 @@ public class TaskActivity extends AppCompatActivity {
     private ListView lv_reports; // список отчётов по заданию
     private Button b_add_report; // отчитаться
 
-    private FirebaseDatabase fb_db = FirebaseDatabase.getInstance();
-    private DatabaseReference dbt = fb_db.getReference("tasks");
     private OnCompleteListener<Void> auth_updateEmailListener;
     private OnCompleteListener<Void> auth_updatePasswordListener;
     private OnCompleteListener<Void> auth_emailVerificationSentListener;
@@ -62,6 +61,8 @@ public class TaskActivity extends AppCompatActivity {
     private OnCompleteListener<AuthResult> _auth_create_user_listener;
     private OnCompleteListener<AuthResult> _auth_sign_in_listener;
     private OnCompleteListener<Void> _auth_reset_password_listener;
+
+    boolean init = true;
 
 
     @Override
@@ -88,6 +89,7 @@ public class TaskActivity extends AppCompatActivity {
 
         spin_spec.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, spec));
         ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
+
         spin_spec.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -100,17 +102,17 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         b_approve.setOnClickListener(_view -> {
-            // подтвердить выполнение задания
+            // изменить статус задания
+            task.finished = !task.finished;
+            b_create.performClick();
+            showTask();
         });
 
         b_create.setOnClickListener(_view -> {
             // отправить новое задание в базу
-            Task newTask = new Task();
-            newTask.id = task.id;
-            newTask.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
-            newTask.description = e_description.getText().toString();
-            newTask.send(b_create.getContext(), dbTasks.getDB());
-            finish();
+            task.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
+            task.description = e_description.getText().toString();
+            task.send(_view.getContext(), dbTasks.getDB());
         });
 
         b_add_report.setOnClickListener(_view -> {
@@ -169,12 +171,24 @@ public class TaskActivity extends AppCompatActivity {
     }
 
 
+    private void showTask() {
+        showViewsForUser(NetWork.isAdmin());
+
+        if (!task.master_uid.equals("")) {
+            e_description.setText(task.description);
+            b_create.setText("Изменить это задание");
+            b_approve.setText(task.finished ? "Считать невыполненным" : "Считать выполненным");
+        }
+    }
+
+
     private void showViewsForUser(boolean admin) {
         spin_master.setClickable(admin);
         spin_spec.setClickable(admin);
         e_description.setEnabled(admin);
-        b_approve.setVisibility(admin?View.VISIBLE:View.GONE);
-        b_add_report.setVisibility(admin?View.GONE:View.VISIBLE);
+        b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
+        b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
+        b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
     }
 
 
@@ -186,17 +200,13 @@ public class TaskActivity extends AppCompatActivity {
             b_add_report.setVisibility(View.GONE);
 
             task = new Task();
-            task.id =dbt.push().getKey();
+            task.id = dbTasks.getDB().push().getKey();
         } else {
             // изменить/просмотреть задание
             task = new Task(new Gson().fromJson(getIntent().getStringExtra("task"), new TypeToken<HashMap<String, Object>>() {
             }.getType()));
-            e_description.setText(task.description);
-            b_create.setVisibility(View.GONE);
-
-            if ((NetWork.user() != null)) {
-                showViewsForUser(dbPeople.isAdmin());
-            }
+            Log.e("status", (task.finished?"В":"Нев")+"ыполнено");
+            Log.e("состояние", getIntent().getStringExtra("task"));
         }
 
         People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {
@@ -206,14 +216,21 @@ public class TaskActivity extends AppCompatActivity {
                 if (!cvalif.equals("admin") && !spec.contains(cvalif)) spec.add(cvalif);
             }
             ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
-            updateMastersBySpec();
+
+            if (init) {
+                if (!task.master_uid.equals("")) {
+                    spin_spec.setSelection(spec.indexOf(dbPeople.getPeople().findManById(task.master_uid).spec));
+                }
+            }
         };
         dbPeople.getPeople().setPeopleListener(onPeopleUpdatedListener);
+
+        AppUtil.showSystemWait(this, true);
     }
 
 
     private void updateMastersBySpec() {
-        if (spec.size()>0 && spin_spec.getSelectedItemPosition()>=0) {
+        if (spec.size() > 0 && spin_spec.getSelectedItemPosition() >= 0) {
             ArrayList<String> selected = new ArrayList<>();
             masters_uid = new ArrayList<>();
             for (Man m : dbPeople.getPeople().getList()) {
@@ -225,6 +242,14 @@ public class TaskActivity extends AppCompatActivity {
             masters.clear();
             masters.addAll(selected);
             ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
+
+            if (init) {
+                spin_master.setSelection(masters_uid.indexOf(task.master_uid));
+                AppUtil.showSystemWait(this, false);
+                init = false;
+            }
+
+            showTask();
         }
     }
 

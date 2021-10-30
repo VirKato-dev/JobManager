@@ -227,9 +227,10 @@ public class AppUtil {
     private static AlertDialog adv;
 
     public static void showSystemWait(Context context, boolean _show) {
+        if (context == null) return;
         if (_show) {
             d_wait = new AlertDialog.Builder(context);
-            LayoutInflater design = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater design = LayoutInflater.from(context);
 
             View convertView = design.inflate(R.layout.loader, null);
             d_wait.setView(convertView);
