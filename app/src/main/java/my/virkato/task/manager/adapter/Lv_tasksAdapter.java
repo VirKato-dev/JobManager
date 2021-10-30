@@ -58,6 +58,7 @@ public class Lv_tasksAdapter extends BaseAdapter {
         String fio = "БЕЗ ИМЕНИ";
         Man man = new People().findManById(task.master_uid);
         if (man != null) fio = man.fio;
+
         t_fio.setText(fio);
         t_description.setText(task.description);
 

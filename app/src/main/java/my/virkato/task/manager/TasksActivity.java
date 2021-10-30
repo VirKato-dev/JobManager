@@ -22,6 +22,7 @@ import java.util.TimerTask;
 
 import my.virkato.task.manager.adapter.Lv_tasksAdapter;
 import my.virkato.task.manager.adapter.NetWork;
+import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Task;
 import my.virkato.task.manager.entity.Tasks;
 
@@ -35,8 +36,8 @@ public class TasksActivity extends AppCompatActivity {
     private Button b_finished;
     private FloatingActionButton fab_add_task;
 
-    private NetWork dbAdmins;
     private NetWork dbUsers;
+    private People people;
     private NetWork dbTasks;
     private Tasks tasks;
     private Intent detail = new Intent();
@@ -53,17 +54,9 @@ public class TasksActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.tasks);
-        FirebaseApp.initializeApp(this);
         initVariables();
         initDesign();
 
-        if (dbAdmins.getPeople().getAdminsListener() == null) {
-            dbAdmins.getPeople().setAdminsListener(() -> {
-                if (dbAdmins.isAdmin()) {
-                    showFAB();
-                }
-            });
-        }
         showWaitBanner(true);
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -90,9 +83,12 @@ public class TasksActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (NetWork.user() != null) {
-            if (dbAdmins.isAdmin()) showFAB();
-        } else startActivity(new Intent(this, AuthActivity.class));
+        if (NetWork.user() == null)
+            startActivity(new Intent(this, AuthActivity.class));
+        if (NetWork.isAdmin()) {
+            showFAB();
+            separateTasks(dbTasks.getTasks().getList(), false, new Task());
+        }
     }
 
 
@@ -109,8 +105,10 @@ public class TasksActivity extends AppCompatActivity {
      */
     private void initVariables() {
         // new NetWork() заодно обновит состояние авторизации при каждом создании объекта
-        dbAdmins = new NetWork(NetWork.Info.ADMINS);
         dbUsers = new NetWork(NetWork.Info.USERS);
+        people = dbUsers.getPeople();
+        people.setAdminsListener(this::onResume);
+
         dbTasks = new NetWork(NetWork.Info.TASKS);
         tasks = dbTasks.getTasks();
         adapter = new Lv_tasksAdapter(lm_progress);
@@ -154,13 +152,13 @@ public class TasksActivity extends AppCompatActivity {
 
 
     private void setMainList() {
-        runOnUiThread(() -> {
+//        runOnUiThread(() -> {
         if (finished) {
             adapter.setNewList(lm_finished);
         } else {
             adapter.setNewList(lm_progress);
         }
-        });
+//        });
     }
 
     /***
@@ -168,7 +166,7 @@ public class TasksActivity extends AppCompatActivity {
      */
     private void receiveTasks() {
         tasks.setOnTasksUpdatedListener(this::separateTasks);
-dbTasks.restartListening();
+        dbTasks.restartListening();
     }
 
     /***
@@ -194,12 +192,13 @@ dbTasks.restartListening();
     }
 
     private void receiveUsers() {
-        dbUsers.getPeople().setPeopleListener(
+        dbUsers.restartListening();
+        people.setPeopleListener(
                 (list, man) -> {
+                    Log.e("ПОЛЬЗОВАТЕЛЬ", man.fio);
                     setMainList();
                 }
         );
-dbUsers.restartListening();
     }
 
 }

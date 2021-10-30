@@ -216,7 +216,7 @@ public class AppUtil {
 
     public static void getAllKeysFromMap(Map<String, Object> map, ArrayList<String> output) {
         if (output == null) return;
-//        output.clear();
+        output.clear();
         if (map == null || map.isEmpty()) return;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             output.add(entry.getKey());

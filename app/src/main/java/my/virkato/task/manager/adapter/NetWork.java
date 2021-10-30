@@ -46,8 +46,8 @@ public class NetWork {
         }
     }
 
-    private static FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseDatabase fb_db = FirebaseDatabase.getInstance();
+    private static FirebaseAuth auth;
+    private FirebaseDatabase fb_db;
     private FirebaseStorage fb_storage = FirebaseStorage.getInstance();
     private DatabaseReference db;
     private static ChildEventListener db_child_listener;
@@ -66,21 +66,20 @@ public class NetWork {
 
     public NetWork(Info folder) {
         this.folder = folder;
-        restartListening();
+        auth = FirebaseAuth.getInstance();
 
         switch (folder) {
             case USERS:
                 if (people == null) people = new People();
+                receiveAdmins();
+                restartListening();
                 store = fb_storage.getReference(folder.path);
                 receiveFromFolder();
                 break;
             case TASKS:
                 if (tasks == null) tasks = new Tasks();
+                restartListening();
                 receiveFromFolder();
-                break;
-            case ADMINS:
-                if (people==null) people = new People();
-                receiveAdmins();
         }
 
         store_upload_progress_listener = (OnProgressListener<UploadTask.TaskSnapshot>) _param1 -> {
@@ -108,7 +107,7 @@ public class NetWork {
     }
 
     public static FirebaseUser user() {
-        return auth.getCurrentUser();
+        return FirebaseAuth.getInstance().getCurrentUser();
     }
 
     public People getPeople() {
@@ -125,9 +124,10 @@ public class NetWork {
     }
 
 
-public void restartListening() {
-    db = fb_db.getReference(folder.path);
-}
+    public void restartListening() {
+        fb_db = FirebaseDatabase.getInstance();
+        db = fb_db.getReference(folder.path);
+    }
 
 
     public StorageReference getStore() {
@@ -135,10 +135,9 @@ public void restartListening() {
     }
 
 
-    public boolean isAdmin() {
+    public static boolean isAdmin() {
         if (user() == null) return false;
-        ArrayList<String> users = people.getAdmins();
-        return users.contains(user().getUid());
+        return people.getAdmins().contains(user().getUid());
     }
 
 
@@ -146,8 +145,6 @@ public void restartListening() {
      * Получить список UID Админов
      */
     private void receiveAdmins() {
-        people = new People();
-
         ValueEventListener dba_listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -157,15 +154,18 @@ public void restartListening() {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     AppUtil.getAllKeysFromMap(dataSnapshot.getValue(ind), people.getAdmins());
                 }
-                if (people.getAdminsListener() != null)
+                if (people.getAdminsListener() != null) {
+                    Log.e("АДМИНЫ", people.getAdmins().toString());
                     people.getAdminsListener().onUpdated();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         };
-        db.addListenerForSingleValueEvent(dba_listener);
+        fb_db = FirebaseDatabase.getInstance();
+        fb_db.getReference(Info.ADMINS.path).addListenerForSingleValueEvent(dba_listener);
     }
 
     /***

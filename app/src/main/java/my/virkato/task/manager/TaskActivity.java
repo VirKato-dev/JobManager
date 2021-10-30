@@ -69,7 +69,6 @@ public class TaskActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.task);
         initialize(_savedInstanceState);
-        FirebaseApp.initializeApp(this);
         initializeLogic();
     }
 

@@ -44,7 +44,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.profile);
         initialize(_savedInstanceState);
-        FirebaseApp.initializeApp(this);
         initializeLogic();
     }
 
