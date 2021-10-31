@@ -36,6 +36,9 @@ import my.virkato.task.manager.entity.Tasks;
  */
 public class NetWork {
 
+    /***
+     * для настройки источника данных из базы
+     */
     public enum Info {
         USERS("users"), TASKS("tasks"), ADMINS("admins"), REPORTS("reports");
 
@@ -46,24 +49,85 @@ public class NetWork {
         }
     }
 
+    /***
+     * сервер авторизации
+     */
     private static FirebaseAuth auth;
+
+    /***
+     * сервер базы данных
+     */
     private FirebaseDatabase fb_db;
-    private FirebaseStorage fb_storage = FirebaseStorage.getInstance();
+
+    /***
+     * источник данных из базы
+     */
     private DatabaseReference db;
+
+    /***
+     * слушатель данных из источника
+     */
     private static ChildEventListener db_child_listener;
+
+    /***
+     * сервер хранилища файлов
+     */
+    private FirebaseStorage fb_storage = FirebaseStorage.getInstance();
+
+    /***
+     * источник файлов из хранилища
+     */
     private StorageReference store;
+
+    /***
+     * слушатель отправки файлов в хранилище
+     */
     private OnCompleteListener<Uri> store_upload_success_listener;
-    private OnSuccessListener<FileDownloadTask.TaskSnapshot> store_download_success_listener;
-    private OnSuccessListener store_delete_success_listener;
+
+    /***
+     * слушатель процесса отправки файлов в хранилище
+     */
     private OnProgressListener store_upload_progress_listener;
+
+    /***
+     * слушатель скачивания файла из хранилища
+     */
+    private OnSuccessListener<FileDownloadTask.TaskSnapshot> store_download_success_listener;
+
+    /***
+     * слушатель удаления файла из хранилища
+     */
+    private OnSuccessListener store_delete_success_listener;
+
+    /***
+     * слушатель процесса скачивания файла из хранилища
+     */
     private OnProgressListener store_download_progress_listener;
+
+    /***
+     * слушатель сбоя в работе с хранилищем
+     */
     private OnFailureListener store_failure_listener;
 
+    /***
+     * ссылка на список людей (один для всего приложения)
+     */
     private static People people;
+
+    /***
+     * ссылка на список заданий (один для всего приложения)
+     */
     private static Tasks tasks;
+
+    /***
+     * текущая папка источника данных/файлов
+     */
     private Info folder;
 
-
+    /***
+     * настроить адаптер для получения данных из указанного источника
+     * @param folder источник данных
+     */
     public NetWork(Info folder) {
         this.folder = folder;
         auth = FirebaseAuth.getInstance();
@@ -105,45 +169,75 @@ public class NetWork {
         };
     }
 
+    /***
+     * проверить авторизацию
+     * @return текущий пользователь
+     */
     public static FirebaseUser user() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    /***
+     * получить ссылку на пользователей
+     * @return все пользователи приложения
+     */
     public People getPeople() {
         return people;
     }
 
+    /***
+     * получить ссылку на задания
+     * @return все задания приложения
+     */
     public Tasks getTasks() {
         return tasks;
     }
 
-
+    /***
+     * получить ссылку на текущий источник данных
+     * @return указатель текущего источника из базы
+     */
     public DatabaseReference getDB() {
         return db;
     }
 
+    /***
+     * узнать название текущего источника
+     * @return папка источника
+     */
     public Info getFolder() {
         return folder;
     }
 
-
+    /***
+     * настроить источник
+     * @param folder папка источника
+     */
     public void restartListening(Info folder) {
         fb_db = FirebaseDatabase.getInstance();
         db = fb_db.getReference(folder.path);
     }
 
-
+    /***
+     * получить ссылку на источник файлов из хранилища
+     * @return текущий источник
+     */
     public StorageReference getStore() {
         return store;
     }
 
-
+    /***
+     * проверить статус пользователя
+     * @return админ ли
+     */
     public static boolean isAdmin() {
         if (user() == null) return false;
         return people.getAdmins().contains(user().getUid());
     }
 
-
+    /***
+     * слушатель списка админов из базы
+     */
     private final ValueEventListener dba_listener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
