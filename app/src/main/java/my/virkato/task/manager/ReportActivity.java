@@ -17,7 +17,6 @@ public class ReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.report);
-        FirebaseApp.initializeApp(this);
 
         initialize(_savedInstanceState);
         initializeLogic();

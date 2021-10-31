@@ -37,7 +37,7 @@ import my.virkato.task.manager.entity.Tasks;
 public class NetWork {
 
     public enum Info {
-        USERS("users"), TASKS("tasks"), ADMINS("admins");
+        USERS("users"), TASKS("tasks"), ADMINS("admins"), REPORTS("reports");
 
         public String path;
 

@@ -53,7 +53,6 @@ public class AuthActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.auth);
-        FirebaseApp.initializeApp(this);
 
         initialize(_savedInstanceState);
         initializeLogic();
