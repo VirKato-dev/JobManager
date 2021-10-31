@@ -29,6 +29,7 @@ public class Reports {
      */
     public void setOnReportsUpdatedListener(OnReportsUpdatedListener listener) {
         onReportsUpdatedListener = listener;
+        if (reports.size()>0) listener.onUpdated();
     }
 
     /***

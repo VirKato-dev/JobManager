@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -68,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
             netWork.getDB().child(manMap.get("uid").toString()).updateChildren(manMap);
         });
 
-        netWork.getPeople().setPeopleListener((list, man) -> {
+        netWork.getPeople().setOnPeopleUpdatedListener((list, man) -> {
             if (manMap != null) {
                 if (man.id.equals(manMap.get("uid").toString())) {
                     e_fio.setText(man.fio);

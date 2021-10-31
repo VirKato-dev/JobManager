@@ -67,9 +67,14 @@ public class NetWork {
     private DatabaseReference db;
 
     /***
+     * текущая папка источника данных/файлов
+     */
+    private Info folder;
+
+    /***
      * слушатель данных из источника
      */
-    private static ChildEventListener db_child_listener;
+    private ChildEventListener db_child_listener;
 
     /***
      * сервер хранилища файлов
@@ -127,25 +132,20 @@ public class NetWork {
     private static Reports reports;
 
     /***
-     * текущая папка источника данных/файлов
-     */
-    private Info folder;
-
-    /***
      * настроить адаптер для получения данных из указанного источника
      * @param folder источник данных
      */
     public NetWork(Info folder) {
         this.folder = folder;
-        auth = FirebaseAuth.getInstance();
-        restartListening(folder);
 
         switch (folder) {
             case USERS:
                 if (people == null) people = new People();
-                receiveAdmins();
-                store = fb_storage.getReference(folder.path);
                 receiveFromFolder();
+                break;
+            case ADMINS:
+                if (people == null) people = new People();
+                receiveAdmins();
                 break;
             case TASKS:
                 if (tasks == null) tasks = new Tasks();
@@ -229,15 +229,6 @@ public class NetWork {
     }
 
     /***
-     * настроить источник
-     * @param folder папка источника
-     */
-    public void restartListening(Info folder) {
-        fb_db = FirebaseDatabase.getInstance();
-        db = fb_db.getReference(folder.path);
-    }
-
-    /***
      * получить ссылку на источник файлов из хранилища
      * @return текущий источник
      */
@@ -280,7 +271,7 @@ public class NetWork {
      * Получить список UID Админов
      */
     private void receiveAdmins() {
-        FirebaseDatabase.getInstance().getReference(Info.ADMINS.path).addListenerForSingleValueEvent(dba_listener);
+        FirebaseDatabase.getInstance().getReference(folder.path).addListenerForSingleValueEvent(dba_listener);
     }
 
     /***
@@ -292,9 +283,8 @@ public class NetWork {
             reports.getList().clear();
             GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
             };
-            Report r;
             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                r = new Report(dataSnapshot.getValue(ind));
+                Report r = new Report(dataSnapshot.getValue(ind));
                 reports.getList().add(r);
             }
             if (reports.getReportsListener() != null) {
@@ -311,14 +301,16 @@ public class NetWork {
      * Получить список отчётов
      */
     private void receiveReports() {
-        FirebaseDatabase.getInstance().getReference(Info.REPORTS.path).addListenerForSingleValueEvent(dbr_listener);
+        FirebaseDatabase.getInstance().getReference(folder.path).addListenerForSingleValueEvent(dbr_listener);
     }
 
     /***
      * Получать данные из выбранной папки (пользователи, задания, отчёты)
      */
     private void receiveFromFolder() {
-        db_child_listener = new ChildEventListener() {
+        fb_db = FirebaseDatabase.getInstance();
+        db = fb_db.getReference(folder.path);
+        db_child_listener = db.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot _param1, String _param2) {
                 GenericTypeIndicator<HashMap<String, Object>> _ind = new GenericTypeIndicator<HashMap<String, Object>>() {
@@ -381,10 +373,20 @@ public class NetWork {
             public void onCancelled(@NonNull DatabaseError _param1) {
                 final int _errorCode = _param1.getCode();
                 final String _errorMessage = _param1.getMessage();
+                Log.e("ОШИБКА", _errorMessage);
             }
-        };
-        db.removeEventListener(db_child_listener);
-        db.addChildEventListener(db_child_listener);
+        });
+    }
+
+    /***
+     * прекратить получение данных из источника
+     */
+    public void stopListening() {
+        if (db_child_listener != null) db.removeEventListener(db_child_listener);
+    }
+
+    public void startListening() {
+        if (db_child_listener != null) db.addChildEventListener(db_child_listener);
     }
 
 }

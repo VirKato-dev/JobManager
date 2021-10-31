@@ -15,8 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -144,7 +142,7 @@ public class PeopleActivity extends AppCompatActivity {
             lm_people = netWork.getPeople().getList();
             lv_people.setAdapter(new Lv_peopleAdapter(lv_people.getContext(), lm_people));
             ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
-            netWork.getPeople().setPeopleListener((list, man) -> {
+            netWork.getPeople().setOnPeopleUpdatedListener((list, man) -> {
                 lm_people = list;
                 if (man.id.equals(NetWork.user().getUid())) {
                     sp.edit().putString("account", man.asJson()).commit();

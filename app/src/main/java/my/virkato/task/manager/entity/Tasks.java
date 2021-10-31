@@ -22,6 +22,7 @@ public class Tasks {
      */
     public void setOnTasksUpdatedListener(OnTasksUpdatedListener listener) {
         onTasksUpdatedListener = listener;
+        if (tasks.size()>0) listener.onUpdated(tasks, false, tasks.get(0));
     }
 
     public Tasks() {
@@ -54,8 +55,9 @@ public class Tasks {
     public void update(Task task, boolean finalize) {
         remove(task, false);
         tasks.add(task);
-        if (finalize && onTasksUpdatedListener != null)
+        if (finalize && onTasksUpdatedListener != null) {
             onTasksUpdatedListener.onUpdated(tasks, false, task);
+        }
     }
 
     /***

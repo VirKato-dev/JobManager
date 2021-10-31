@@ -2,7 +2,6 @@ package my.virkato.task.manager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,11 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -33,7 +28,6 @@ import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Report;
 import my.virkato.task.manager.entity.Reports;
 import my.virkato.task.manager.entity.Task;
-import my.virkato.task.manager.entity.Tasks;
 
 /***
  * Информация о задании
@@ -332,7 +326,7 @@ public class TaskActivity extends AppCompatActivity {
                 }
             }
         };
-        dbPeople.getPeople().setPeopleListener(onPeopleUpdatedListener);
+        dbPeople.getPeople().setOnPeopleUpdatedListener(onPeopleUpdatedListener);
         AppUtil.showSystemWait(this, true);
     }
 
