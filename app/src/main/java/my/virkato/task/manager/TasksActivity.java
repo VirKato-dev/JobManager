@@ -11,8 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import my.virkato.task.manager.adapter.Lv_tasksAdapter;
 import my.virkato.task.manager.adapter.NetWork;
@@ -49,25 +47,7 @@ public class TasksActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.tasks);
 
-        initVariables();
-        initDesign();
-
-        receiveTasks();
-        receiveUsers();
-
         showWaitBanner(true);
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //
-                    }
-                });
-            }
-        };
-        new Timer().schedule(timerTask, 1000);
     }
 
 
@@ -79,17 +59,14 @@ public class TasksActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (NetWork.isAdmin()) {
-            showFAB();
-            separateTasks(dbTasks.getTasks().getList(), false, new Task());
-        }
-        dbUsers.restartListening(dbUsers.getFolder());
-        dbTasks.restartListening(dbTasks.getFolder());
+
+        initVariables();
+        initDesign();
     }
 
 
-    private void showFAB() {
-        fab_add_task.setVisibility(View.VISIBLE);
+    private void showFAB(boolean f) {
+        fab_add_task.setVisibility(f ? View.VISIBLE : View.GONE);
         fab_add_task.setOnClickListener(v -> {
             // запустить просмотр пустого задания (создание нового)
             startActivity(new Intent(v.getContext(), TaskActivity.class).putExtra("task", ""));
@@ -98,8 +75,10 @@ public class TasksActivity extends AppCompatActivity {
 
 
     People.OnAdminsUpdatedListener adminsListener = () -> {
-        if (NetWork.user() == null) startActivity(new Intent(getApplicationContext(), AuthActivity.class));
-        AppUtil.showSystemWait(getApplicationContext(),false);
+        if (NetWork.user() == null)
+            startActivity(new Intent(getApplicationContext(), AuthActivity.class));
+        showWaitBanner(false);
+        separateTasks(tasks.getList(), false, null);
     };
 
 
@@ -111,10 +90,12 @@ public class TasksActivity extends AppCompatActivity {
         dbUsers = new NetWork(NetWork.Info.USERS);
         people = dbUsers.getPeople();
         people.setAdminsListener(adminsListener);
+        receiveUsers();
 
         dbTasks = new NetWork(NetWork.Info.TASKS);
         tasks = dbTasks.getTasks();
-        tasksAdapter = new Lv_tasksAdapter(lm_progress);
+        receiveTasks();
+
         UID = getIntent().getStringExtra("uid"); // для какого пользователя
     }
 
@@ -129,7 +110,9 @@ public class TasksActivity extends AppCompatActivity {
         fab_add_task = findViewById(R.id.fab_add_task);
         fab_add_task.setVisibility(View.GONE);
 
+        tasksAdapter = new Lv_tasksAdapter(lm_progress);
         lv_tasks.setAdapter(tasksAdapter);
+        tasksAdapter.notifyDataSetChanged();
 
         lv_tasks.setOnItemClickListener((_param1, _param2, _position, _param4) -> {
             detail.setClass(getApplicationContext(), TaskActivity.class);
@@ -159,6 +142,7 @@ public class TasksActivity extends AppCompatActivity {
         } else {
             tasksAdapter.setNewList(lm_progress);
         }
+        showFAB(NetWork.isAdmin());
     }
 
     /***
@@ -166,7 +150,6 @@ public class TasksActivity extends AppCompatActivity {
      */
     private void receiveTasks() {
         tasks.setOnTasksUpdatedListener(this::separateTasks);
-        dbTasks.restartListening(dbTasks.getFolder());
     }
 
     /***
@@ -191,7 +174,6 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void receiveUsers() {
-        dbUsers.restartListening(dbUsers.getFolder());
         people.setPeopleListener(
                 (list, man) -> {
                     if (NetWork.user() != null) UID = NetWork.user().getUid();
