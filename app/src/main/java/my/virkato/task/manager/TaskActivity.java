@@ -36,20 +36,72 @@ import my.virkato.task.manager.entity.Tasks;
  */
 public class TaskActivity extends AppCompatActivity {
 
+    /***
+     * текущее задание
+     */
     private Task task;
+
+    /***
+     * адаптер для получения списка заданий
+     */
     private NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
+
+    /***
+     * адаптер для получения списка людей
+     */
     private NetWork dbPeople = new NetWork(NetWork.Info.USERS);
+
+    /***
+     * имена мастеров текущей специализации
+     */
     private ArrayList<String> masters = new ArrayList<>();
+
+    /***
+     * UID мастеров текущей специализации
+     */
     private ArrayList<String> masters_uid = new ArrayList<>();
+
+    /***
+     * все специализации найденные в списке людей
+     */
     private ArrayList<String> spec = new ArrayList<>();
 
     private TextView e_description; // текст задание
-    private Spinner spin_master; // специалисты
-    private Spinner spin_spec; // специальности
-    private Button b_approve; // завершение работ
-    private Button b_create; // новое задание
-    private ListView lv_reports; // список отчётов по заданию
-    private Button b_add_report; // отчитаться
+
+    /***
+     * список имён мастеров
+     */
+    private Spinner spin_master;
+
+    /***
+     * список специализаций мастеров
+     */
+    private Spinner spin_spec;
+
+    /***
+     * меняем статус задания
+     */
+    private Button b_approve;
+
+    /***
+     * сохраняем задание
+     */
+    private Button b_create;
+
+    /***
+     * вывод списка отчётов по заданию
+     */
+    private ListView lv_reports;
+
+    /***
+     * перейти к странице создания отчёта о ходе работ
+     */
+    private Button b_add_report;
+
+    /***
+     * первичное заполнение данных для существующего задания
+     */
+    boolean init = true;
 
     private OnCompleteListener<Void> auth_updateEmailListener;
     private OnCompleteListener<Void> auth_updatePasswordListener;
@@ -61,8 +113,6 @@ public class TaskActivity extends AppCompatActivity {
     private OnCompleteListener<AuthResult> _auth_create_user_listener;
     private OnCompleteListener<AuthResult> _auth_sign_in_listener;
     private OnCompleteListener<Void> _auth_reset_password_listener;
-
-    boolean init = true;
 
 
     @Override
@@ -104,21 +154,18 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         b_approve.setOnClickListener(_view -> {
-            // изменить статус задания
             task.finished = !task.finished;
             b_create.performClick();
-            showTask();
+            showViewsForUser(NetWork.isAdmin());
         });
 
         b_create.setOnClickListener(_view -> {
-            // отправить новое задание в базу
             task.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
             task.description = e_description.getText().toString();
             task.send(_view.getContext(), dbTasks.getDB());
         });
 
         b_add_report.setOnClickListener(_view -> {
-            // перейти к странице создания отчёта о ходе работ
             startActivity(new Intent(this, ReportActivity.class));
         });
 
@@ -172,25 +219,22 @@ public class TaskActivity extends AppCompatActivity {
         };
     }
 
-
-    private void showTask() {
-        showViewsForUser(NetWork.isAdmin());
-
-        if (!task.master_uid.equals("")) {
-            e_description.setText(task.description);
-            b_create.setText("Изменить это задание");
-            b_approve.setText(task.finished ? "Считать невыполненным" : "Считать выполненным");
-        }
-    }
-
-
+    /***
+     * для пользователей и админов экран немного отличается
+     * @param admin админ?
+     */
     private void showViewsForUser(boolean admin) {
-        spin_master.setEnabled(admin);
+        spin_master.setEnabled(admin); // пользователь не может изменить задание
         spin_spec.setEnabled(admin);
         e_description.setEnabled(admin);
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
+        if (!task.master_uid.equals("")) {
+            e_description.setText(task.description);
+            b_create.setText("Изменить это задание");
+            b_approve.setText(task.finished ? "Считать невыполненным" : "Считать выполненным");
+        }
     }
 
 
@@ -208,7 +252,13 @@ public class TaskActivity extends AppCompatActivity {
             task = new Task(new Gson().fromJson(getIntent().getStringExtra("task"), new TypeToken<HashMap<String, Object>>() {
             }.getType()));
         }
+        receiveAllMasters();
+    }
 
+    /***
+     * получаем список всех мастеров и выделяем из него имена, специализации, идентификаторы
+     */
+    private void receiveAllMasters() {
         People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {
             spec.clear();
             for (Man m : list) {
@@ -224,11 +274,12 @@ public class TaskActivity extends AppCompatActivity {
             }
         };
         dbPeople.getPeople().setPeopleListener(onPeopleUpdatedListener);
-
         AppUtil.showSystemWait(this, true);
     }
 
-
+    /***
+     * обновляем список мастеров в соответствие с выбранной специализацией
+     */
     private void updateMastersBySpec() {
         if (spec.size() > 0 && spin_spec.getSelectedItemPosition() >= 0) {
             ArrayList<String> selected = new ArrayList<>();
@@ -249,20 +300,7 @@ public class TaskActivity extends AppCompatActivity {
                 init = false;
             }
 
-            showTask();
-        }
-    }
-
-
-    @Override
-    protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
-
-        super.onActivityResult(_requestCode, _resultCode, _data);
-
-        switch (_requestCode) {
-
-            default:
-                break;
+            showViewsForUser(NetWork.isAdmin());
         }
     }
 
