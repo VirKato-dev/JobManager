@@ -29,6 +29,7 @@ import java.util.Map;
 
 import my.virkato.task.manager.AppUtil;
 import my.virkato.task.manager.entity.People;
+import my.virkato.task.manager.entity.Reports;
 import my.virkato.task.manager.entity.Tasks;
 
 /***
@@ -118,6 +119,11 @@ public class NetWork {
      * ссылка на список заданий (один для всего приложения)
      */
     private static Tasks tasks;
+
+    /***
+     * ссылка на список отчётов (один для всего приложения)
+     */
+    private static Reports reports;
 
     /***
      * текущая папка источника данных/файлов
@@ -266,7 +272,7 @@ public class NetWork {
     }
 
     /***
-     * Получать данные из выбранной папки (folder)
+     * Получать данные из выбранной папки (пользователи, задания, отчёты)
      */
     private void receiveFromFolder() {
         db_child_listener = new ChildEventListener() {
@@ -284,6 +290,9 @@ public class NetWork {
                             break;
                         case TASKS:
                             tasks.update(_childValue, true);
+                            break;
+                        case REPORTS:
+                            reports.update(_childValue, true);
                     }
                 }
             }
@@ -302,6 +311,9 @@ public class NetWork {
                             break;
                         case TASKS:
                             tasks.update(_childValue, true);
+                            break;
+                        case REPORTS:
+                            reports.update(_childValue, true);
                     }
                 }
             }
@@ -320,6 +332,9 @@ public class NetWork {
                             break;
                         case TASKS:
                             tasks.remove(_childValue, true);
+                            break;
+                        case REPORTS:
+                            reports.remove(_childValue, true);
                     }
                 }
             }
