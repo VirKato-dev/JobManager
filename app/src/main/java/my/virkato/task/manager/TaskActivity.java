@@ -126,7 +126,6 @@ public class TaskActivity extends AppCompatActivity {
 
 
     private void initialize(Bundle _savedInstanceState) {
-
         e_description = findViewById(R.id.e_task_description);
         spin_master = findViewById(R.id.spin_master);
         spin_spec = findViewById(R.id.spin_spec);
