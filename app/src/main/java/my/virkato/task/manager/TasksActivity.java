@@ -2,19 +2,13 @@ package my.virkato.task.manager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.FirebaseApp;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -42,7 +36,7 @@ public class TasksActivity extends AppCompatActivity {
     private Tasks tasks;
     private Intent detail = new Intent();
 
-    private Lv_tasksAdapter adapter;
+    private Lv_tasksAdapter tasksAdapter;
 
     private final ArrayList<Task> lm_progress = new ArrayList<>();
     private final ArrayList<Task> lm_finished = new ArrayList<>();
@@ -120,7 +114,7 @@ public class TasksActivity extends AppCompatActivity {
 
         dbTasks = new NetWork(NetWork.Info.TASKS);
         tasks = dbTasks.getTasks();
-        adapter = new Lv_tasksAdapter(lm_progress);
+        tasksAdapter = new Lv_tasksAdapter(lm_progress);
         UID = getIntent().getStringExtra("uid"); // для какого пользователя
     }
 
@@ -135,7 +129,7 @@ public class TasksActivity extends AppCompatActivity {
         fab_add_task = findViewById(R.id.fab_add_task);
         fab_add_task.setVisibility(View.GONE);
 
-        lv_tasks.setAdapter(adapter);
+        lv_tasks.setAdapter(tasksAdapter);
 
         lv_tasks.setOnItemClickListener((_param1, _param2, _position, _param4) -> {
             detail.setClass(getApplicationContext(), TaskActivity.class);
@@ -161,9 +155,9 @@ public class TasksActivity extends AppCompatActivity {
 
     private void setMainList() {
         if (finished) {
-            adapter.setNewList(lm_finished);
+            tasksAdapter.setNewList(lm_finished);
         } else {
-            adapter.setNewList(lm_progress);
+            tasksAdapter.setNewList(lm_progress);
         }
     }
 

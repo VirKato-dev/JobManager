@@ -1,8 +1,5 @@
 package my.virkato.task.manager.adapter;
 
-import android.app.Application;
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +51,7 @@ public class Lv_tasksAdapter extends BaseAdapter {
         TextView t_description = _view.findViewById(R.id.t_description);
         TextView t_fio = _view.findViewById(R.id.t_fio);
 
-        Task task = _data.get(_position);
+        Task task = getItem(_position);
         String fio = "БЕЗ ИМЕНИ";
         Man man = new People().findManById(task.master_uid);
         if (man != null) fio = man.fio;

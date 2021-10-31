@@ -24,10 +24,14 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import my.virkato.task.manager.adapter.Lv_reportsAdapter;
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.entity.Man;
 import my.virkato.task.manager.entity.People;
+import my.virkato.task.manager.entity.Report;
+import my.virkato.task.manager.entity.Reports;
 import my.virkato.task.manager.entity.Task;
 import my.virkato.task.manager.entity.Tasks;
 
@@ -37,14 +41,34 @@ import my.virkato.task.manager.entity.Tasks;
 public class TaskActivity extends AppCompatActivity {
 
     /***
-     * текущее задание
+     * адаптер для получения списка отчётов
      */
-    private Task task;
+    private NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
+
+    /***
+     * ссылка на отчёты
+     */
+    private Reports reports = dbReports.getReports();
+
+    /***
+     * адаптер списка отчётов
+     */
+    private Lv_reportsAdapter reportsAdapter;
+
+    /***
+     * отчёты
+     */
+    private ArrayList<Report> lm_reports = new ArrayList<>();
 
     /***
      * адаптер для получения списка заданий
      */
     private NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
+
+    /***
+     * текущее задание
+     */
+    private Task task;
 
     /***
      * адаптер для получения списка людей
@@ -124,6 +148,11 @@ public class TaskActivity extends AppCompatActivity {
         initializeLogic();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        receiveAllReports();
+    }
 
     private void initialize(Bundle _savedInstanceState) {
         e_description = findViewById(R.id.e_task_description);
@@ -151,6 +180,16 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
+        reportsAdapter = new Lv_reportsAdapter(lm_reports);
+        lv_reports.setAdapter(reportsAdapter);
+        reportsAdapter.notifyDataSetChanged();
+
+        lv_reports.setOnItemClickListener((parent, view, position, id) -> {
+            startActivity(new Intent(parent.getContext(), ReportActivity.class)
+                    .putExtra("report", reports.getList().get(position).asJson())
+            );
+        });
+
         b_approve.setOnClickListener(_view -> {
             task.finished = !task.finished;
             b_create.performClick();
@@ -164,7 +203,8 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         b_add_report.setOnClickListener(_view -> {
-            startActivity(new Intent(this, ReportActivity.class));
+            startActivity(new Intent(this, ReportActivity.class)
+            .putExtra("report", "{\"task_id\":\""+task.id+"\"}"));
         });
 
         auth_updateEmailListener = _param1 -> {
@@ -251,6 +291,27 @@ public class TaskActivity extends AppCompatActivity {
             }.getType()));
         }
         receiveAllMasters();
+    }
+
+    /***
+     * получаем список всех отчётов и выбираем из него только отчёты к текущему заданию
+     */
+    private void receiveAllReports() {
+        dbReports = new NetWork(NetWork.Info.REPORTS); // заново
+
+        Reports.OnReportsUpdatedListener onReportsUpdatedListener = () -> {
+            lm_reports.clear();
+            lm_reports.addAll(reports.getList());
+
+            Iterator<Report> ir = lm_reports.iterator();
+            while (ir.hasNext()) {
+                if (!ir.next().task_id.equals(task.id)) {
+                    ir.remove();
+                }
+            }
+            reportsAdapter.notifyDataSetChanged();
+        };
+        dbReports.getReports().setOnReportsUpdatedListener(onReportsUpdatedListener);
     }
 
     /***

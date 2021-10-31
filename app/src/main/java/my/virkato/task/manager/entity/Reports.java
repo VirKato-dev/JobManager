@@ -9,7 +9,7 @@ public class Reports {
     /***
      * все отчёты
      */
-    private static final ArrayList<Report> reports = new ArrayList<>();
+    private static ArrayList<Report> reports = new ArrayList<>();
 
     /***
      * слушатель изменений списка отчётов
@@ -20,7 +20,7 @@ public class Reports {
      * Извещатель об изменении списка отчётов
      */
     public interface OnReportsUpdatedListener {
-        void onUpdated(ArrayList<Report> reports, boolean removed, Report report);
+        void onUpdated();
     }
 
     /***
@@ -30,6 +30,15 @@ public class Reports {
     public void setOnReportsUpdatedListener(OnReportsUpdatedListener listener) {
         onReportsUpdatedListener = listener;
     }
+
+    /***
+     *
+     * @return
+     */
+    public OnReportsUpdatedListener getReportsListener() {
+        return onReportsUpdatedListener;
+    }
+
 
     public Reports() {
         // для получения имеющегося списка
@@ -62,7 +71,7 @@ public class Reports {
         remove(report, false);
         reports.add(report);
         if (finalize && onReportsUpdatedListener != null)
-            onReportsUpdatedListener.onUpdated(reports, false, report);
+            onReportsUpdatedListener.onUpdated();
     }
 
     /***
@@ -84,7 +93,7 @@ public class Reports {
         if (found != null) {
             reports.remove(found);
             if (finalize && onReportsUpdatedListener != null)
-                onReportsUpdatedListener.onUpdated(reports, true, found);
+                onReportsUpdatedListener.onUpdated();
         }
     }
 
@@ -109,7 +118,7 @@ public class Reports {
     /***
      * Получить отчёт по его ID
      * @param id искомый отчёт
-     * @return задание удобное для обработки
+     * @return отчёт удобный для обработки
      */
     public Report findReportById(String id) {
         if (id != null) {

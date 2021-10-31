@@ -15,54 +15,51 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import my.virkato.task.manager.R;
+import my.virkato.task.manager.entity.Report;
+import my.virkato.task.manager.entity.Task;
 
 /***
  * Список отчетов для конкретного задания
  */
 public class Lv_reportsAdapter extends BaseAdapter {
-    ArrayList<HashMap<String, Object>> _data;
-    Context context;
+    ArrayList<Report> _data;
 
-
-    public Lv_reportsAdapter(Context context, ArrayList<HashMap<String, Object>> _arr) {
+    public Lv_reportsAdapter(ArrayList<Report> _arr) {
         _data = _arr;
-        this.context = context;
     }
 
+    public void setNewList(ArrayList<Report> list) {
+        _data.clear();
+        _data.addAll(list);
+        notifyDataSetChanged();
+    }
 
-    @Override
     public int getCount() {
         return _data.size();
     }
 
-
-    @Override
-    public HashMap<String, Object> getItem(int _index) {
+    public Report getItem(int _index) {
         return _data.get(_index);
     }
 
-
-    @Override
     public long getItemId(int _index) {
         return _index;
     }
 
-
-    @Override
     public View getView(final int _position, View _v, ViewGroup _container) {
-        LayoutInflater _inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater _inflater = LayoutInflater.from(_container.getContext());
         View _view = _v;
         if (_view == null) {
             _view = _inflater.inflate(R.layout.a_report, null);
         }
 
-        final LinearLayout linear1 = _view.findViewById(R.id.linear1);
         final ImageView i_images = _view.findViewById(R.id.i_images);
-        final LinearLayout linear2 = _view.findViewById(R.id.linear2);
         final TextView t_desc = _view.findViewById(R.id.t_desc);
 
         t_desc.setEllipsize(TextUtils.TruncateAt.END);
         i_images.setColorFilter(0xFF2196F3, PorterDuff.Mode.MULTIPLY);
+
+        t_desc.setText(getItem(_position).description);
 
         return _view;
     }

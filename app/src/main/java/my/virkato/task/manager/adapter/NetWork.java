@@ -29,6 +29,7 @@ import java.util.Map;
 
 import my.virkato.task.manager.AppUtil;
 import my.virkato.task.manager.entity.People;
+import my.virkato.task.manager.entity.Report;
 import my.virkato.task.manager.entity.Reports;
 import my.virkato.task.manager.entity.Tasks;
 
@@ -149,6 +150,10 @@ public class NetWork {
             case TASKS:
                 if (tasks == null) tasks = new Tasks();
                 receiveFromFolder();
+                break;
+            case REPORTS:
+                if (reports == null) reports = new Reports();
+                receiveReports();
         }
 
         store_upload_progress_listener = (OnProgressListener<UploadTask.TaskSnapshot>) _param1 -> {
@@ -197,6 +202,14 @@ public class NetWork {
      */
     public Tasks getTasks() {
         return tasks;
+    }
+
+    /***
+     * получить ссылку на отчёты
+     * @return все отчёты приложения
+     */
+    public Reports getReports() {
+        return reports;
     }
 
     /***
@@ -263,12 +276,42 @@ public class NetWork {
         }
     };
 
-
     /***
      * Получить список UID Админов
      */
     private void receiveAdmins() {
         FirebaseDatabase.getInstance().getReference(Info.ADMINS.path).addListenerForSingleValueEvent(dba_listener);
+    }
+
+    /***
+     * слушатель списка отчётов из базы
+     */
+    private final ValueEventListener dbr_listener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            reports.getList().clear();
+            GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
+            };
+            Report r;
+            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                r = new Report(dataSnapshot.getValue(ind));
+                reports.getList().add(r);
+            }
+            if (reports.getReportsListener() != null) {
+                reports.getReportsListener().onUpdated();
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+        }
+    };
+
+    /***
+     * Получить список отчётов
+     */
+    private void receiveReports() {
+        FirebaseDatabase.getInstance().getReference(Info.REPORTS.path).addListenerForSingleValueEvent(dbr_listener);
     }
 
     /***
@@ -290,9 +333,6 @@ public class NetWork {
                             break;
                         case TASKS:
                             tasks.update(_childValue, true);
-                            break;
-                        case REPORTS:
-                            reports.update(_childValue, true);
                     }
                 }
             }
@@ -311,9 +351,6 @@ public class NetWork {
                             break;
                         case TASKS:
                             tasks.update(_childValue, true);
-                            break;
-                        case REPORTS:
-                            reports.update(_childValue, true);
                     }
                 }
             }
@@ -332,9 +369,6 @@ public class NetWork {
                             break;
                         case TASKS:
                             tasks.remove(_childValue, true);
-                            break;
-                        case REPORTS:
-                            reports.remove(_childValue, true);
                     }
                 }
             }
