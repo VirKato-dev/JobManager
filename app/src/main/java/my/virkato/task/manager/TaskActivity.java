@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -117,6 +118,13 @@ public class TaskActivity extends AppCompatActivity {
     private Button b_add_report;
 
     /***
+     * поля ввода дат выполнения задания с помощью диалога
+     */
+    private LinearLayout l_dates;
+    private LinearLayout l_date_start, l_date_end;
+    private TextView t_date_start, t_date_end;
+
+    /***
      * первичное заполнение данных для существующего задания
      */
     boolean init = true;
@@ -156,6 +164,11 @@ public class TaskActivity extends AppCompatActivity {
         b_create = findViewById(R.id.b_create);
         lv_reports = findViewById(R.id.lv_reports);
         b_add_report = findViewById(R.id.b_add_report);
+        l_dates = findViewById(R.id.l_dates);
+        l_date_start = findViewById(R.id.l_date_start);
+        l_date_end = findViewById(R.id.l_date_end);
+        t_date_start = findViewById(R.id.t_date_start);
+        t_date_end = findViewById(R.id.t_date_end);
 
         spin_master.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, masters));
         ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
@@ -199,6 +212,14 @@ public class TaskActivity extends AppCompatActivity {
         b_add_report.setOnClickListener(_view -> {
             startActivity(new Intent(this, ReportActivity.class)
             .putExtra("report", "{\"task_id\":\""+task.id+"\"}"));
+        });
+
+        l_date_start.setOnClickListener(v -> {
+            //TODO показать диалог выбора даты
+        });
+
+        l_date_end.setOnClickListener(v -> {
+            //TODO показать диалог выбора даты
         });
 
         auth_updateEmailListener = _param1 -> {
@@ -259,6 +280,9 @@ public class TaskActivity extends AppCompatActivity {
         spin_master.setEnabled(admin); // пользователь не может изменить задание
         spin_spec.setEnabled(admin);
         e_description.setEnabled(admin);
+        l_date_start.setEnabled(admin);
+        l_date_end.setEnabled(admin);
+
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);

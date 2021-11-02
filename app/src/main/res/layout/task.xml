@@ -42,6 +42,55 @@
 			android:textColor="#000000"
 			android:textSize="16sp" />
 
+		<LinearLayout
+			android:id="@+id/l_dates"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<LinearLayout
+				android:id="@+id/l_date_start"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:gravity="center_horizontal"
+				android:orientation="horizontal">
+
+				<TextView
+					android:id="@+id/t_date_start"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="TextView" />
+
+				<ImageView
+					android:id="@+id/i_date_start"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					app:srcCompat="@drawable/ic_calendar" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/l_date_end"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:gravity="center_horizontal"
+				android:orientation="horizontal">
+
+				<TextView
+					android:id="@+id/t_date_end"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="TextView" />
+
+				<ImageView
+					android:id="@+id/i_date_end"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					app:srcCompat="@drawable/ic_calendar" />
+			</LinearLayout>
+		</LinearLayout>
+
 		<Button
 			android:id="@+id/b_approve"
 			android:layout_width="wrap_content"
