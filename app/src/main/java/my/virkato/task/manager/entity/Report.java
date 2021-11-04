@@ -40,6 +40,11 @@ public class Report {
     public ArrayList<String> images = new ArrayList<>();
 
     /***
+     * дата отчёта
+     */
+    public long date = 0L;
+
+    /***
      * новый отчёт создан из MAP
      * @param map первоначальные настройки
      */
@@ -48,6 +53,7 @@ public class Report {
         if (map.containsKey("task_id")) task_id = map.get("task_id").toString();
         if (map.containsKey("description")) description = map.get("description").toString();
         if (map.containsKey("images")) images = new Gson().fromJson(map.get("images").toString(), new TypeToken<ArrayList<String>>(){}.getType());
+        if (map.containsKey("date")) date = (long) Double.parseDouble(map.get("date").toString());
     }
 
 
@@ -63,6 +69,7 @@ public class Report {
         map.put("task_id", task_id);
         map.put("description", description);
         map.put("images", new Gson().toJson(images));
+        map.put("date", date);
         return map;
     }
 
@@ -72,8 +79,8 @@ public class Report {
      */
     public String asJson() {
         return String.format(Locale.US,
-                "{\"id\":\"%s\", \"task_id\":\"%s\", \"description\":\"%s\", \"images\":\"%s\"}",
-                id, task_id, description, new Gson().toJson(images));
+                "{\"id\":\"%s\", \"task_id\":\"%s\", \"description\":\"%s\", \"images\":\"%s\", \"date\":%d}",
+                id, task_id, description, new Gson().toJson(images), date);
     }
 
     /***
@@ -83,11 +90,6 @@ public class Report {
      */
     public void send(Context context, DatabaseReference db) {
         AppUtil.showSystemWait(context, true);
-        db.child(id).updateChildren(this.asMap(), new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                AppUtil.showSystemWait(context, false);
-            }
-        });
+        db.child(id).updateChildren(this.asMap(), (error, ref) -> AppUtil.showSystemWait(context, false));
     }
 }

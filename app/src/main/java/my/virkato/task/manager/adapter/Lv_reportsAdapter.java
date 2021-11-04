@@ -1,6 +1,5 @@
 package my.virkato.task.manager.adapter;
 
-import android.content.Context;
 import android.graphics.PorterDuff;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -8,15 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Locale;
 
 import my.virkato.task.manager.R;
 import my.virkato.task.manager.entity.Report;
-import my.virkato.task.manager.entity.Task;
 
 /***
  * Список отчетов для конкретного задания
@@ -55,11 +53,14 @@ public class Lv_reportsAdapter extends BaseAdapter {
 
         final ImageView i_images = _view.findViewById(R.id.i_images);
         final TextView t_desc = _view.findViewById(R.id.t_desc);
+        final TextView t_date = _view.findViewById(R.id.t_date);
 
-        t_desc.setEllipsize(TextUtils.TruncateAt.END);
+//        t_desc.setEllipsize(TextUtils.TruncateAt.END);
         i_images.setColorFilter(0xFF2196F3, PorterDuff.Mode.MULTIPLY);
 
         t_desc.setText(getItem(_position).description);
+        if (getItem(_position).date > 0)
+            t_date.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(getItem(_position).date));
 
         return _view;
     }

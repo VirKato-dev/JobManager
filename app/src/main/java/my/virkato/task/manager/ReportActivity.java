@@ -2,6 +2,7 @@ package my.virkato.task.manager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import my.virkato.task.manager.adapter.NetWork;
@@ -64,6 +66,7 @@ public class ReportActivity extends AppCompatActivity {
         }
         report = new Report(new Gson().fromJson(getIntent().getStringExtra("report"), new TypeToken<HashMap<String, Object>>() {
         }.getType()));
+        Log.e("REPORT", getIntent().getStringExtra("report"));
         if (report.id.equals("")) {
             // создать новый отчёт к указанному заданию
             report.id = dbReports.getDB().push().getKey();
@@ -71,6 +74,7 @@ public class ReportActivity extends AppCompatActivity {
 
         b_report_save.setOnClickListener(v -> {
             report.description = e_description.getText().toString();
+            report.date = System.currentTimeMillis();
             report.send(v.getContext(), dbReports.getDB());
         });
 

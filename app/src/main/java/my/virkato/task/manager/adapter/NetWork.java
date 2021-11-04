@@ -301,7 +301,9 @@ public class NetWork {
      * Получить список отчётов
      */
     private void receiveReports() {
-        FirebaseDatabase.getInstance().getReference(folder.path).addListenerForSingleValueEvent(dbr_listener);
+        fb_db = FirebaseDatabase.getInstance();
+        db = fb_db.getReference(folder.path);
+        db.addListenerForSingleValueEvent(dbr_listener);
     }
 
     /***

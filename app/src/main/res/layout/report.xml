@@ -21,8 +21,10 @@
 		android:layout_height="wrap_content"
 		android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 		android:ems="10"
-		android:inputType="text"
-		android:padding="8dp" />
+		android:inputType="none"
+		android:lines="3"
+		android:padding="8dp"
+		android:singleLine="false" />
 
 	<Button
 		android:id="@+id/b_report_save"
