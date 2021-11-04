@@ -2,6 +2,7 @@ package my.virkato.task.manager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,10 +28,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -223,9 +228,15 @@ public class AppUtil {
         }
     }
 
+
     private static AlertDialog.Builder d_wait;
     private static AlertDialog adv;
 
+    /***
+     * показать заставку ожидания
+     * @param context контекст Activity
+     * @param _show показать/скрыть
+     */
     public static void showSystemWait(Context context, boolean _show) {
         if (context == null) return;
         if (_show) {
@@ -248,6 +259,31 @@ public class AppUtil {
             adv.hide();
             adv.dismiss();
         }
+    }
+
+
+    private static DatePickerDialog dpd;
+
+    /***
+     * показать диалог выбора даты
+     */
+    public static void showSelectDateDialog(TextView tv, OnDatePicked listener) {
+        dpd = new DatePickerDialog(tv.getContext());
+        dpd.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            Calendar cal = Calendar.getInstance();
+            cal.set(year, month, dayOfMonth,0,0,0);
+            long time = cal.getTimeInMillis();
+            tv.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(time));
+            if (listener != null) listener.onPicked(time);
+        });
+        dpd.show();
+    }
+
+    /***
+     * колбэк результата выбора даты
+     */
+    public interface OnDatePicked {
+        void onPicked(long time);
     }
 
 }

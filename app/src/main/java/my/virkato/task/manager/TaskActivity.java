@@ -18,9 +18,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 
 import my.virkato.task.manager.adapter.Lv_reportsAdapter;
 import my.virkato.task.manager.adapter.NetWork;
@@ -122,7 +124,7 @@ public class TaskActivity extends AppCompatActivity {
      */
     private LinearLayout l_dates;
     private LinearLayout l_date_start, l_date_end;
-    private TextView t_date_start, t_date_end;
+    private TextView t_date_start, t_date_finish;
 
     /***
      * первичное заполнение данных для существующего задания
@@ -168,7 +170,7 @@ public class TaskActivity extends AppCompatActivity {
         l_date_start = findViewById(R.id.l_date_start);
         l_date_end = findViewById(R.id.l_date_end);
         t_date_start = findViewById(R.id.t_date_start);
-        t_date_end = findViewById(R.id.t_date_end);
+        t_date_finish = findViewById(R.id.t_date_finish);
 
         spin_master.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, masters));
         ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
@@ -216,10 +218,16 @@ public class TaskActivity extends AppCompatActivity {
 
         l_date_start.setOnClickListener(v -> {
             //TODO показать диалог выбора даты
+            AppUtil.showSelectDateDialog(t_date_start, time -> {
+                task.date_start = time;
+            });
         });
 
         l_date_end.setOnClickListener(v -> {
             //TODO показать диалог выбора даты
+            AppUtil.showSelectDateDialog(t_date_finish, time -> {
+                task.date_finish = time;
+            });
         });
 
         auth_updateEmailListener = _param1 -> {
@@ -288,6 +296,8 @@ public class TaskActivity extends AppCompatActivity {
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
         if (!task.master_uid.equals("")) {
             e_description.setText(task.description);
+            t_date_start.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_start));
+            t_date_finish.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_finish));
             b_create.setText("Изменить это задание");
             b_approve.setText(task.finished ? "Считать невыполненным" : "Считать выполненным");
         }
