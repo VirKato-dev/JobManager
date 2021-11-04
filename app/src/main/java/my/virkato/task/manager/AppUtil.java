@@ -268,14 +268,16 @@ public class AppUtil {
      * показать диалог выбора даты
      */
     public static void showSelectDateDialog(TextView tv, OnDatePicked listener) {
-        dpd = new DatePickerDialog(tv.getContext());
-        dpd.setOnDateSetListener((view, year, month, dayOfMonth) -> {
-            Calendar cal = Calendar.getInstance();
-            cal.set(year, month, dayOfMonth,0,0,0);
-            long time = cal.getTimeInMillis();
-            tv.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(time));
-            if (listener != null) listener.onPicked(time);
-        });
+        Calendar cal = Calendar.getInstance();
+        dpd = new DatePickerDialog(
+                tv.getContext(),
+                (view, year, month, dayOfMonth) -> {
+                    cal.set(year, month, dayOfMonth, 0, 0, 0);
+                    long time = cal.getTimeInMillis();
+                    tv.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(time));
+                    if (listener != null) listener.onPicked(time);
+                },
+                cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         dpd.show();
     }
 
