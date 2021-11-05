@@ -1,14 +1,17 @@
 package my.virkato.task.manager;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -125,6 +128,7 @@ public class TaskActivity extends AppCompatActivity {
     private LinearLayout l_dates;
     private LinearLayout l_date_start, l_date_end;
     private TextView t_date_start, t_date_finish;
+    private ImageView i_date_start, i_date_finish;
 
     /***
      * первичное заполнение данных для существующего задания
@@ -171,12 +175,17 @@ public class TaskActivity extends AppCompatActivity {
         l_date_end = findViewById(R.id.l_date_end);
         t_date_start = findViewById(R.id.t_date_start);
         t_date_finish = findViewById(R.id.t_date_finish);
+        i_date_start = findViewById(R.id.i_date_start);
+        i_date_finish = findViewById(R.id.i_date_finish);
+
+        i_date_start.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
+        i_date_finish.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
 
         spin_master.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, masters));
-        ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
+        ((ArrayAdapter)spin_master.getAdapter()).notifyDataSetChanged();
 
         spin_spec.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, spec));
-        ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
+        ((ArrayAdapter)spin_spec.getAdapter()).notifyDataSetChanged();
 
         spin_spec.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -352,7 +361,7 @@ public class TaskActivity extends AppCompatActivity {
                 String cvalif = m.spec;
                 if (!cvalif.equals("admin") && !spec.contains(cvalif)) spec.add(cvalif);
             }
-            ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
+            ((ArrayAdapter)spin_spec.getAdapter()).notifyDataSetChanged();
 
             if (init) {
                 if (!task.master_uid.equals("")) {
@@ -379,7 +388,7 @@ public class TaskActivity extends AppCompatActivity {
             }
             masters.clear();
             masters.addAll(selected);
-            ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
+            ((ArrayAdapter)spin_master.getAdapter()).notifyDataSetChanged();
 
             if (init) {
                 spin_master.setSelection(masters_uid.indexOf(task.master_uid));
