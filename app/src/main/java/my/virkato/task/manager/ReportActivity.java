@@ -86,6 +86,7 @@ public class ReportActivity extends AppCompatActivity {
      */
     private void showReport() {
         e_description.setText(report.description);
+        b_report_save.setVisibility(NetWork.isAdmin()? View.GONE : View.VISIBLE);
     }
 
 
