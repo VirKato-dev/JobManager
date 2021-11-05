@@ -32,7 +32,7 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.a_picture, parent);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.a_picture, parent, false);
         return new ViewHolder(v);
     }
 
@@ -40,9 +40,9 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String item = getItem(position);
         if (item.startsWith("http")) {
-            Glide.with(context).load(Uri.parse(item)).into(img);
+            Glide.with(context).load(Uri.parse(item)).into(holder.getImageView());
         } else {
-            img.setImageBitmap(FileUtil.decodeSampleBitmapFromPath(item, 1024, 1024));
+            holder.getImageView().setImageBitmap(FileUtil.decodeSampleBitmapFromPath(item, 1024, 1024));
         }
     }
 
@@ -65,6 +65,11 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
 
         public ViewHolder(View itemView) {
             super(itemView);
+            pic = itemView.findViewById(R.id.i_picture);
+        }
+
+        public ImageView getImageView() {
+            return pic;
         }
     }
 

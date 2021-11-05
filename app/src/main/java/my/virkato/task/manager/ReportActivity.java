@@ -1,28 +1,36 @@
 package my.virkato.task.manager;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.adapter.Rv_picturesAdapter;
 import my.virkato.task.manager.entity.Report;
-import my.virkato.task.manager.entity.Task;
 
 /***
  * оформить отчёт о ходе работ
@@ -38,6 +46,11 @@ public class ReportActivity extends AppCompatActivity {
      * сохранить отчёт
      */
     private Button b_report_save;
+
+    /***
+     * собавить фотографию отчёта
+     */
+    private Button b_add_picture;
 
     /***
      * адаптер для получения списка отчётов
@@ -59,6 +72,18 @@ public class ReportActivity extends AppCompatActivity {
      */
     private ArrayList<String> pictures;
 
+    /***
+     * приёмник выбранного файла
+     */
+    private ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    String path = FileUtil.convertUriToFilePath(rv.getContext(), uri);
+                    pictures.add(path);
+                    rv.getAdapter().notifyDataSetChanged();
+                }
+            });
+
 
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
@@ -68,6 +93,7 @@ public class ReportActivity extends AppCompatActivity {
         e_description = findViewById(R.id.e_description);
         b_report_save = findViewById(R.id.b_report_save);
         rv = findViewById(R.id.rv_pictures);
+        b_add_picture = findViewById(R.id.b_add_picture);
 
         initializeLogic();
     }
@@ -78,8 +104,10 @@ public class ReportActivity extends AppCompatActivity {
             // нельзя создать отчёт к несуществующему заданию
             finish();
         }
-        report = new Report(new Gson().fromJson(getIntent().getStringExtra("report"), new TypeToken<HashMap<String, Object>>() {
-        }.getType()));
+        String json = getIntent().getStringExtra("report");
+        Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
+        HashMap<String, Object> map = new Gson().fromJson(json, type);
+        report = new Report(map);
         if (report.id.equals("")) {
             // создать новый отчёт к указанному заданию
             report.id = dbReports.getDB().push().getKey();
@@ -94,21 +122,30 @@ public class ReportActivity extends AppCompatActivity {
         pictures = report.images;
 
         rv.setAdapter(new Rv_picturesAdapter(this, pictures));
+        rv.setLayoutManager(new LinearLayoutManager(this));
         rv.getAdapter().notifyDataSetChanged();
 
         showReport();
-   }
+
+        b_add_picture.setOnClickListener(v -> {
+            mGetContent.launch("image/*");
+        });
+    }
 
     /***
      * показать отчёт
      * редактировать отчёт разрешено в чечение 5 часов
      * редактировать отчёт может только исполнитель
+     * добавлять фото может только исполнитель
      */
     private void showReport() {
         e_description.setText(report.description);
-        b_report_save.setVisibility(NetWork.isAdmin()? View.GONE : View.VISIBLE);
-        if ((System.currentTimeMillis() - report.date) > (5 * 60 * 60 * 1000)) {
+        b_report_save.setVisibility(NetWork.isAdmin() ? View.GONE : View.VISIBLE);
+        b_add_picture.setVisibility(NetWork.isAdmin() ? View.GONE : View.VISIBLE);
+
+        if (report.date > 0 && (System.currentTimeMillis() - report.date) > (5 * 60 * 60 * 1000)) {
             b_report_save.setVisibility(View.GONE);
+            b_add_picture.setVisibility(View.GONE);
         }
     }
 

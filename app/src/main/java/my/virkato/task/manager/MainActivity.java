@@ -1,9 +1,14 @@
 package my.virkato.task.manager;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.FirebaseApp;
 
@@ -18,6 +23,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main);
         FirebaseApp.initializeApp(this);
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
+        } else {
+            start();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int reqCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(reqCode, permissions, grantResults);
+        if (reqCode == 1000) {
+            start();
+        }
+    }
+
+    private void start() {
         Intent intent = new Intent().setClass(getApplicationContext(), TasksActivity.class);
         startActivity(intent);
         finish();

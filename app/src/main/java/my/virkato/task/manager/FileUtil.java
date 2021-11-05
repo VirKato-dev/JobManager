@@ -281,7 +281,7 @@ public class FileUtil {
                     contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                 }
 
-                final String selection = MediaStore.Audio.Media._ID + "=?";
+                final String selection = "_id=?";
                 final String[] selectionArgs = new String[]{
                         split[1]
                 };
