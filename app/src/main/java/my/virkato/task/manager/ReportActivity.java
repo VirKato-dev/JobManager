@@ -83,10 +83,15 @@ public class ReportActivity extends AppCompatActivity {
 
     /***
      * показать отчёт
+     * редактировать отчёт разрешено в чечение 5 часов
+     * редактировать отчёт может только исполнитель
      */
     private void showReport() {
         e_description.setText(report.description);
         b_report_save.setVisibility(NetWork.isAdmin()? View.GONE : View.VISIBLE);
+        if ((System.currentTimeMillis() - report.date) > (5 * 60 * 60 * 1000)) {
+            b_report_save.setVisibility(View.GONE);
+        }
     }
 
 
