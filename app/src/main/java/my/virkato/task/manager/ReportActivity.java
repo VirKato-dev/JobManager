@@ -130,6 +130,7 @@ public class ReportActivity extends AppCompatActivity {
         ((Rv_picturesAdapter) rv.getAdapter()).setOnClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
             String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
+            //TODO увеличенный просмотр
             AppUtil.showMessage(rv.getContext(), item);
         });
 
@@ -137,6 +138,9 @@ public class ReportActivity extends AppCompatActivity {
             int position = rv.getChildLayoutPosition(v);
             String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
             AppUtil.showMessage(rv.getContext(), item);
+            pictures.remove(position);
+            rv.getAdapter().notifyDataSetChanged();
+            report.send(rv.getContext(), dbReports.getDB());
             return true;
         });
 
