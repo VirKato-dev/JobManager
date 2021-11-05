@@ -8,16 +8,19 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 import my.virkato.task.manager.adapter.NetWork;
+import my.virkato.task.manager.adapter.Rv_picturesAdapter;
 import my.virkato.task.manager.entity.Report;
 import my.virkato.task.manager.entity.Task;
 
@@ -46,6 +49,16 @@ public class ReportActivity extends AppCompatActivity {
      */
     private Report report;
 
+    /***
+     * список фотографий отчёта
+     */
+    private RecyclerView rv;
+
+    /***
+     * картинки отчёта
+     */
+    private ArrayList<String> pictures;
+
 
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
@@ -54,6 +67,7 @@ public class ReportActivity extends AppCompatActivity {
 
         e_description = findViewById(R.id.e_description);
         b_report_save = findViewById(R.id.b_report_save);
+        rv = findViewById(R.id.rv_pictures);
 
         initializeLogic();
     }
@@ -66,7 +80,6 @@ public class ReportActivity extends AppCompatActivity {
         }
         report = new Report(new Gson().fromJson(getIntent().getStringExtra("report"), new TypeToken<HashMap<String, Object>>() {
         }.getType()));
-        Log.e("REPORT", getIntent().getStringExtra("report"));
         if (report.id.equals("")) {
             // создать новый отчёт к указанному заданию
             report.id = dbReports.getDB().push().getKey();
@@ -77,6 +90,11 @@ public class ReportActivity extends AppCompatActivity {
             report.date = System.currentTimeMillis();
             report.send(v.getContext(), dbReports.getDB());
         });
+
+        pictures = report.images;
+
+        rv.setAdapter(new Rv_picturesAdapter(this, pictures));
+        rv.getAdapter().notifyDataSetChanged();
 
         showReport();
    }
