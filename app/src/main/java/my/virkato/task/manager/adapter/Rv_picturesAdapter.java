@@ -23,6 +23,8 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
     private ArrayList<String> listItem;
     private Context context;
     private ImageView img;
+    private View.OnClickListener click;
+    private View.OnLongClickListener longClick;
 
     public Rv_picturesAdapter(Context context, ArrayList pictures) {
         this.context = context;
@@ -33,6 +35,8 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.a_picture, parent, false);
+        v.setOnClickListener(click);
+        v.setOnLongClickListener(longClick);
         return new ViewHolder(v);
     }
 
@@ -71,6 +75,15 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
         public ImageView getImageView() {
             return pic;
         }
+    }
+
+
+    public void setOnClickListener(View.OnClickListener listener) {
+        click = listener;
+    }
+
+    public void setOnLongClickListener(View.OnLongClickListener listener) {
+        longClick = listener;
     }
 
 }

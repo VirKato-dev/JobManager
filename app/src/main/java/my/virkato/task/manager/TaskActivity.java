@@ -226,14 +226,12 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         l_date_start.setOnClickListener(v -> {
-            //TODO показать диалог выбора даты
             AppUtil.showSelectDateDialog(t_date_start, time -> {
                 task.date_start = time;
             });
         });
 
         l_date_end.setOnClickListener(v -> {
-            //TODO показать диалог выбора даты
             AppUtil.showSelectDateDialog(t_date_finish, time -> {
                 task.date_finish = time;
             });

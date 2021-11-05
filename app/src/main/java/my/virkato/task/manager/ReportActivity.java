@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -105,7 +106,8 @@ public class ReportActivity extends AppCompatActivity {
             finish();
         }
         String json = getIntent().getStringExtra("report");
-        Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
+        Type type = new TypeToken<HashMap<String, Object>>() {
+        }.getType();
         HashMap<String, Object> map = new Gson().fromJson(json, type);
         report = new Report(map);
         if (report.id.equals("")) {
@@ -124,6 +126,19 @@ public class ReportActivity extends AppCompatActivity {
         rv.setAdapter(new Rv_picturesAdapter(this, pictures));
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.getAdapter().notifyDataSetChanged();
+
+        ((Rv_picturesAdapter) rv.getAdapter()).setOnClickListener(v -> {
+            int position = rv.getChildLayoutPosition(v);
+            String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
+            AppUtil.showMessage(rv.getContext(), item);
+        });
+
+        ((Rv_picturesAdapter) rv.getAdapter()).setOnLongClickListener(v -> {
+            int position = rv.getChildLayoutPosition(v);
+            String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
+            AppUtil.showMessage(rv.getContext(), item);
+            return true;
+        });
 
         showReport();
 
