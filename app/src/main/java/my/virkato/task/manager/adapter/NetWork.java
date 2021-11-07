@@ -1,6 +1,7 @@
 package my.virkato.task.manager.adapter;
 
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -23,13 +24,16 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import my.virkato.task.manager.AppUtil;
+import my.virkato.task.manager.FileUtil;
 import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Report;
+import my.virkato.task.manager.entity.ReportImage;
 import my.virkato.task.manager.entity.Reports;
 import my.virkato.task.manager.entity.Tasks;
 
@@ -160,16 +164,17 @@ public class NetWork {
             double _progressValue = (100.0 * _param1.getBytesTransferred()) / _param1.getTotalByteCount();
         };
 
-        store_download_progress_listener = (OnProgressListener<FileDownloadTask.TaskSnapshot>) _param1 -> {
-            double _progressValue = (100.0 * _param1.getBytesTransferred()) / _param1.getTotalByteCount();
-        };
-
         store_upload_success_listener = _param1 -> {
             final String _downloadUrl = _param1.getResult().toString();
         };
 
+        store_download_progress_listener = (OnProgressListener<FileDownloadTask.TaskSnapshot>) _param1 -> {
+            double _progressValue = (100.0 * _param1.getBytesTransferred()) / _param1.getTotalByteCount();
+        };
+
         store_download_success_listener = _param1 -> {
             final long _totalByteCount = _param1.getTotalByteCount();
+
         };
 
         store_delete_success_listener = _param1 -> {
@@ -271,7 +276,9 @@ public class NetWork {
      * Получить список UID Админов
      */
     private void receiveAdmins() {
-        FirebaseDatabase.getInstance().getReference(folder.path).addListenerForSingleValueEvent(dba_listener);
+        fb_db = FirebaseDatabase.getInstance();
+        db = fb_db.getReference(folder.path);
+        db.addListenerForSingleValueEvent(dba_listener);
     }
 
     /***
@@ -286,6 +293,9 @@ public class NetWork {
             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                 Report r = new Report(dataSnapshot.getValue(ind));
                 reports.getList().add(r);
+            }
+            if (isAdmin()) {
+                getImagesFromStorage();
             }
             if (reports.getReportsListener() != null) {
                 reports.getReportsListener().onUpdated();
@@ -304,6 +314,9 @@ public class NetWork {
         fb_db = FirebaseDatabase.getInstance();
         db = fb_db.getReference(folder.path);
         db.addListenerForSingleValueEvent(dbr_listener);
+
+        fb_storage = FirebaseStorage.getInstance();
+        store = fb_storage.getReference(folder.path);
     }
 
     /***
@@ -387,8 +400,37 @@ public class NetWork {
         if (db_child_listener != null) db.removeEventListener(db_child_listener);
     }
 
+    /***
+     * начать получение данных из базы
+     */
     public void startListening() {
         if (db_child_listener != null) db.addChildEventListener(db_child_listener);
     }
+
+    /***
+     * получить картинки из хранилища на устройство админа
+     */
+    private void getImagesFromStorage() {
+        for (Report rep : reports.getList()) {
+            for (ReportImage ri : rep.images) {
+                if (ri.received.equals("") || !new File(ri.received).exists()) {
+                    // для неполученных картинок
+                    if (!ri.url.equals("")) {
+                        // которые имеются в хранилище
+                        File toFile = new File(localFolder + "/reports/" + rep.id +
+                                ri.original.substring(ri.original.lastIndexOf("/") + 1));
+                        fb_storage.getReferenceFromUrl(ri.url)
+                                .getFile(toFile)
+                                .addOnSuccessListener(store_download_success_listener);
+
+                        ri.received = toFile.getAbsolutePath();
+                        rep.updateReceivedImagePath(db);
+                    }
+                }
+            }
+        }
+    }
+
+    private String localFolder = Environment.getDownloadCacheDirectory().getAbsolutePath();
 
 }

@@ -1,13 +1,14 @@
 
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	package="my.virkato.task.manager">
 	<uses-permission	android:name="android.permission.INTERNET"/>
 	<uses-permission	android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission	android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 	<uses-permission	android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
 	<application
-		android:allowBackup="true"
+		android:allowBackup="false"
 		android:label="Task Manager"
 		android:icon="@drawable/app_icon"
 		android:largeHeap="true"
@@ -20,7 +21,8 @@
 			android:supportsPictureInPicture="true"
 			android:theme="@style/AppTheme.FullScreen"
 			android:screenOrientation="portrait"
-			android:windowSoftInputMode="stateHidden">
+			android:windowSoftInputMode="stateHidden"
+			tools:targetApi="n">
 			<intent-filter>
 				<action	android:name="android.intent.action.MAIN"/>
 				<category	android:name="android.intent.category.LAUNCHER"/>
@@ -32,42 +34,48 @@
 			android:hardwareAccelerated="true"
 			android:supportsPictureInPicture="true"
 			android:screenOrientation="portrait"
-			android:windowSoftInputMode="stateHidden"/>
+			android:windowSoftInputMode="stateHidden"
+			tools:targetApi="n" />
 		<activity
 			android:name=".AuthActivity"
 			android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
 			android:hardwareAccelerated="true"
 			android:supportsPictureInPicture="true"
 			android:screenOrientation="portrait"
-			android:windowSoftInputMode="stateHidden"/>
+			android:windowSoftInputMode="stateHidden"
+			tools:targetApi="n" />
 		<activity
 			android:name=".PeopleActivity"
 			android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
 			android:hardwareAccelerated="true"
 			android:supportsPictureInPicture="true"
 			android:screenOrientation="portrait"
-			android:windowSoftInputMode="stateHidden"/>
+			android:windowSoftInputMode="stateHidden"
+			tools:targetApi="n" />
 		<activity
 			android:name=".ProfileActivity"
 			android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
 			android:hardwareAccelerated="true"
 			android:supportsPictureInPicture="true"
 			android:screenOrientation="portrait"
-			android:windowSoftInputMode="stateHidden"/>
+			android:windowSoftInputMode="stateHidden"
+			tools:targetApi="n" />
 		<activity
 			android:name=".TaskActivity"
 			android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
 			android:hardwareAccelerated="true"
 			android:supportsPictureInPicture="true"
 			android:screenOrientation="portrait"
-			android:windowSoftInputMode="stateHidden"/>
+			android:windowSoftInputMode="stateHidden"
+			tools:targetApi="n" />
 		<activity
 			android:name=".ReportActivity"
 			android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
 			android:hardwareAccelerated="true"
 			android:supportsPictureInPicture="true"
 			android:screenOrientation="portrait"
-			android:windowSoftInputMode="stateHidden"/>
+			android:windowSoftInputMode="stateHidden"
+			tools:targetApi="n" />
 		<meta-data
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version"/>
@@ -76,6 +84,15 @@
 			android:authorities="my.virkato.task.manager.firebaseinitprovider"
 			android:exported="false"
 			android:initOrder="100"/>
+		<provider
+			android:authorities="my.virkato.task.manager.fileprovider"
+			android:name="androidx.core.content.FileProvider"
+			android:grantUriPermissions="true"
+			android:exported="false">
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/filepaths" />
+		</provider>
 		<service
 			android:name="com.google.firebase.components.ComponentDiscoveryService"
 			android:exported="false">

@@ -1,25 +1,13 @@
 package my.virkato.task.manager.entity;
 
 import android.content.Context;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import my.virkato.task.manager.AppUtil;
 
@@ -42,9 +30,9 @@ public class Report {
     public String description = "";
 
     /***
-     * пояснительные изображения
+     * отправленные картинки пользователем
      */
-    public ArrayList<String> images = new ArrayList<>();
+    public ArrayList<ReportImage> images = new ArrayList<>();
 
     /***
      * дата отчёта
@@ -59,7 +47,7 @@ public class Report {
         if (map.containsKey("id")) id = map.get("id").toString();
         if (map.containsKey("task_id")) task_id = map.get("task_id").toString();
         if (map.containsKey("description")) description = map.get("description").toString();
-        if (map.containsKey("images")) images = (ArrayList<String>) map.get("images");
+        if (map.containsKey("images")) images = (ArrayList<ReportImage>) map.get("images");
         if (map.containsKey("date")) date = (long) Double.parseDouble(map.get("date").toString());
     }
 
@@ -98,6 +86,56 @@ public class Report {
      */
     public void send(Context context, DatabaseReference db) {
         AppUtil.showSystemWait(context, true);
+        this.context = context;
+        this.db = db;
+        if (images.size() > 0) {
+            sendImages();
+        } else {
+            // без картинок
+            save();
+        }
+    }
+
+    // на время выолнения сохранения
+    private Context context;
+    private DatabaseReference db;
+
+    private void save() {
         db.child(id).updateChildren(this.asMap(), (error, ref) -> AppUtil.showSystemWait(context, false));
+    }
+
+    /***
+     * отправить все неотправленные и изменённые картинки отчёта
+     */
+    public void sendImages() {
+        AppUtil.showSystemWait(context, true);
+        pc = images.size();
+        if (pc > 0) sendNextImage();
+    }
+
+    // используется при отправке картинок в хранилище
+    private int pc = 0;
+
+    /***
+     * отправить следующую неотправленную картинку
+     */
+    private void sendNextImage() {
+        pc--;
+        if (images.get(pc).url.equals("")) {
+            // отправить файл в хранилище
+            if (false) { // после завершения отправки
+                images.get(pc).url = ""; // ссылка на файл
+                save();
+            }
+        }
+    }
+
+    /***
+     * обновить путь скачанной на устройство админа картинки
+     * @param db папка для сохранения
+     */
+    public void updateReceivedImagePath(DatabaseReference db) {
+        this.db = db;
+        save();
     }
 }

@@ -1,28 +1,18 @@
 package my.virkato.task.manager;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -32,6 +22,7 @@ import java.util.HashMap;
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.adapter.Rv_picturesAdapter;
 import my.virkato.task.manager.entity.Report;
+import my.virkato.task.manager.entity.ReportImage;
 
 /***
  * оформить отчёт о ходе работ
@@ -71,7 +62,7 @@ public class ReportActivity extends AppCompatActivity {
     /***
      * картинки отчёта
      */
-    private ArrayList<String> pictures;
+    private ArrayList<ReportImage> pictures;
 
     /***
      * приёмник выбранного файла
@@ -80,7 +71,9 @@ public class ReportActivity extends AppCompatActivity {
             uri -> {
                 if (uri != null) {
                     String path = FileUtil.convertUriToFilePath(rv.getContext(), uri);
-                    pictures.add(path);
+                    ReportImage repImg = new ReportImage();
+                    repImg.original = path;
+                    pictures.add(repImg);
                     rv.getAdapter().notifyDataSetChanged();
                 }
             });
