@@ -131,6 +131,7 @@ public class ReportActivity extends AppCompatActivity {
             int position = rv.getChildLayoutPosition(v);
             String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
             AppUtil.showMessage(rv.getContext(), item);
+            dbReports.removeImageFromStorage(pictures.get(position).url);
             pictures.remove(position);
             rv.getAdapter().notifyDataSetChanged();
             report.send(rv.getContext(), dbReports.getDB());
