@@ -11,22 +11,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import my.virkato.task.manager.FileUtil;
 import my.virkato.task.manager.R;
+import my.virkato.task.manager.entity.ReportImage;
 
 
 public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.ViewHolder> {
 
-    private ArrayList<String> listItem;
+    private ArrayList<ReportImage> listItem;
     private Context context;
     private ImageView img;
     private View.OnClickListener click;
     private View.OnLongClickListener longClick;
 
-    public Rv_picturesAdapter(Context context, ArrayList pictures) {
+    public Rv_picturesAdapter(Context context, ArrayList<ReportImage> pictures) {
         this.context = context;
         this.listItem = pictures;
     }
@@ -42,11 +45,19 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String item = getItem(position);
-        if (item.startsWith("http")) {
-            Glide.with(context).load(Uri.parse(item)).into(holder.getImageView());
+        ReportImage item = getItem(position);
+        String pict = "";
+        if (NetWork.isAdmin()) {
+            if (!item.received.equals("")) pict = item.received;
+            else pict = item.url;
         } else {
-            holder.getImageView().setImageBitmap(FileUtil.decodeSampleBitmapFromPath(item, 1024, 1024));
+            if (!item.original.equals("")) pict = item.original;
+        }
+
+        if (pict.startsWith("http")) {
+            Glide.with(context).load(Uri.parse(pict)).into(holder.getImageView());
+        } else {
+            holder.getImageView().setImageBitmap(FileUtil.decodeSampleBitmapFromPath(pict, 1024, 1024));
         }
     }
 
@@ -55,8 +66,13 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
         return listItem.size();
     }
 
-    public String getItem(int position) {
-        return listItem.get(position);
+    //TODO починить извлечение images из Report
+    public ReportImage getItem(int position) {
+        ReportImage repImg = new ReportImage();
+        repImg.original = listItem.get(position).original;
+        repImg.url = listItem.get(position).url;
+        repImg.received = listItem.get(position).received;
+        return repImg;
     }
 
 

@@ -48,7 +48,8 @@ public class Task {
     }
 
 
-    public String asJson() {
+    @Override
+    public String toString() {
         return String.format(Locale.US,
                 "{\"id\":\"%s\", \"master_uid\":\"%s\", \"description\":\"%s\", \"date_start\":%d, \"date_finish\":%d, \"finished\":\"%s\"}",
                 id, master_uid, description, date_start, date_finish, finished?"1":"0");

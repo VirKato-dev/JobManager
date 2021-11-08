@@ -1,8 +1,10 @@
 package my.virkato.task.manager.entity;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import my.virkato.task.manager.AppUtil;
+import my.virkato.task.manager.adapter.NetWork;
 
 
 public class Report {
@@ -73,7 +76,8 @@ public class Report {
      * в виде JSON
      * @return готово к отправке в другую Activity
      */
-    public String asJson() {
+    @Override
+    public String toString() {
         return String.format(Locale.US,
                 "{\"id\":\"%s\", \"task_id\":\"%s\", \"description\":\"%s\", \"images\":%s, \"date\":%d}",
                 id, task_id, description, new Gson().toJson(images), date);
@@ -82,12 +86,14 @@ public class Report {
     /***
      * отправить информацию в базу данных
      * @param context для правильной работы заставки загрузки
-     * @param db место назначения в базе
+     * @param ref сслыка на базу и хранилище
      */
-    public void send(Context context, DatabaseReference db) {
+    public void send(Context context, NetWork ref) {
         AppUtil.showSystemWait(context, true);
         this.context = context;
-        this.db = db;
+        nw = ref;
+        db = ref.getDB();
+        store = ref.getStore();
         if (images.size() > 0) {
             sendImages();
         } else {
@@ -98,7 +104,9 @@ public class Report {
 
     // на время выолнения сохранения
     private Context context;
+    private NetWork nw;
     private DatabaseReference db;
+    private StorageReference store;
 
     private void save() {
         db.child(id).updateChildren(this.asMap(), (error, ref) -> AppUtil.showSystemWait(context, false));
@@ -107,8 +115,7 @@ public class Report {
     /***
      * отправить все неотправленные и изменённые картинки отчёта
      */
-    public void sendImages() {
-        AppUtil.showSystemWait(context, true);
+    private void sendImages() {
         pc = images.size();
         if (pc > 0) sendNextImage();
     }
@@ -121,12 +128,23 @@ public class Report {
      */
     private void sendNextImage() {
         pc--;
-        if (images.get(pc).url.equals("")) {
-            // отправить файл в хранилище
-            if (false) { // после завершения отправки
-                images.get(pc).url = ""; // ссылка на файл
-                save();
+        if (pc >= 0) {
+            if (images.get(pc).url.equals("")) {
+                // отправить файл в хранилище
+                NetWork.OnSavedImageListener callBack = url -> {
+                    images.get(pc).url = url; // ссылка на файл
+                    save();
+                    sendNextImage();
+                };
+                Log.e("SEND START", images.get(pc).original);
+                nw.saveImageToStorage(task_id, id+"_"+pc, images.get(pc), nw, callBack);
+            } else {
+                Log.e("SEND SKIPED", images.get(pc).original);
+                sendNextImage();
             }
+        } else {
+            Log.e("SEND FINISHED", "");
+            AppUtil.showSystemWait(context, false);
         }
     }
 

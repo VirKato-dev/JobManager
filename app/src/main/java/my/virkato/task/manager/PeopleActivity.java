@@ -145,7 +145,7 @@ public class PeopleActivity extends AppCompatActivity {
             netWork.getPeople().setOnPeopleUpdatedListener((list, man) -> {
                 lm_people = list;
                 if (man.id.equals(NetWork.user().getUid())) {
-                    sp.edit().putString("account", man.asJson()).commit();
+                    sp.edit().putString("account", man.toString()).commit();
                     AppUtil.showMessage(getApplicationContext(), "Ваши данные получены");
 
                     delay.cancel();

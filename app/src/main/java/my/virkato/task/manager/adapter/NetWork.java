@@ -6,9 +6,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -23,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.internal.LinkedTreeMap;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,6 +56,13 @@ public class NetWork {
         Info(String path) {
             this.path = path;
         }
+    }
+
+    /***
+     * когда картинка отправлена в хранилище
+     */
+    public interface OnSavedImageListener {
+        void onSaved(String url);
     }
 
     /***
@@ -93,7 +103,7 @@ public class NetWork {
     /***
      * слушатель отправки файлов в хранилище
      */
-    private OnCompleteListener<Uri> store_upload_success_listener;
+    private OnSuccessListener<Uri> store_upload_success_listener;
 
     /***
      * слушатель процесса отправки файлов в хранилище
@@ -165,7 +175,8 @@ public class NetWork {
         };
 
         store_upload_success_listener = _param1 -> {
-            final String _downloadUrl = _param1.getResult().toString();
+            final String _downloadUrl = _param1.toString();
+            if (onSavedImageListener != null) onSavedImageListener.onSaved(_downloadUrl);
         };
 
         store_download_progress_listener = (OnProgressListener<FileDownloadTask.TaskSnapshot>) _param1 -> {
@@ -437,5 +448,26 @@ public class NetWork {
     public void removeImageFromStorage(String url) {
         fb_storage.getReferenceFromUrl(url).delete();
     }
+
+    /***
+     * отправить картинку в хранилище и сохранить её URL в базу
+     */
+    public void saveImageToStorage(String task_id, String rep_id,
+                                   ReportImage repImg, NetWork ref,
+                                   OnSavedImageListener callBack) {
+        onSavedImageListener = callBack;
+        String ext = repImg.original.substring(repImg.original.lastIndexOf("."));
+        ref.store.child(task_id)
+                .child(rep_id + ext)
+                .putFile(Uri.fromFile(new File(repImg.original)))
+                .continueWithTask(task -> ref.store
+                        .child(task_id)
+                        .child(rep_id + ext)
+                        .getDownloadUrl())
+                .addOnSuccessListener(store_upload_success_listener);
+    }
+
+    private OnSavedImageListener onSavedImageListener;
+
 
 }

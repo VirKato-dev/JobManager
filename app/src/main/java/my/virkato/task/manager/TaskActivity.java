@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -204,7 +203,7 @@ public class TaskActivity extends AppCompatActivity {
 
         lv_reports.setOnItemClickListener((parent, view, position, id) -> {
             startActivity(new Intent(parent.getContext(), ReportActivity.class)
-                    .putExtra("report", ((Report)parent.getAdapter().getItem(position)).asJson())
+                    .putExtra("report", ((Report)parent.getAdapter().getItem(position)).toString())
             );
         });
 

@@ -111,7 +111,7 @@ public class ReportActivity extends AppCompatActivity {
         b_report_save.setOnClickListener(v -> {
             report.description = e_description.getText().toString();
             report.date = System.currentTimeMillis();
-            report.send(v.getContext(), dbReports.getDB());
+            report.send(v.getContext(), dbReports);
         });
 
         pictures = report.images;
@@ -122,19 +122,18 @@ public class ReportActivity extends AppCompatActivity {
 
         ((Rv_picturesAdapter) rv.getAdapter()).setOnClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
-            String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
+            String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position).url;
             //TODO увеличенный просмотр
             AppUtil.showMessage(rv.getContext(), item);
         });
 
         ((Rv_picturesAdapter) rv.getAdapter()).setOnLongClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
-            String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
-            AppUtil.showMessage(rv.getContext(), item);
+            String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position).url;
             dbReports.removeImageFromStorage(pictures.get(position).url);
             pictures.remove(position);
             rv.getAdapter().notifyDataSetChanged();
-            report.send(rv.getContext(), dbReports.getDB());
+            report.send(rv.getContext(), dbReports);
             return true;
         });
 

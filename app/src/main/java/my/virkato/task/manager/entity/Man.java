@@ -32,7 +32,8 @@ public class Man {
     }
 
 
-    public String asJson() {
+    @Override
+    public String toString() {
         return String.format(
                 "{\"id\":\"%s\", \"fio\":\"%s\", \"spec\":\"%s\", \"phone\":\"%s\", \"avatar\":\"%s\"}",
                 id, fio, spec, phone, avatar);
