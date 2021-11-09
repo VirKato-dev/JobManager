@@ -34,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private SharedPreferences sp;
 
-    private final NetWork netWork = new NetWork(NetWork.Info.USERS);
+    private final NetWork dbUsers = new NetWork(NetWork.Info.USERS);
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
 
 
@@ -42,6 +42,8 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.profile);
+
+        dbUsers.receiveNewData();
 
         initialize(_savedInstanceState);
         initializeLogic();
@@ -64,10 +66,10 @@ public class ProfileActivity extends AppCompatActivity {
                     manMap.put("phone", sp.getString("phone", ""));
                 }
             }
-            netWork.getDB().child(manMap.get("uid").toString()).updateChildren(manMap);
+            dbUsers.getDB().child(manMap.get("uid").toString()).updateChildren(manMap);
         });
 
-        netWork.getPeople().setOnPeopleUpdatedListener((list, man) -> {
+        dbUsers.getPeople().setOnPeopleUpdatedListener((list, man) -> {
             if (manMap != null) {
                 if (man.id.equals(manMap.get("uid").toString())) {
                     e_fio.setText(man.fio);

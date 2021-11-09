@@ -42,8 +42,7 @@ public class PeopleActivity extends AppCompatActivity {
     private final Intent tasks = new Intent();
     private final Intent profile = new Intent();
     private final Intent authentication = new Intent();
-    private NetWork netWork = new NetWork(NetWork.Info.USERS);
-    ;
+    private NetWork dbUsers = new NetWork(NetWork.Info.USERS);
     private SharedPreferences sp;
 
 
@@ -129,9 +128,11 @@ public class PeopleActivity extends AppCompatActivity {
             manMap.put("spec", "");
 
             // перезапускаем проверку пользователей
-            netWork = new NetWork(NetWork.Info.USERS);
+//            dbUsers = new NetWork(NetWork.Info.USERS);
+            dbUsers.receiveNewData();
+            dbUsers.startReceiving();
             // сначала получаем список Админов
-            netWork.getPeople().setAdminsListener(adminsUpdatedListener);
+            dbUsers.getPeople().setAdminsListener(adminsUpdatedListener);
         }
 
     }
@@ -139,17 +140,17 @@ public class PeopleActivity extends AppCompatActivity {
     People.OnAdminsUpdatedListener adminsUpdatedListener = new People.OnAdminsUpdatedListener() {
         @Override
         public void onUpdated() {
-            lm_people = netWork.getPeople().getList();
+            lm_people = dbUsers.getPeople().getList();
             lv_people.setAdapter(new Lv_peopleAdapter(lv_people.getContext(), lm_people));
             ((BaseAdapter) lv_people.getAdapter()).notifyDataSetChanged();
-            netWork.getPeople().setOnPeopleUpdatedListener((list, man) -> {
+            dbUsers.getPeople().setOnPeopleUpdatedListener((list, man) -> {
                 lm_people = list;
                 if (man.id.equals(NetWork.user().getUid())) {
                     sp.edit().putString("account", man.toString()).commit();
                     AppUtil.showMessage(getApplicationContext(), "Ваши данные получены");
 
                     delay.cancel();
-                    if (!netWork.isAdmin()) {
+                    if (!dbUsers.isAdmin()) {
                         // обычные пользователи идут на экран своих заданий
                         tasks.setClass(getApplicationContext(), TasksActivity.class);
                         tasks.putExtra("uid", NetWork.user().getUid());

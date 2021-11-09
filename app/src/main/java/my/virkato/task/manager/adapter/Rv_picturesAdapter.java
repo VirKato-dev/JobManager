@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.gson.internal.LinkedTreeMap;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -46,10 +47,14 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ReportImage item = getItem(position);
-        String pict = "";
+        String pict = item.url;
         if (NetWork.isAdmin()) {
-            if (!item.received.equals("")) pict = item.received;
-            else pict = item.url;
+            if (!item.received.equals("")) {
+                if (new File(pict).exists()) {
+                    // пока картинка не скачалась на устройство админа
+                    pict = item.received;
+                }
+            }
         } else {
             if (!item.original.equals("")) pict = item.original;
         }
@@ -76,7 +81,7 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView pic;
+        private ImageView pic;
 
         public ViewHolder(View itemView) {
             super(itemView);

@@ -1,16 +1,13 @@
 package my.virkato.task.manager.adapter;
 
+import android.content.Context;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -25,18 +22,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import my.virkato.task.manager.AppUtil;
-import my.virkato.task.manager.FileUtil;
 import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Report;
 import my.virkato.task.manager.entity.ReportImage;
@@ -148,6 +139,11 @@ public class NetWork {
      */
     private static Reports reports;
 
+
+    private Context context;
+    private static File cacheDir;
+
+
     /***
      * настроить адаптер для получения данных из указанного источника
      * @param folder источник данных
@@ -157,20 +153,14 @@ public class NetWork {
 
         switch (folder) {
             case USERS:
-                if (people == null) people = new People();
-                receiveFromFolder();
-                break;
             case ADMINS:
                 if (people == null) people = new People();
-                receiveAdmins();
                 break;
             case TASKS:
                 if (tasks == null) tasks = new Tasks();
-                receiveFromFolder();
                 break;
             case REPORTS:
                 if (reports == null) reports = new Reports();
-                receiveReports();
         }
 
         store_upload_progress_listener = (OnProgressListener<UploadTask.TaskSnapshot>) _param1 -> {
@@ -188,7 +178,7 @@ public class NetWork {
 
         store_download_success_listener = _param1 -> {
             final long _totalByteCount = _param1.getTotalByteCount();
-
+            Log.e("LOAD PICTURE", "LOADED");
         };
 
         store_delete_success_listener = _param1 -> {
@@ -196,7 +186,23 @@ public class NetWork {
 
         store_failure_listener = _param1 -> {
             final String _message = _param1.getMessage();
+            Log.e("LOAD PICTURE", "FAILED");
         };
+    }
+
+    public void receiveNewData() {
+        switch (folder) {
+            case USERS:
+            case TASKS:
+                stopReceiving();
+                receiveFromFolder();
+                break;
+            case ADMINS:
+                receiveAdmins();
+                break;
+            case REPORTS:
+                receiveReports();
+        }
     }
 
     /***
@@ -339,6 +345,7 @@ public class NetWork {
     private void receiveFromFolder() {
         fb_db = FirebaseDatabase.getInstance();
         db = fb_db.getReference(folder.path);
+        stopReceiving();
         db_child_listener = db.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot _param1, String _param2) {
@@ -410,42 +417,58 @@ public class NetWork {
     /***
      * прекратить получение данных из источника
      */
-    public void stopListening() {
+    public void stopReceiving() {
         if (db_child_listener != null) db.removeEventListener(db_child_listener);
     }
 
     /***
      * начать получение данных из базы
      */
-    public void startListening() {
+    public void startReceiving() {
         if (db_child_listener != null) db.addChildEventListener(db_child_listener);
     }
 
     /***
      * получить картинки из хранилища на устройство админа
+     * @implNote предварительно использовать Network().setContext()
      */
     private void getImagesFromStorage() {
-        for (Report rep : reports.getList()) {
-            for (ReportImage ri : rep.images) {
-                if (ri.received.equals("") || !new File(ri.received).exists()) {
-                    // для неполученных картинок
-                    if (!ri.url.equals("")) {
-                        // которые имеются в хранилище
-                        File toFile = new File(localFolder + "/reports/" + rep.id +
-                                ri.original.substring(ri.original.lastIndexOf("/") + 1));
-                        fb_storage.getReferenceFromUrl(ri.url)
-                                .getFile(toFile)
-                                .addOnSuccessListener(store_download_success_listener);
+        if (cacheDir != null) {
+//            Log.e("cahceDir", cacheDir.getAbsolutePath());
+            // только если имеется связь с контекстом
+            for (Report rep : reports.getList()) {
+                for (ReportImage ri : rep.images) {
+                    if (ri.received.equals("") || !new File(ri.received).exists()) {
+                        // для неполученных картинок
+                        if (!ri.url.equals("")) {
+                            // которые имеются в хранилище
+                            if (!cacheDir.exists()) Log.e("MAKE DIR", cacheDir.mkdir()?"true":"false");
 
-                        ri.received = toFile.getAbsolutePath();
-                        rep.updateReceivedImagePath(db);
+                            File toFile = new File(cacheDir, rep.id +
+                                    ri.original.substring(ri.original.lastIndexOf("/") + 1));
+
+                            fb_storage.getReferenceFromUrl(ri.url)
+                                    .getFile(toFile)
+                                    .addOnSuccessListener(store_download_success_listener)
+                                    .addOnFailureListener(store_failure_listener);
+
+                            ri.received = toFile.getAbsolutePath();
+                            rep.updateReceivedImagePath(db);
+                        }
                     }
                 }
             }
         }
     }
 
-    private String localFolder = Environment.getDownloadCacheDirectory().getAbsolutePath();
+    /***
+     * привязать контекст приложения к процессу скачивания картинок
+     * @param context лучше использовать getApplicationContext()
+     */
+    public void setContext(Context context) {
+        this.context = context;
+        cacheDir = context.getExternalCacheDir();
+    }
 
 
     public void removeImageFromStorage(ReportImage repImg) {

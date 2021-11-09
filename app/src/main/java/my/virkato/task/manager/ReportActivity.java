@@ -84,6 +84,9 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.report);
 
+        dbReports.setContext(getApplicationContext());
+        dbReports.receiveNewData();
+
         e_description = findViewById(R.id.e_description);
         b_report_save = findViewById(R.id.b_report_save);
         rv = findViewById(R.id.rv_pictures);
@@ -99,8 +102,7 @@ public class ReportActivity extends AppCompatActivity {
             finish();
         }
         String json = getIntent().getStringExtra("report");
-        Type type = new TypeToken<HashMap<String, Object>>() {
-        }.getType();
+        Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
         HashMap<String, Object> map = new Gson().fromJson(json, type);
         report = new Report(map);
         if (report.id.equals("")) {
@@ -120,7 +122,7 @@ public class ReportActivity extends AppCompatActivity {
 
         ((Rv_picturesAdapter) rv.getAdapter()).setOnClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
-            String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position).url;
+            ReportImage item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
             //TODO увеличенный просмотр
 //            AppUtil.showMessage(rv.getContext(), item);
         });
@@ -169,19 +171,6 @@ public class ReportActivity extends AppCompatActivity {
         if (report.date > 0 && (System.currentTimeMillis() - report.date) > (5 * 60 * 60 * 1000)) {
             b_report_save.setVisibility(View.GONE);
             b_add_picture.setVisibility(View.GONE);
-        }
-    }
-
-
-    @Override
-    protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
-
-        super.onActivityResult(_requestCode, _resultCode, _data);
-
-        switch (_requestCode) {
-
-            default:
-                break;
         }
     }
 

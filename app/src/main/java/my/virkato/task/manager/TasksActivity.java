@@ -67,6 +67,10 @@ public class TasksActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.tasks);
+
+        dbAdmins.receiveNewData();
+        dbUsers.receiveNewData();
+        dbTasks.receiveNewData();
     }
 
 
@@ -91,15 +95,15 @@ public class TasksActivity extends AppCompatActivity {
 
         UID = getIntent().getStringExtra("uid"); // для какого пользователя
 
-        dbAdmins.stopListening();
-        dbUsers.stopListening();
-        dbTasks.stopListening();
+        dbAdmins.stopReceiving();
+        dbUsers.stopReceiving();
+        dbTasks.stopReceiving();
         admins.setAdminsListener(adminsListener);
         people.setOnPeopleUpdatedListener(peopleListener);
         tasks.setOnTasksUpdatedListener(tasksListener);
-        dbAdmins.startListening();
-        dbUsers.startListening();
-        dbTasks.startListening();
+        dbAdmins.startReceiving();
+        dbUsers.startReceiving();
+        dbTasks.startReceiving();
 
         tasksAdapter = new Lv_tasksAdapter(lm_progress);
         lv_tasks.setAdapter(tasksAdapter);

@@ -134,23 +134,13 @@ public class TaskActivity extends AppCompatActivity {
      */
     boolean init = true;
 
-    private OnCompleteListener<Void> auth_updateEmailListener;
-    private OnCompleteListener<Void> auth_updatePasswordListener;
-    private OnCompleteListener<Void> auth_emailVerificationSentListener;
-    private OnCompleteListener<Void> auth_deleteUserListener;
-    private OnCompleteListener<Void> auth_updateProfileListener;
-    private OnCompleteListener<AuthResult> auth_phoneAuthListener;
-    private OnCompleteListener<AuthResult> auth_googleSignInListener;
-    private OnCompleteListener<AuthResult> _auth_create_user_listener;
-    private OnCompleteListener<AuthResult> _auth_sign_in_listener;
-    private OnCompleteListener<Void> _auth_reset_password_listener;
-
-
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.task);
 
+        dbPeople.receiveNewData();
+        dbTasks.receiveNewData();
         initialize(_savedInstanceState);
         initializeLogic();
     }
@@ -235,55 +225,6 @@ public class TaskActivity extends AppCompatActivity {
                 task.date_finish = time;
             });
         });
-
-        auth_updateEmailListener = _param1 -> {
-            final boolean _success = _param1.isSuccessful();
-            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-        };
-
-        auth_updatePasswordListener = _param1 -> {
-            final boolean _success = _param1.isSuccessful();
-            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-        };
-
-        auth_emailVerificationSentListener = _param1 -> {
-            final boolean _success = _param1.isSuccessful();
-            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-        };
-
-        auth_deleteUserListener = _param1 -> {
-            final boolean _success = _param1.isSuccessful();
-            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-        };
-
-        auth_phoneAuthListener = task -> {
-            final boolean _success = task.isSuccessful();
-            final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
-        };
-
-        auth_updateProfileListener = _param1 -> {
-            final boolean _success = _param1.isSuccessful();
-            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-        };
-
-        auth_googleSignInListener = task -> {
-            final boolean _success = task.isSuccessful();
-            final String _errorMessage = task.getException() != null ? task.getException().getMessage() : "";
-        };
-
-        _auth_create_user_listener = _param1 -> {
-            final boolean _success = _param1.isSuccessful();
-            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-        };
-
-        _auth_sign_in_listener = _param1 -> {
-            final boolean _success = _param1.isSuccessful();
-            final String _errorMessage = _param1.getException() != null ? _param1.getException().getMessage() : "";
-        };
-
-        _auth_reset_password_listener = _param1 -> {
-            final boolean _success = _param1.isSuccessful();
-        };
     }
 
     /***
@@ -331,7 +272,8 @@ public class TaskActivity extends AppCompatActivity {
      * получаем список всех отчётов и выбираем из него только отчёты к текущему заданию
      */
     private void receiveAllReports() {
-        dbReports = new NetWork(NetWork.Info.REPORTS); // заново
+        dbReports.setContext(getApplicationContext()); // для сохранения картинок на устройстве админа
+        dbReports.receiveNewData(); // заново
 
         Reports.OnReportsUpdatedListener onReportsUpdatedListener = () -> {
             lm_reports.clear();
