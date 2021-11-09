@@ -448,8 +448,9 @@ public class NetWork {
     private String localFolder = Environment.getDownloadCacheDirectory().getAbsolutePath();
 
 
-    public void removeImageFromStorage(String url) {
-        fb_storage.getReferenceFromUrl(url).delete();
+    public void removeImageFromStorage(ReportImage repImg) {
+        fb_storage.getReferenceFromUrl(repImg.url).delete();
+        repImg.url = "";
     }
 
     /***

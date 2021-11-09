@@ -93,17 +93,21 @@ public class Report {
                 id, task_id, description, new Gson().toJson(images), date);
     }
 
+    public void delete(NetWork ref) {
+        ref.getDB().child(id).removeValue();
+    }
+
     /***
      * отправить информацию в базу данных
      * @param context для правильной работы заставки загрузки
      * @param ref сслыка на базу и хранилище
      */
     public void send(Context context, NetWork ref) {
-        AppUtil.showSystemWait(context, true);
         this.context = context;
         nw = ref;
         db = ref.getDB();
         store = ref.getStore();
+
         if (images.size() > 0) {
             sendImages();
         } else {
@@ -118,6 +122,7 @@ public class Report {
     private DatabaseReference db;
     private StorageReference store;
 
+
     private void save() {
         db.child(id).updateChildren(this.asMap(), (error, ref) -> AppUtil.showSystemWait(context, false));
     }
@@ -127,7 +132,10 @@ public class Report {
      */
     private void sendImages() {
         pc = images.size();
-        if (pc > 0) sendNextImage();
+        if (pc > 0) {
+            AppUtil.showSystemWait(context, true);
+            sendNextImage();
+        }
     }
 
     // используется при отправке картинок в хранилище
@@ -143,7 +151,6 @@ public class Report {
                 // отправить файл в хранилище
                 NetWork.OnSavedImageListener callBack = url -> {
                     images.get(pc).url = url; // ссылка на файл
-                    save();
                     sendNextImage();
                 };
                 Log.e("SEND START", images.get(pc).original);
@@ -153,8 +160,9 @@ public class Report {
                 sendNextImage();
             }
         } else {
-            Log.e("SEND FINISHED", "");
+            Log.e("SEND FINISHED", ".");
             AppUtil.showSystemWait(context, false);
+            save();
         }
     }
 

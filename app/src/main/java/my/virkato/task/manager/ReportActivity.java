@@ -109,9 +109,7 @@ public class ReportActivity extends AppCompatActivity {
         }
 
         b_report_save.setOnClickListener(v -> {
-            report.description = e_description.getText().toString();
-            report.date = System.currentTimeMillis();
-            report.send(v.getContext(), dbReports);
+            saveReport();
         });
 
         pictures = report.images;
@@ -124,14 +122,17 @@ public class ReportActivity extends AppCompatActivity {
             int position = rv.getChildLayoutPosition(v);
             String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position).url;
             //TODO увеличенный просмотр
-            AppUtil.showMessage(rv.getContext(), item);
+//            AppUtil.showMessage(rv.getContext(), item);
         });
 
         ((Rv_picturesAdapter) rv.getAdapter()).setOnLongClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
-            String item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position).url;
-            dbReports.removeImageFromStorage(pictures.get(position).url);
+            ReportImage item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
             pictures.remove(position);
+            if (!item.url.equals("")) {
+                dbReports.removeImageFromStorage(item);
+                saveReport();
+            }
             rv.getAdapter().notifyDataSetChanged();
             report.send(rv.getContext(), dbReports);
             return true;
@@ -142,6 +143,16 @@ public class ReportActivity extends AppCompatActivity {
         b_add_picture.setOnClickListener(v -> {
             mGetContent.launch("image/*");
         });
+    }
+
+    /***
+     * сохранить отчёт
+     */
+    void saveReport() {
+        report.delete(dbReports);
+        report.description = e_description.getText().toString();
+        report.date = System.currentTimeMillis();
+        report.send(this, dbReports);
     }
 
     /***
