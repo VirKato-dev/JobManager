@@ -26,10 +26,13 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import my.virkato.task.manager.AppUtil;
@@ -298,12 +301,12 @@ public class NetWork {
     private final ValueEventListener dbr_listener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            reports.getList().clear();
-            GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
+            ArrayList<Report> list = reports.getList();
+            list.clear();
+            GenericTypeIndicator<HashMap<String,Object>> ind = new GenericTypeIndicator<HashMap<String,Object>>() {
             };
             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                Report r = new Report(dataSnapshot.getValue(ind));
-                reports.getList().add(r);
+                list.add(new Report(dataSnapshot.getValue(ind)));
             }
             if (isAdmin()) {
                 getImagesFromStorage();

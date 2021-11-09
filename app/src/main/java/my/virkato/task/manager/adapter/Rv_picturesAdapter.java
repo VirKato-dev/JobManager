@@ -66,15 +66,10 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
         return listItem.size();
     }
 
-    //TODO починить извлечение images из Report
-    public ReportImage getItem(int position) {
-        ReportImage repImg = new ReportImage();
-        repImg.original = listItem.get(position).original;
-        repImg.url = listItem.get(position).url;
-        repImg.received = listItem.get(position).received;
-        return repImg;
-    }
 
+    public ReportImage getItem(int position) {
+        return listItem.get(position);
+    }
 
     /***
      * Виджет элемента списка

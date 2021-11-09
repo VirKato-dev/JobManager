@@ -3,10 +3,15 @@ package my.virkato.task.manager.entity;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -50,8 +55,12 @@ public class Report {
         if (map.containsKey("id")) id = map.get("id").toString();
         if (map.containsKey("task_id")) task_id = map.get("task_id").toString();
         if (map.containsKey("description")) description = map.get("description").toString();
-        if (map.containsKey("images")) images = (ArrayList<ReportImage>) map.get("images");
         if (map.containsKey("date")) date = (long) Double.parseDouble(map.get("date").toString());
+        if (map.containsKey("images")) {
+            ArrayList<LinkedTreeMap<String,String>> ltm = (ArrayList<LinkedTreeMap<String, String>>) map.get("images");
+            Type type = new TypeToken<ArrayList<ReportImage>>(){}.getType();
+            images = new Gson().fromJson(new Gson().toJson(ltm), type);
+        }
     }
 
 
@@ -76,6 +85,7 @@ public class Report {
      * в виде JSON
      * @return готово к отправке в другую Activity
      */
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.US,
