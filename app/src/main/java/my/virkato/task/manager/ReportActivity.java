@@ -1,20 +1,31 @@
 package my.virkato.task.manager;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +74,11 @@ public class ReportActivity extends AppCompatActivity {
      * картинки отчёта
      */
     private ArrayList<ReportImage> pictures;
+
+    /***
+     * период к течение которого мастер может отредактировать свой отчёт
+     */
+    private long editPeriod = 5 * 60 * 60 * 1000;
 
     /***
      * приёмник выбранного файла
@@ -117,26 +133,31 @@ public class ReportActivity extends AppCompatActivity {
         pictures = report.images;
 
         rv.setAdapter(new Rv_picturesAdapter(this, pictures));
-        rv.setLayoutManager(new LinearLayoutManager(this));
+//        rv.setLayoutManager(new LinearLayoutManager(this));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
+        gridLayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+        rv.setLayoutManager(gridLayoutManager);
         rv.getAdapter().notifyDataSetChanged();
 
         ((Rv_picturesAdapter) rv.getAdapter()).setOnClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
             ReportImage item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
             //TODO увеличенный просмотр
-//            AppUtil.showMessage(rv.getContext(), item);
+            showImageFullSize(item);
         });
 
         ((Rv_picturesAdapter) rv.getAdapter()).setOnLongClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
-            ReportImage item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
-            pictures.remove(position);
-            if (!item.url.equals("")) {
-                dbReports.removeImageFromStorage(item);
-                saveReport();
+            if (!NetWork.isAdmin()) {
+                ReportImage item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
+                pictures.remove(position);
+                if (!item.url.equals("")) {
+                    dbReports.removeImageFromStorage(item);
+                    saveReport();
+                }
+                rv.getAdapter().notifyDataSetChanged();
+                report.send(rv.getContext(), dbReports);
             }
-            rv.getAdapter().notifyDataSetChanged();
-            report.send(rv.getContext(), dbReports);
             return true;
         });
 
@@ -165,13 +186,36 @@ public class ReportActivity extends AppCompatActivity {
      */
     private void showReport() {
         e_description.setText(report.description);
+        e_description.setEnabled(!NetWork.isAdmin()); // только мастер может редактировать
         b_report_save.setVisibility(NetWork.isAdmin() ? View.GONE : View.VISIBLE);
         b_add_picture.setVisibility(NetWork.isAdmin() ? View.GONE : View.VISIBLE);
 
-        if (report.date > 0 && (System.currentTimeMillis() - report.date) > (5 * 60 * 60 * 1000)) {
+        if (report.date > 0 && (System.currentTimeMillis() - report.date) > editPeriod) {
             b_report_save.setVisibility(View.GONE);
             b_add_picture.setVisibility(View.GONE);
         }
     }
 
+    private void showImageFullSize(ReportImage repImg) {
+        String pict = repImg.url;
+        if (NetWork.isAdmin()) {
+            if (!repImg.received.equals("")) {
+                if (new File(repImg.received).exists()) {
+                    pict = "file://"+repImg.received;
+                }
+            }
+        } else {
+            pict = "file://"+repImg.original;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog alertDialog = builder.create();
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View photo = inflater.inflate(R.layout.a_photo, null);
+        PhotoView photoView = photo.findViewById(R.id.pv);
+        photoView.setImageURI(Uri.parse(pict));
+        photoView.setAllowParentInterceptOnEdge(true);
+        alertDialog.setView(photoView);
+        alertDialog.show();
+//        alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    }
 }
