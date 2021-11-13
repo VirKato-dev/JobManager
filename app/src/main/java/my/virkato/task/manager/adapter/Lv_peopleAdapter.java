@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import my.virkato.task.manager.R;
 import my.virkato.task.manager.entity.Man;
@@ -17,43 +16,41 @@ import my.virkato.task.manager.entity.Man;
  * Список всех пользователей
  */
 public class Lv_peopleAdapter extends BaseAdapter {
-    ArrayList<Man> _data;
-    Context context;
+    ArrayList<Man> data;
 
-    public Lv_peopleAdapter(Context context, ArrayList<Man> _arr) {
-        _data = _arr;
-        this.context = context;
+    public Lv_peopleAdapter(ArrayList<Man> people) {
+        data = people;
     }
 
     @Override
     public int getCount() {
-        return _data.size();
+        return data.size();
     }
 
     @Override
-    public Man getItem(int _index) {
-        return _data.get(_index);
+    public Man getItem(int index) {
+        return data.get(index);
     }
 
     @Override
-    public long getItemId(int _index) {
-        return _index;
+    public long getItemId(int index) {
+        return index;
     }
 
     @Override
-    public View getView(final int _position, View _v, ViewGroup _container) {
-        LayoutInflater _inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View _view = _v;
-        if (_view == null) {
-            _view = _inflater.inflate(R.layout.a_man, null);
+    public View getView(final int position, View v, ViewGroup container) {
+        LayoutInflater inflater = LayoutInflater.from(container.getContext());
+        View view = v;
+        if (view == null) {
+            view = inflater.inflate(R.layout.a_man, null);
         }
 
-        final TextView textview1 = _view.findViewById(R.id.t_description);
-        final TextView textview2 = _view.findViewById(R.id.e_task_description);
+        final TextView textview1 = view.findViewById(R.id.t_description);
+        final TextView textview2 = view.findViewById(R.id.e_task_description);
 
-        textview1.setText(_data.get(_position).fio);
-        textview2.setText(_data.get(_position).spec);
+        textview1.setText(getItem(position).fio);
+        textview2.setText(getItem(position).spec);
 
-        return _view;
+        return view;
     }
 }

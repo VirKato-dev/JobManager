@@ -150,6 +150,8 @@ public class NetWork {
      */
     public NetWork(Info folder) {
         this.folder = folder;
+        fb_db = FirebaseDatabase.getInstance();
+        db = fb_db.getReference(folder.path);
 
         switch (folder) {
             case USERS:
@@ -296,8 +298,6 @@ public class NetWork {
      * Получить список UID Админов
      */
     private void receiveAdmins() {
-        fb_db = FirebaseDatabase.getInstance();
-        db = fb_db.getReference(folder.path);
         db.addListenerForSingleValueEvent(dba_listener);
     }
 
@@ -331,8 +331,6 @@ public class NetWork {
      * Получить список отчётов
      */
     private void receiveReports() {
-        fb_db = FirebaseDatabase.getInstance();
-        db = fb_db.getReference(folder.path);
         db.addListenerForSingleValueEvent(dbr_listener);
 
         fb_storage = FirebaseStorage.getInstance();
@@ -343,8 +341,6 @@ public class NetWork {
      * Получать данные из выбранной папки (пользователи, задания, отчёты)
      */
     private void receiveFromFolder() {
-        fb_db = FirebaseDatabase.getInstance();
-        db = fb_db.getReference(folder.path);
         stopReceiving();
         db_child_listener = db.addChildEventListener(new ChildEventListener() {
             @Override

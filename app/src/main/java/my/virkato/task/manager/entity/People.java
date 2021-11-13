@@ -1,7 +1,5 @@
 package my.virkato.task.manager.entity;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;

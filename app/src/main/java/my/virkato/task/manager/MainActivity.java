@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void start() {
-        Intent intent = new Intent().setClass(getApplicationContext(), TasksActivity.class);
+        Intent intent = new Intent().setClass(getApplicationContext(), PeopleActivity.class);
         startActivity(intent);
         finish();
     }

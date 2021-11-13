@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import my.virkato.task.manager.adapter.Lv_tasksAdapter;
 import my.virkato.task.manager.adapter.NetWork;
@@ -26,6 +27,7 @@ public class TasksActivity extends AppCompatActivity {
     private ListView lv_tasks;
     private Button b_work;
     private Button b_finished;
+    private Button b_people;
     private FloatingActionButton fab_add_task;
 
     private Lv_tasksAdapter tasksAdapter;
@@ -45,15 +47,12 @@ public class TasksActivity extends AppCompatActivity {
     private People admins = dbAdmins.getPeople();
 
     private People.OnPeopleUpdatedListener peopleListener = (list, man) -> {
-        if (NetWork.user() != null) UID = NetWork.user().getUid();
-        else startActivity(new Intent(getApplicationContext(), AuthActivity.class));
         setMainList();
         showWaitBanner(false);
         separateTasks(tasks.getList(), false, null);
     };
 
     private People.OnAdminsUpdatedListener adminsListener = () -> {
-        if (NetWork.user() == null) startActivity(new Intent(getApplicationContext(), AuthActivity.class));
         showWaitBanner(false);
         separateTasks(tasks.getList(), false, null);
     };
@@ -78,6 +77,7 @@ public class TasksActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        if (NetWork.user() == null) startActivity(new Intent(getApplicationContext(), AuthActivity.class));
         showWaitBanner(true);
 
         initVariables();
@@ -90,10 +90,16 @@ public class TasksActivity extends AppCompatActivity {
         lv_tasks = findViewById(R.id.lv_tasks);
         b_work = findViewById(R.id.button1);
         b_finished = findViewById(R.id.button2);
+        b_people = findViewById(R.id.b_people);
         fab_add_task = findViewById(R.id.fab_add_task);
         fab_add_task.setVisibility(View.GONE);
 
         UID = getIntent().getStringExtra("uid"); // для какого пользователя
+        if (UID == null) UID = NetWork.user().getUid();
+
+        tasksAdapter = new Lv_tasksAdapter(lm_progress);
+        lv_tasks.setAdapter(tasksAdapter);
+        tasksAdapter.notifyDataSetChanged();
 
         dbAdmins.stopReceiving();
         dbUsers.stopReceiving();
@@ -104,10 +110,6 @@ public class TasksActivity extends AppCompatActivity {
         dbAdmins.startReceiving();
         dbUsers.startReceiving();
         dbTasks.startReceiving();
-
-        tasksAdapter = new Lv_tasksAdapter(lm_progress);
-        lv_tasks.setAdapter(tasksAdapter);
-        tasksAdapter.notifyDataSetChanged();
 
         lv_tasks.setOnItemClickListener((parent, view, position, id) -> {
             startActivity(new Intent(parent.getContext(), TaskActivity.class)
@@ -124,6 +126,10 @@ public class TasksActivity extends AppCompatActivity {
             finished = true;
             setMainList();
         });
+
+        b_people.setOnClickListener(v -> {
+            startActivity(new Intent(v.getContext(), PeopleActivity.class));
+        });
     }
 
     /***
@@ -135,6 +141,13 @@ public class TasksActivity extends AppCompatActivity {
     public void separateTasks(ArrayList<Task> tasks, boolean removed, Task task) {
         lm_progress.clear();
         lm_finished.clear();
+        Iterator<Task> it = tasks.iterator();
+        while (it.hasNext()) {
+            Task t = it.next();
+            if (!t.master_uid.equals(UID) || !NetWork.isAdmin()) {
+                it.remove();
+            }
+        }
         for (Task t : tasks) {
             if (NetWork.isAdmin() || t.master_uid.equals(UID)) {
                 if (t.finished) {
@@ -155,6 +168,7 @@ public class TasksActivity extends AppCompatActivity {
             tasksAdapter.setNewList(lm_progress);
         }
         showFAB(NetWork.isAdmin());
+//        b_people.setVisibility(NetWork.isAdmin()?View.VISIBLE:View.GONE);
     }
 
 

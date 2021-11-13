@@ -12,11 +12,14 @@ public class Man {
     public String avatar = "";
 
 
+    public Man() {}
+
+
     public Man(HashMap<String, Object> map) {
         if (map.containsKey("fio")) fio = map.get("fio").toString();
         if (map.containsKey("spec")) spec = map.get("spec").toString();
         if (map.containsKey("phone")) phone = map.get("phone").toString();
-        if (map.containsKey("id")) id = map.get("uid").toString();
+        if (map.containsKey("uid")) id = map.get("uid").toString();
         if (map.containsKey("avatar")) avatar = map.get("avatar").toString();
     }
 
@@ -35,7 +38,7 @@ public class Man {
     @Override
     public String toString() {
         return String.format(
-                "{\"id\":\"%s\", \"fio\":\"%s\", \"spec\":\"%s\", \"phone\":\"%s\", \"avatar\":\"%s\"}",
+                "{\"uid\":\"%s\", \"fio\":\"%s\", \"spec\":\"%s\", \"phone\":\"%s\", \"avatar\":\"%s\"}",
                 id, fio, spec, phone, avatar);
     }
 }

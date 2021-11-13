@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,13 +12,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
 
 import my.virkato.task.manager.adapter.NetWork;
+import my.virkato.task.manager.entity.Man;
+import my.virkato.task.manager.entity.People;
 
 /***
  * Страница профиля пользователя
@@ -25,7 +27,7 @@ import my.virkato.task.manager.adapter.NetWork;
 public class ProfileActivity extends AppCompatActivity {
 
 
-    private HashMap<String, Object> manMap = new HashMap<>();
+    private Man you = new Man();
 
     private TextView t_phone;
     private EditText e_fio;
@@ -35,7 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
     private SharedPreferences sp;
 
     private final NetWork dbUsers = new NetWork(NetWork.Info.USERS);
-    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private final NetWork dbAdmins = new NetWork(NetWork.Info.ADMINS);
 
 
     @Override
@@ -43,15 +45,26 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.profile);
 
-        dbUsers.receiveNewData();
-
+        AppUtil.showSystemWait(this, true);
         initialize(_savedInstanceState);
         initializeLogic();
+
+        dbAdmins.getPeople().setAdminsListener(this::initializeLogic);
+
+        dbUsers.getPeople().setOnPeopleUpdatedListener((list, man) -> {
+            if (NetWork.user() != null) {
+                Man tmp = dbUsers.getPeople().findManById(you.id);
+                if (tmp != null) {
+                    you = tmp;
+                    showUserData();
+                }
+            }
+        });
+
     }
 
 
     private void initialize(Bundle _savedInstanceState) {
-
         t_phone = findViewById(R.id.t_phone);
         e_fio = findViewById(R.id.e_fio);
         e_spec = findViewById(R.id.e_spec);
@@ -59,43 +72,30 @@ public class ProfileActivity extends AppCompatActivity {
         sp = getSharedPreferences("data", Activity.MODE_PRIVATE);
 
         b_save.setOnClickListener(_view -> {
-            manMap.put("fio", e_fio.getText().toString());
-            manMap.put("spec", e_spec.getText().toString());
-            if (manMap.get("uid").toString().equals(auth.getCurrentUser().getUid())) {
-                if (!manMap.containsKey("phone")) {
-                    manMap.put("phone", sp.getString("phone", ""));
+            you.fio = e_fio.getText().toString();
+            you.spec = e_spec.getText().toString();
+            if (you.id.equals(NetWork.user().getUid())) {
+                if (!you.phone.equals("")) {
+                    you.phone = sp.getString("phone", "");
                 }
             }
-            dbUsers.getDB().child(manMap.get("uid").toString()).updateChildren(manMap);
+            dbUsers.getDB().child(you.id).updateChildren(you.asMap());
         });
-
-        dbUsers.getPeople().setOnPeopleUpdatedListener((list, man) -> {
-            if (manMap != null) {
-                if (man.id.equals(manMap.get("uid").toString())) {
-                    e_fio.setText(man.fio);
-                    e_spec.setText(man.spec);
-                    t_phone.setText(man.phone);
-                }
-            }
-        });
-
     }
 
 
     private void initializeLogic() {
-        if ((auth.getCurrentUser() == null)) {
-            finish();
-        } else {
+        if ((NetWork.user() != null)) {
             if ("".equals(getIntent().getStringExtra("man"))) {
-                manMap.put("uid", auth.getCurrentUser().getUid());
+                you.id = NetWork.user().getUid();
             } else {
-                manMap = new Gson().fromJson(getIntent().getStringExtra("man"), new TypeToken<HashMap<String, Object>>() {
-                }.getType());
-                e_fio.setText(manMap.get("fio").toString());
-                e_spec.setText(manMap.get("spec").toString());
-                t_phone.setText(manMap.get("phone").toString());
+                you = new Man(new Gson().fromJson(getIntent().getStringExtra("man"),
+                        new TypeToken<HashMap<String, Object>>() {
+                        }.getType()));
             }
-            _initDesign();
+            showUserData();
+        } else {
+            finish();
         }
     }
 
@@ -110,17 +110,22 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public void _initDesign() {
+    private void showUserData() {
         e_fio.setEnabled(false);
         e_spec.setEnabled(false);
         b_save.setVisibility(View.GONE);
-        if ((auth.getCurrentUser() != null)) {
-            if (auth.getCurrentUser().getUid().equals(manMap.get("uid").toString())) {
+        if ((NetWork.user() != null)) {
+            if (NetWork.user().getUid().equals(you.id) || NetWork.isAdmin()) {
                 e_fio.setEnabled(true);
                 e_spec.setEnabled(true);
                 b_save.setVisibility(View.VISIBLE);
             }
         }
+
+        e_fio.setText(you.fio);
+        e_spec.setText(you.spec);
+        t_phone.setText(you.phone);
+        AppUtil.showSystemWait(this, false);
     }
 
 }

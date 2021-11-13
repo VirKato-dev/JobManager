@@ -45,8 +45,16 @@
 			android:id="@+id/lv_tasks"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:layout_weight="1"
 			android:divider="@null"
 			android:dividerHeight="0dp" />
+
+		<Button
+			android:id="@+id/b_people"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="Люди"
+			android:visibility="gone" />
 	</LinearLayout>
 
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
