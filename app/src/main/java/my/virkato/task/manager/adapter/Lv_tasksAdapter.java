@@ -6,7 +6,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import my.virkato.task.manager.R;
 import my.virkato.task.manager.entity.Man;
@@ -50,6 +52,7 @@ public class Lv_tasksAdapter extends BaseAdapter {
 
         TextView t_description = _view.findViewById(R.id.t_description);
         TextView t_fio = _view.findViewById(R.id.t_fio);
+        TextView t_task_date = _view.findViewById(R.id.t_task_date);
 
         Task task = getItem(_position);
         String fio = "БЕЗ ИМЕНИ";
@@ -58,6 +61,7 @@ public class Lv_tasksAdapter extends BaseAdapter {
 
         t_fio.setText(fio);
         t_description.setText(task.description);
+        t_task_date.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(task.date_start));
 
         return _view;
     }
