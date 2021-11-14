@@ -13,6 +13,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import my.virkato.task.manager.adapter.Lv_peopleAdapter;
 import my.virkato.task.manager.adapter.Lv_tasksAdapter;
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.entity.People;
@@ -28,6 +29,7 @@ public class TasksActivity extends AppCompatActivity {
     private Button b_work;
     private Button b_finished;
     private Button b_people;
+    private Button b_my_profile;
     private FloatingActionButton fab_add_task;
 
     private Lv_tasksAdapter tasksAdapter;
@@ -90,6 +92,7 @@ public class TasksActivity extends AppCompatActivity {
         lv_tasks = findViewById(R.id.lv_tasks);
         b_work = findViewById(R.id.button1);
         b_finished = findViewById(R.id.button2);
+        b_my_profile = findViewById(R.id.b_my_profile);
         b_people = findViewById(R.id.b_people);
         fab_add_task = findViewById(R.id.fab_add_task);
         fab_add_task.setVisibility(View.GONE);
@@ -113,7 +116,7 @@ public class TasksActivity extends AppCompatActivity {
 
         lv_tasks.setOnItemClickListener((parent, view, position, id) -> {
             startActivity(new Intent(parent.getContext(), TaskActivity.class)
-                    .putExtra("task", ((Task) parent.getAdapter().getItem(position)).toString())
+                    .putExtra("task", parent.getAdapter().getItem(position).toString())
             );
         });
 
@@ -125,6 +128,12 @@ public class TasksActivity extends AppCompatActivity {
         b_finished.setOnClickListener(view -> {
             finished = true;
             setMainList();
+        });
+
+        b_my_profile.setOnClickListener( view -> {
+            Intent profile = new Intent(view.getContext(), ProfileActivity.class);
+            profile.putExtra("man", dbUsers.getPeople().findManById(NetWork.user().getUid()).toString());
+            startActivity(profile);
         });
 
         b_people.setOnClickListener(v -> {

@@ -28,4 +28,5 @@
 	<string name="button_in_progress">In progress</string>
 	<string name="button_in_finished">In finished</string>
 	<string name="button_list_people">People</string>
+    <string name="button_my_profile">Profile</string>
 </resources>
