@@ -144,7 +144,7 @@ public class TasksActivity extends AppCompatActivity {
         Iterator<Task> it = tasks.iterator();
         while (it.hasNext()) {
             Task t = it.next();
-            if (!(NetWork.isAdmin() || t.master_uid.equals(UID))) {
+            if (!t.master_uid.equals(UID)) {
                 it.remove();
             }
         }

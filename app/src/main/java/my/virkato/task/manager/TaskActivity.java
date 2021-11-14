@@ -3,6 +3,7 @@ package my.virkato.task.manager;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -138,17 +139,19 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.task);
-
-        dbPeople.receiveNewData();
-        dbTasks.receiveNewData();
         initialize(_savedInstanceState);
         initializeLogic();
+
+//        dbPeople.receiveNewData();
+        dbTasks.receiveNewData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        receiveAllReports();
+        if (NetWork.user() != null) {
+            receiveAllReports();
+        } else finish();
     }
 
     private void initialize(Bundle _savedInstanceState) {
@@ -171,10 +174,10 @@ public class TaskActivity extends AppCompatActivity {
         i_date_finish.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
 
         spin_master.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, masters));
-        ((ArrayAdapter)spin_master.getAdapter()).notifyDataSetChanged();
+        ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
 
         spin_spec.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, spec));
-        ((ArrayAdapter)spin_spec.getAdapter()).notifyDataSetChanged();
+        ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
 
         spin_spec.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -193,7 +196,7 @@ public class TaskActivity extends AppCompatActivity {
 
         lv_reports.setOnItemClickListener((parent, view, position, id) -> {
             startActivity(new Intent(parent.getContext(), ReportActivity.class)
-                    .putExtra("report", ((Report)parent.getAdapter().getItem(position)).toString())
+                    .putExtra("report", parent.getAdapter().getItem(position).toString())
             );
         });
 
@@ -211,7 +214,7 @@ public class TaskActivity extends AppCompatActivity {
 
         b_add_report.setOnClickListener(_view -> {
             startActivity(new Intent(this, ReportActivity.class)
-            .putExtra("report", "{\"task_id\":\""+task.id+"\"}"));
+                    .putExtra("report", "{\"task_id\":\"" + task.id + "\"}"));
         });
 
         l_date_start.setOnClickListener(v -> {
@@ -237,11 +240,16 @@ public class TaskActivity extends AppCompatActivity {
         e_description.setEnabled(admin);
         l_date_start.setEnabled(admin);
         l_date_end.setEnabled(admin);
-
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
+
         if (!task.master_uid.equals("")) {
+            String master = dbPeople.getPeople().findManById(task.master_uid).id;
+            String currentUser = NetWork.user().getUid();
+            b_add_report.setVisibility(
+                    currentUser.equals(master) ? View.VISIBLE : View.GONE);
+
             e_description.setText(task.description);
             t_date_start.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_start));
             t_date_finish.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_finish));
@@ -300,7 +308,7 @@ public class TaskActivity extends AppCompatActivity {
                 String cvalif = m.spec;
                 if (!cvalif.equals("admin") && !spec.contains(cvalif)) spec.add(cvalif);
             }
-            ((ArrayAdapter)spin_spec.getAdapter()).notifyDataSetChanged();
+            ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
 
             if (init) {
                 if (!task.master_uid.equals("")) {
@@ -327,7 +335,7 @@ public class TaskActivity extends AppCompatActivity {
             }
             masters.clear();
             masters.addAll(selected);
-            ((ArrayAdapter)spin_master.getAdapter()).notifyDataSetChanged();
+            ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();
 
             if (init) {
                 spin_master.setSelection(masters_uid.indexOf(task.master_uid));

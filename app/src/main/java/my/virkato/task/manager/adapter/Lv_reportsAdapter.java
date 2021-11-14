@@ -1,5 +1,6 @@
 package my.virkato.task.manager.adapter;
 
+import android.content.Context;
 import android.graphics.PorterDuff;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import my.virkato.task.manager.R;
+import my.virkato.task.manager.entity.Man;
 import my.virkato.task.manager.entity.Report;
 
 /***
@@ -44,9 +46,10 @@ public class Lv_reportsAdapter extends BaseAdapter {
         return _index;
     }
 
-    public View getView(final int _position, View _v, ViewGroup _container) {
-        LayoutInflater _inflater = LayoutInflater.from(_container.getContext());
-        View _view = _v;
+    public View getView(final int position, View v, ViewGroup container) {
+        Context cont = container.getContext();
+        LayoutInflater _inflater = LayoutInflater.from(cont);
+        View _view = v;
         if (_view == null) {
             _view = _inflater.inflate(R.layout.a_report, null);
         }
@@ -54,14 +57,27 @@ public class Lv_reportsAdapter extends BaseAdapter {
         final ImageView i_images = _view.findViewById(R.id.i_images);
         final TextView t_desc = _view.findViewById(R.id.t_desc);
         final TextView t_date = _view.findViewById(R.id.t_date);
+        final TextView t_repFIO = _view.findViewById(R.id.t_repFIO);
 
-//        t_desc.setEllipsize(TextUtils.TruncateAt.END);
-        i_images.setColorFilter(0xFF2196F3, PorterDuff.Mode.MULTIPLY);
+        if (getItem(position).images.size() > 0) i_images.setVisibility(View.VISIBLE);
+        else i_images.setVisibility(View.INVISIBLE);
+        i_images.setColorFilter(R.color.colorPrimary, PorterDuff.Mode.MULTIPLY);
 
-        t_desc.setText(getItem(_position).description);
-        if (getItem(_position).date > 0)
-            t_date.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(getItem(_position).date));
+        t_desc.setEllipsize(TextUtils.TruncateAt.END);
+        t_desc.setText(getItem(position).description);
 
+        if (getItem(position).date > 0)
+            t_date.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(getItem(position).date));
+
+        String m_id = getItem(position).master;
+        String name = cont.getString(R.string.noname);
+        if (m_id != null && !m_id.equals("")) {
+            Man man = new NetWork(NetWork.Info.USERS).getPeople().findManById(m_id);
+            if (man != null) {
+                name = man.fio;
+            }
+        }
+        t_repFIO.setText(name);
         return _view;
     }
 }

@@ -1,24 +1,17 @@
 package my.virkato.task.manager;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -34,6 +27,7 @@ import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.adapter.Rv_picturesAdapter;
 import my.virkato.task.manager.entity.Report;
 import my.virkato.task.manager.entity.ReportImage;
+import my.virkato.task.manager.entity.Task;
 
 /***
  * оформить отчёт о ходе работ
@@ -58,7 +52,7 @@ public class ReportActivity extends AppCompatActivity {
     /***
      * адаптер для получения списка отчётов
      */
-    private NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
+    private final NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
 
     /***
      * текущий отчёт
@@ -81,6 +75,21 @@ public class ReportActivity extends AppCompatActivity {
     private long editPeriod = 5 * 60 * 60 * 1000;
 
     /***
+     * мастер текущего задания
+     */
+    private String master = "";
+
+    /***
+     * отчёт к этому заданию
+     */
+    private String taskId = "";
+
+    /***
+     * можно ли изменять/создавать отчёт
+     */
+    private boolean canChange = false;
+
+    /***
      * приёмник выбранного файла
      */
     private ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -101,7 +110,7 @@ public class ReportActivity extends AppCompatActivity {
         setContentView(R.layout.report);
 
         dbReports.setContext(getApplicationContext());
-        dbReports.receiveNewData();
+//        dbReports.receiveNewData();
 
         e_description = findViewById(R.id.e_description);
         b_report_save = findViewById(R.id.b_report_save);
@@ -120,6 +129,7 @@ public class ReportActivity extends AppCompatActivity {
         String json = getIntent().getStringExtra("report");
         Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
         HashMap<String, Object> map = new Gson().fromJson(json, type);
+        taskId = map.get("task_id").toString();
         report = new Report(map);
         if (report.id.equals("")) {
             // создать новый отчёт к указанному заданию
@@ -129,6 +139,10 @@ public class ReportActivity extends AppCompatActivity {
         b_report_save.setOnClickListener(v -> {
             saveReport();
         });
+
+        Task task = dbReports.getTasks().findTaskById(taskId);
+        if (task != null) master = task.master_uid;
+        canChange = master.equals(NetWork.user().getUid());
 
         pictures = report.images;
 
@@ -142,7 +156,6 @@ public class ReportActivity extends AppCompatActivity {
         ((Rv_picturesAdapter) rv.getAdapter()).setOnClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
             ReportImage item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
-            //TODO увеличенный просмотр
             showImageFullSize(item);
         });
 
@@ -175,6 +188,7 @@ public class ReportActivity extends AppCompatActivity {
         report.delete(dbReports);
         report.description = e_description.getText().toString();
         report.date = System.currentTimeMillis();
+        report.master = NetWork.user().getUid();
         report.send(this, dbReports);
     }
 
@@ -186,9 +200,9 @@ public class ReportActivity extends AppCompatActivity {
      */
     private void showReport() {
         e_description.setText(report.description);
-        e_description.setEnabled(!NetWork.isAdmin()); // только мастер может редактировать
-        b_report_save.setVisibility(NetWork.isAdmin() ? View.GONE : View.VISIBLE);
-        b_add_picture.setVisibility(NetWork.isAdmin() ? View.GONE : View.VISIBLE);
+        e_description.setEnabled(canChange); // только мастер может редактировать
+        b_report_save.setVisibility(canChange ? View.VISIBLE : View.GONE);
+        b_add_picture.setVisibility(canChange ? View.VISIBLE : View.GONE);
 
         if (report.date > 0 && (System.currentTimeMillis() - report.date) > editPeriod) {
             b_report_save.setVisibility(View.GONE);

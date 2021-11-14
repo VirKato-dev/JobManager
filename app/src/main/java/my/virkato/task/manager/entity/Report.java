@@ -33,6 +33,11 @@ public class Report {
     public String task_id = "";
 
     /***
+     * идентификатор мастера отправившего текущий отчёт
+     */
+    public String master = "";
+
+    /***
      * описание отчёта
      */
     public String description = "";
@@ -54,6 +59,7 @@ public class Report {
     public Report(HashMap<String, Object> map) {
         if (map.containsKey("id")) id = map.get("id").toString();
         if (map.containsKey("task_id")) task_id = map.get("task_id").toString();
+        if (map.containsKey("master")) master = map.get("master").toString();
         if (map.containsKey("description")) description = map.get("description").toString();
         if (map.containsKey("date")) date = (long) Double.parseDouble(map.get("date").toString());
         if (map.containsKey("images")) {
@@ -75,6 +81,7 @@ public class Report {
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", id);
         map.put("task_id", task_id);
+        map.put("master", master);
         map.put("description", description);
         map.put("images", images);
         map.put("date", date);
@@ -89,8 +96,8 @@ public class Report {
     @Override
     public String toString() {
         return String.format(Locale.US,
-                "{\"id\":\"%s\", \"task_id\":\"%s\", \"description\":\"%s\", \"images\":%s, \"date\":%d}",
-                id, task_id, description, new Gson().toJson(images), date);
+                "{\"id\":\"%s\", \"task_id\":\"%s\", \"master\":\"%s\", \"description\":\"%s\", \"images\":%s, \"date\":%d}",
+                id, task_id, master, description, new Gson().toJson(images), date);
     }
 
     public void delete(NetWork ref) {
