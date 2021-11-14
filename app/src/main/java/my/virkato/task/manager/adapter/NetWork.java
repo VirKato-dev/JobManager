@@ -163,6 +163,8 @@ public class NetWork {
                 break;
             case REPORTS:
                 if (reports == null) reports = new Reports();
+                fb_storage = FirebaseStorage.getInstance();
+                store = fb_storage.getReference(folder.path);
         }
 
         store_upload_progress_listener = (OnProgressListener<UploadTask.TaskSnapshot>) _param1 -> {
@@ -330,9 +332,6 @@ public class NetWork {
      */
     private void receiveReports() {
         db.addListenerForSingleValueEvent(dbr_listener);
-
-        fb_storage = FirebaseStorage.getInstance();
-        store = fb_storage.getReference(folder.path);
     }
 
     /***
@@ -474,14 +473,14 @@ public class NetWork {
      * отправить картинку в хранилище и сохранить её URL в базу
      */
     public void saveImageToStorage(String task_id, String rep_id,
-                                   ReportImage repImg, NetWork ref,
+                                   ReportImage repImg,
                                    OnSavedImageListener callBack) {
         onSavedImageListener = callBack;
         String ext = repImg.original.substring(repImg.original.lastIndexOf("."));
-        ref.store.child(task_id)
+        store.child(task_id)
                 .child(rep_id + ext)
                 .putFile(Uri.fromFile(new File(repImg.original)))
-                .continueWithTask(task -> ref.store
+                .continueWithTask(task -> store
                         .child(task_id)
                         .child(rep_id + ext)
                         .getDownloadUrl())

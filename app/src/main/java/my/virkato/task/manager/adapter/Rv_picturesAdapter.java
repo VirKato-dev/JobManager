@@ -48,6 +48,7 @@ public class Rv_picturesAdapter extends RecyclerView.Adapter<Rv_picturesAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ReportImage item = getItem(position);
         String pict = item.url;
+        if (pict.equals("")) pict = item.original;
         if (NetWork.isAdmin()) {
             if (!item.received.equals("")) {
                 if (new File(pict).exists()) {

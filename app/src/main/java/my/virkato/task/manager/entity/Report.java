@@ -160,7 +160,7 @@ public class Report {
                     images.get(pc).url = url; // ссылка на файл
                     sendNextImage();
                 };
-                nw.saveImageToStorage(task_id, id+"_"+pc, images.get(pc), nw, callBack);
+                nw.saveImageToStorage(task_id, id+"_"+pc, images.get(pc), callBack);
             } else {
                 sendNextImage();
             }
