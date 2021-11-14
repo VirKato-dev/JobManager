@@ -36,7 +36,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
-			android:hint="Описание задания"
+			android:hint="@string/hint_description"
+			android:hintTextColor="#00838F"
 			android:lines="3"
 			android:minHeight="48dp"
 			android:padding="8dp"
@@ -65,7 +66,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
-					android:text="Начать задание" />
+					android:text="@string/label_start_task" />
 
 				<TextView
 					android:id="@+id/t_date_start"
@@ -73,7 +74,7 @@
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
 					android:gravity="center_horizontal"
-					android:text="00.00.0000" />
+					android:text="@string/def_date" />
 
 				<ImageView
 					android:id="@+id/i_date_start"
@@ -98,7 +99,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
-					android:text="Окончить задание" />
+					android:text="@string/label_end_task" />
 
 				<TextView
 					android:id="@+id/t_date_finish"
@@ -106,7 +107,7 @@
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
 					android:gravity="center_horizontal"
-					android:text="00.00.0000" />
+					android:text="@string/def_date" />
 
 				<ImageView
 					android:id="@+id/i_date_finish"
@@ -126,7 +127,8 @@
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
-					android:text="Создать это задание" />
+					android:text="@string/button_as_new_task"
+					android:textSize="12sp" />
 
 				<Button
 					android:id="@+id/b_approve"
@@ -135,7 +137,7 @@
 					android:layout_gravity="right"
 					android:layout_weight="1"
 					android:padding="8dp"
-					android:text="Это задание выполнено"
+					android:text="@string/button_as_finished"
 					android:textColor="#000000"
 					android:textSize="12sp" />
 			</LinearLayout>
@@ -154,7 +156,7 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="right"
 			android:padding="8dp"
-			android:text="Дополнить отчёт"
+			android:text="@string/button_add_report"
 			android:textColor="#000000"
 			android:textSize="12sp" />
 

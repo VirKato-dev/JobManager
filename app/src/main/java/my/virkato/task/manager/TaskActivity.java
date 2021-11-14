@@ -256,6 +256,11 @@ public class TaskActivity extends AppCompatActivity {
             b_create.setText("Изменить это задание");
             b_approve.setText(task.finished ? "Считать невыполненным" : "Считать выполненным");
         }
+
+        if (task.finished) {
+            b_add_report.setVisibility(View.GONE);
+            //TODO показать обещанную сумму оплаты за задание
+        }
     }
 
 

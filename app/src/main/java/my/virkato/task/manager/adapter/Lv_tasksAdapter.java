@@ -1,5 +1,6 @@
 package my.virkato.task.manager.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +44,10 @@ public class Lv_tasksAdapter extends BaseAdapter {
         return _index;
     }
 
-    public View getView(final int _position, View _v, ViewGroup _container) {
-        LayoutInflater _inflater = LayoutInflater.from(_container.getContext());
-        View _view = _v;
+    public View getView(final int position, View v, ViewGroup container) {
+        Context cont = container.getContext();
+        LayoutInflater _inflater = LayoutInflater.from(container.getContext());
+        View _view = v;
         if (_view == null) {
             _view = _inflater.inflate(R.layout.a_task, null);
         }
@@ -54,8 +56,8 @@ public class Lv_tasksAdapter extends BaseAdapter {
         TextView t_fio = _view.findViewById(R.id.t_fio);
         TextView t_task_date = _view.findViewById(R.id.t_task_date);
 
-        Task task = getItem(_position);
-        String fio = "БЕЗ ИМЕНИ";
+        Task task = getItem(position);
+        String fio = cont.getString(R.string.noname);
         Man man = new People().findManById(task.master_uid);
         if (man != null) fio = man.fio;
 

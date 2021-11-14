@@ -1,6 +1,31 @@
 <resources>
-	<string	name="app_name"	translatable="false">Task Manager</string>
-	<string	name="id_test"	translatable="false">TextTexttttt</string>
-    <string name="noname">неизвестный</string>
-	<string name="report_master">Отчитался:</string>
+	<string	name="app_name">Task Manager</string>
+	<string	name="id_test"	translatable="false">TestText</string>
+    <string name="noname">noname</string>
+	<string name="report_master">From:</string>
+	<string name="label_master">Master:</string>
+	<string name="label_phone">Phone:</string>
+	<string name="hint_phone">number without \'+\'</string>
+	<string name="button_check">Request the OTP</string>
+	<string name="label_acception">Enter the OTP:</string>
+	<string name="hint_otp">OTP</string>
+	<string name="button_send">Send</string>
+	<string name="label_fio">Name:</string>
+	<string name="hint_fio">Name, Surname</string>
+	<string name="label_spec">Skill:</string>
+	<string name="hint_spec">Qualification</string>
+	<string name="button_save">Save</string>
+	<string name="label_description">Description</string>
+	<string name="button_save_report">Save the report</string>
+	<string name="button_add_photo">Add a picture</string>
+	<string name="button_add_report">Add a new report</string>
+	<string name="hint_description">Task description</string>
+	<string name="label_start_task">Start date</string>
+	<string name="def_date">00.00.0000</string>
+	<string name="label_end_task">Finish date</string>
+	<string name="button_as_finished">Task is done</string>
+	<string name="button_as_new_task">Create this task</string>
+	<string name="button_in_progress">In progress</string>
+	<string name="button_in_finished">In finished</string>
+	<string name="button_list_people">People</string>
 </resources>

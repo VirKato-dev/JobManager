@@ -13,7 +13,8 @@
 		android:layout_marginStart="4dp"
 		android:layout_marginTop="4dp"
 		android:layout_marginEnd="4dp"
-		android:text="Описание отчёта" />
+		android:text="@string/label_description"
+		android:textColor="#263238" />
 
 	<EditText
 		android:id="@+id/e_description"
@@ -30,7 +31,7 @@
 		android:id="@+id/b_report_save"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="Сохранить отчёт" />
+		android:text="@string/button_save_report" />
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/rv_pictures"
@@ -42,5 +43,5 @@
 		android:id="@+id/b_add_picture"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="Добавить фото" />
+		android:text="@string/button_add_photo" />
 </LinearLayout>

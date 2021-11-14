@@ -160,14 +160,11 @@ public class Report {
                     images.get(pc).url = url; // ссылка на файл
                     sendNextImage();
                 };
-                Log.e("SEND START", images.get(pc).original);
                 nw.saveImageToStorage(task_id, id+"_"+pc, images.get(pc), nw, callBack);
             } else {
-                Log.e("SEND SKIPED", images.get(pc).original);
                 sendNextImage();
             }
         } else {
-            Log.e("SEND FINISHED", ".");
             AppUtil.showSystemWait(context, false);
             save();
         }

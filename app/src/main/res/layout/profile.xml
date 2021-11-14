@@ -11,14 +11,16 @@
 		android:layout_height="match_parent"
 		android:padding="8dp"
 		android:orientation="vertical">
+
 		<TextView
 			android:id="@+id/e_task_description"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
-			android:text="Телефон:"
-			android:textSize="12sp"
-			android:textColor="#000000"/>
+			android:text="@string/label_phone"
+			android:textColor="#000000"
+			android:textSize="12sp" />
+
 		<TextView
 			android:id="@+id/t_phone"
 			android:layout_width="wrap_content"
@@ -26,15 +28,14 @@
 			android:paddingLeft="8dp"
 			android:paddingRight="8dp"
 			android:paddingBottom="8dp"
-			android:text="TextView"
-			android:textSize="18sp"
-			android:textColor="#000000"/>
+			android:textColor="#000000"
+			android:textSize="18sp" />
 		<TextView
 			android:id="@+id/textview3"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
-			android:text="ФИО:"
+			android:text="@string/label_fio"
 			android:textSize="12sp"
 			android:textColor="#000000"/>
 		<EditText
@@ -46,14 +47,14 @@
 			android:paddingBottom="8dp"
 			android:textSize="18sp"
 			android:textColor="#000000"
-			android:hint="Фамилия Имя Отчество"
+			android:hint="@string/hint_fio"
 			android:textColorHint="#607D8B"/>
 		<TextView
 			android:id="@+id/textview4"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
-			android:text="Специалист:"
+			android:text="@string/label_spec"
 			android:textSize="12sp"
 			android:textColor="#000000"/>
 		<EditText
@@ -65,14 +66,14 @@
 			android:paddingBottom="8dp"
 			android:textSize="18sp"
 			android:textColor="#000000"
-			android:hint="Специальность"
+			android:hint="@string/hint_spec"
 			android:textColorHint="#607D8B"/>
 		<Button
 			android:id="@+id/b_save"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:padding="8dp"
-			android:text="Сохранить"
+			android:text="@string/button_save"
 			android:textSize="12sp"
 			android:textColor="#000000"
 			android:layout_gravity="right"/>

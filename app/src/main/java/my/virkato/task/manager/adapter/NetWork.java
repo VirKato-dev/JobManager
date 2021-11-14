@@ -180,7 +180,6 @@ public class NetWork {
 
         store_download_success_listener = _param1 -> {
             final long _totalByteCount = _param1.getTotalByteCount();
-            Log.e("LOAD PICTURE", "LOADED");
         };
 
         store_delete_success_listener = _param1 -> {
@@ -188,7 +187,6 @@ public class NetWork {
 
         store_failure_listener = _param1 -> {
             final String _message = _param1.getMessage();
-            Log.e("LOAD PICTURE", "FAILED");
         };
     }
 
