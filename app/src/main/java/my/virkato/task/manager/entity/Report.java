@@ -59,7 +59,7 @@ public class Report {
         if (map.containsKey("id")) id = map.get("id").toString();
         if (map.containsKey("task_id")) task_id = map.get("task_id").toString();
         if (map.containsKey("master")) master = map.get("master").toString();
-        if (map.containsKey("description")) description = map.get("description").toString();
+        if (map.containsKey("description")) description = map.get("description").toString().replaceAll("\"", "'");
         if (map.containsKey("date")) date = (long) Double.parseDouble(map.get("date").toString());
         if (map.containsKey("images")) {
             ArrayList<LinkedTreeMap<String,String>> ltm = (ArrayList<LinkedTreeMap<String, String>>) map.get("images");
@@ -81,7 +81,7 @@ public class Report {
         map.put("id", id);
         map.put("task_id", task_id);
         map.put("master", master);
-        map.put("description", description);
+        map.put("description", description.replaceAll("\"", "'"));
         map.put("images", images);
         map.put("date", date);
         return map;
@@ -96,7 +96,7 @@ public class Report {
     public String toString() {
         return String.format(Locale.US,
                 "{\"id\":\"%s\", \"task_id\":\"%s\", \"master\":\"%s\", \"description\":\"%s\", \"images\":%s, \"date\":%d}",
-                id, task_id, master, description, new Gson().toJson(images), date);
+                id, task_id, master, description.replaceAll("\"", "'"), new Gson().toJson(images), date);
     }
 
     public void delete(NetWork ref) {

@@ -26,7 +26,7 @@ public class Task {
     public Task(HashMap<String, Object> map) {
         if (map.containsKey("id")) id = map.get("id").toString();
         if (map.containsKey("master_uid")) master_uid = map.get("master_uid").toString();
-        if (map.containsKey("description")) description = map.get("description").toString();
+        if (map.containsKey("description")) description = map.get("description").toString().replaceAll("\"", "'");
         if (map.containsKey("date_start")) date_start = (long) Double.parseDouble(map.get("date_start").toString());
         if (map.containsKey("date_finish")) date_finish = (long) Double.parseDouble(map.get("date_finish").toString());
         if (map.containsKey("finished")) finished = map.get("finished").toString().equals("1");
@@ -40,7 +40,7 @@ public class Task {
         HashMap<String, Object> map = new HashMap<>();
         map.put("id", id);
         map.put("master_uid", master_uid);
-        map.put("description", description);
+        map.put("description", description.replaceAll("\"", "'"));
         map.put("date_start", date_start);
         map.put("date_finish", date_finish);
         map.put("finished", finished?"1":"0");
@@ -52,7 +52,7 @@ public class Task {
     public String toString() {
         return String.format(Locale.US,
                 "{\"id\":\"%s\", \"master_uid\":\"%s\", \"description\":\"%s\", \"date_start\":%d, \"date_finish\":%d, \"finished\":\"%s\"}",
-                id, master_uid, description, date_start, date_finish, finished?"1":"0");
+                id, master_uid, description.replaceAll("\"", "'"), date_start, date_finish, finished?"1":"0");
     }
 
     public void send(Context context, DatabaseReference db) {
