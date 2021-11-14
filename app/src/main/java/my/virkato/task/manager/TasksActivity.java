@@ -13,7 +13,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import my.virkato.task.manager.adapter.Lv_peopleAdapter;
 import my.virkato.task.manager.adapter.Lv_tasksAdapter;
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.entity.People;

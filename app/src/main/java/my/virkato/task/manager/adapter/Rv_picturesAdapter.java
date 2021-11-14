@@ -11,11 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.internal.LinkedTreeMap;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import my.virkato.task.manager.FileUtil;
 import my.virkato.task.manager.R;
