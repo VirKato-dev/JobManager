@@ -37,7 +37,6 @@
 			android:layout_height="wrap_content"
 			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 			android:hint="@string/hint_description"
-			android:hintTextColor="#00838F"
 			android:lines="3"
 			android:minHeight="48dp"
 			android:padding="8dp"
