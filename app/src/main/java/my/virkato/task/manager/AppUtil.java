@@ -239,6 +239,7 @@ public class AppUtil {
     public static void showSystemWait(Context context, boolean _show) {
         if (context == null) return;
         if (_show) {
+            if (adv != null) adv.dismiss();
             d_wait = new AlertDialog.Builder(context);
             LayoutInflater design = LayoutInflater.from(context);
 
