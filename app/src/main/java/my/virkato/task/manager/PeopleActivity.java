@@ -110,9 +110,7 @@ public class PeopleActivity extends AppCompatActivity {
                 if (tmp != null) {
                     you = tmp;
                     sp.edit().putString("account", you.toString()).commit();
-                    if (false) {
-                        AppUtil.showMessage(getApplicationContext(), "Ваши данные получены");
-                    }
+//                    AppUtil.showMessage(getApplicationContext(), "Ваши данные получены");
                     delay.cancel(); // найдены данные текущего пользователя
 
                     if (!NetWork.isAdmin()) {
@@ -124,9 +122,7 @@ public class PeopleActivity extends AppCompatActivity {
                     } else {
                         // только Админ может остаться на экране списка пользователей
                         lv_people.setVisibility(View.VISIBLE);
-                        if (false) {
-                            AppUtil.showMessage(lv_people.getContext(), "Вы Админ");
-                        }
+//                        AppUtil.showMessage(lv_people.getContext(), "Вы Админ");
 
                     }
 //                    saving = false;
