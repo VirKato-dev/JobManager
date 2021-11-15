@@ -37,62 +37,63 @@ public class ReportActivity extends AppCompatActivity {
     /***
      * описание отчёта
      */
-    private EditText e_description;
+    EditText e_description;
 
     /***
      * сохранить отчёт
      */
-    private Button b_report_save;
+    Button b_report_save;
 
     /***
      * собавить фотографию отчёта
      */
-    private Button b_add_picture;
+    Button b_add_picture;
 
     /***
      * адаптер для получения списка отчётов
      */
-    private final NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
+    final NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
 
     /***
      * текущий отчёт
      */
-    private Report report;
+    Report report;
 
     /***
      * список фотографий отчёта
      */
-    private RecyclerView rv;
+    RecyclerView rv;
 
     /***
      * картинки отчёта
      */
-    private ArrayList<ReportImage> pictures;
+    ArrayList<ReportImage> pictures;
 
     /***
      * период к течение которого мастер может отредактировать свой отчёт
      */
-    private long editPeriod = 5 * 60 * 60 * 1000;
+    final long PERIOD = 5 * 60 * 60 * 1000;
 
     /***
      * мастер текущего задания
      */
-    private String master = "";
+    String master = "";
 
     /***
      * отчёт к этому заданию
      */
-    private String taskId = "";
+    String taskId = "";
 
     /***
      * можно ли изменять/создавать отчёт
      */
-    private boolean canChange = false;
+    boolean canChange = false;
 
     /***
      * приёмник выбранного файла
      */
-    private ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
+    final ActivityResultLauncher<String> mGetContent = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
             uri -> {
                 if (uri != null) {
                     String path = FileUtil.convertUriToFilePath(rv.getContext(), uri);
@@ -127,7 +128,8 @@ public class ReportActivity extends AppCompatActivity {
             finish();
         }
         String json = getIntent().getStringExtra("report");
-        Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
+        Type type = new TypeToken<HashMap<String, Object>>() {
+        }.getType();
         HashMap<String, Object> map = new Gson().fromJson(json, type);
         taskId = map.get("task_id").toString();
         report = new Report(map);
@@ -204,7 +206,7 @@ public class ReportActivity extends AppCompatActivity {
         b_report_save.setVisibility(canChange ? View.VISIBLE : View.GONE);
         b_add_picture.setVisibility(canChange ? View.VISIBLE : View.GONE);
 
-        if (report.date > 0 && (System.currentTimeMillis() - report.date) > editPeriod) {
+        if (report.date > 0 && (System.currentTimeMillis() - report.date) > PERIOD) {
             b_report_save.setVisibility(View.GONE);
             b_add_picture.setVisibility(View.GONE);
         }
@@ -215,11 +217,11 @@ public class ReportActivity extends AppCompatActivity {
         if (NetWork.isAdmin()) {
             if (!repImg.received.equals("")) {
                 if (new File(repImg.received).exists()) {
-                    pict = "file://"+repImg.received;
+                    pict = "file://" + repImg.received;
                 }
             }
         } else {
-            pict = "file://"+repImg.original;
+            pict = "file://" + repImg.original;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         AlertDialog alertDialog = builder.create();
