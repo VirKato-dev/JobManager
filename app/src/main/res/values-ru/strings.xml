@@ -33,4 +33,7 @@
     <string name="label_reward">"Оплата: "</string>
     <string name="button_reward_got">Получено</string>
     <string name="fill_please">Заполните все поля пожалуйста!</string>
+    <string name="change_this_task">Изменить это задание</string>
+    <string name="task_not_finished">Не считать выполненным</string>
+    <string name="task_finished">Считать выполненным</string>
 </resources>

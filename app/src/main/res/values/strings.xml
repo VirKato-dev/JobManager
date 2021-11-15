@@ -33,4 +33,7 @@
 	<string name="label_reward">"Payment: "</string>
     <string name="button_reward_got">Received</string>
     <string name="fill_please">Fill all fields please!</string>
+    <string name="change_this_task">Change this task</string>
+	<string name="task_not_finished">Task not done</string>
+	<string name="task_finished">The task is done</string>
 </resources>

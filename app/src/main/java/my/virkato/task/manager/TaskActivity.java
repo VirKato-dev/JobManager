@@ -260,7 +260,12 @@ public class TaskActivity extends AppCompatActivity {
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
-        b_rewarded.setVisibility(task.finished ? View.VISIBLE : View.GONE);
+        b_rewarded.setVisibility(
+                (
+                        (task.finished && NetWork.isAdmin()) ||
+                        (task.master_uid.equals(NetWork.user().getUid()) && task.rewarded)
+                ) ? View.VISIBLE : View.GONE
+        );
         i_reward_got.setImageResource(task.reward_got ? R.drawable.ic_ok : R.drawable.ic_not);
 
         if (!task.master_uid.equals("")) {
@@ -281,8 +286,8 @@ public class TaskActivity extends AppCompatActivity {
             e_reward.setText(String.format(Locale.ENGLISH, "%.2f", task.reward));
             t_date_start.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_start));
             t_date_finish.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_finish));
-            b_create.setText("Изменить это задание");
-            b_approve.setText(task.finished ? "Считать невыполненным" : "Считать выполненным");
+            b_create.setText(R.string.change_this_task);
+            b_approve.setText(task.finished ? R.string.task_not_finished : R.string.task_finished);
         }
 
     }
@@ -346,8 +351,8 @@ public class TaskActivity extends AppCompatActivity {
         People.OnPeopleUpdatedListener onPeopleUpdatedListener = (list, man) -> {
             spec.clear();
             for (Man m : list) {
-                String cvalif = m.spec;
-                if (!cvalif.equals("admin") && !spec.contains(cvalif)) spec.add(cvalif);
+                String qualif = m.spec;
+                if (!qualif.equals("admin") && !spec.contains(qualif)) spec.add(qualif);
             }
             ((ArrayAdapter) spin_spec.getAdapter()).notifyDataSetChanged();
 
