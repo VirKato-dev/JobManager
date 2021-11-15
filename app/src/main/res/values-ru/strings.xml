@@ -20,9 +20,9 @@
     <string name="button_add_photo">Добавить фото</string>
     <string name="button_add_report">Дополнить отчёт</string>
     <string name="hint_description">Описание задания</string>
-    <string name="label_start_task">Начать задание</string>
+    <string name="label_start_task">Начало работ</string>
     <string name="def_date">00.00.0000</string>
-    <string name="label_end_task">Окончить задание</string>
+    <string name="label_end_task">Окончить работу</string>
     <string name="button_as_finished">Это задание выполнено</string>
     <string name="button_as_new_task">Создать это задание</string>
     <string name="button_in_progress">В работе</string>
@@ -34,6 +34,6 @@
     <string name="button_reward_got">Получено</string>
     <string name="fill_please">Заполните все поля пожалуйста!</string>
     <string name="change_this_task">Изменить это задание</string>
-    <string name="task_not_finished">Не считать выполненным</string>
-    <string name="task_finished">Считать выполненным</string>
+    <string name="task_not_finished">Работа ещё не выполнена</string>
+    <string name="task_finished">Работа принята</string>
 </resources>
