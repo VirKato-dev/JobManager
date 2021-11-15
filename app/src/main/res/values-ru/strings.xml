@@ -18,7 +18,7 @@
     <string name="label_description">Описание отчёта</string>
     <string name="button_save_report">Сохранить отчёт</string>
     <string name="button_add_photo">Добавить фото</string>
-    <string name="button_add_report">Дополнить отчёт</string>
+    <string name="button_add_report">Добавить отчёт / заявку</string>
     <string name="hint_description">Описание задания</string>
     <string name="label_start_task">Начало работ</string>
     <string name="def_date">00.00.0000</string>
