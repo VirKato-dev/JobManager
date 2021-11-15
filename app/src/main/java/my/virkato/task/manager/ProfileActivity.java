@@ -69,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
         b_save = findViewById(R.id.b_save);
         sp = getSharedPreferences("data", Activity.MODE_PRIVATE);
 
-        b_save.setOnClickListener(_view -> {
+        b_save.setOnClickListener(view -> {
             you.fio = e_fio.getText().toString();
             you.spec = e_spec.getText().toString();
             if (you.id.equals(NetWork.user().getUid())) {
@@ -77,7 +77,11 @@ public class ProfileActivity extends AppCompatActivity {
                     you.phone = sp.getString("phone", "");
                 }
             }
-            dbUsers.getDB().child(you.id).updateChildren(you.asMap());
+            if (you.spec.trim().equals("") || you.fio.trim().equals("")) {
+                AppUtil.showMessage(view.getContext(), getString(R.string.fill_please));
+            } else {
+                dbUsers.getDB().child(you.id).updateChildren(you.asMap());
+            }
         });
     }
 

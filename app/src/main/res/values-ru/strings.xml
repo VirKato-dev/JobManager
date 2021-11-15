@@ -29,4 +29,8 @@
     <string name="button_in_finished">Завершено</string>
     <string name="button_list_people">Люди</string>
     <string name="button_my_profile">Профиль</string>
+    <string name="button_rewarded">Оплачено</string>
+    <string name="label_reward">"Оплата: "</string>
+    <string name="button_reward_got">Получено</string>
+    <string name="fill_please">Заполните все поля пожалуйста!</string>
 </resources>

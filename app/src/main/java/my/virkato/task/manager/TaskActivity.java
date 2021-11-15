@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -87,7 +88,10 @@ public class TaskActivity extends AppCompatActivity {
      */
     private ArrayList<String> spec = new ArrayList<>();
 
-    private TextView e_description; // текст задание
+    /***
+     * поле ввода текста задания
+     */
+    private TextView e_description;
 
     /***
      * список имён мастеров
@@ -108,6 +112,21 @@ public class TaskActivity extends AppCompatActivity {
      * сохраняем задание
      */
     private Button b_create;
+
+    /***
+     * подтверждение отправки/получения платежа
+     */
+    private Button b_rewarded;
+
+    /***
+     * сумма вознаграждения
+     */
+    private EditText e_reward;
+
+    /***
+     * маркер получения оплаты
+     */
+    private ImageView i_reward_got;
 
     /***
      * вывод списка отчётов по заданию
@@ -157,6 +176,9 @@ public class TaskActivity extends AppCompatActivity {
         spin_spec = findViewById(R.id.spin_spec);
         b_approve = findViewById(R.id.b_approve);
         b_create = findViewById(R.id.b_create);
+        b_rewarded = findViewById(R.id.b_rewarded);
+        e_reward = findViewById(R.id.e_reward);
+        i_reward_got = findViewById(R.id.i_reward_got);
         lv_reports = findViewById(R.id.lv_reports);
         b_add_report = findViewById(R.id.b_add_report);
         l_dates = findViewById(R.id.l_dates);
@@ -197,19 +219,16 @@ public class TaskActivity extends AppCompatActivity {
             );
         });
 
-        b_approve.setOnClickListener(_view -> {
+        b_approve.setOnClickListener(view -> {
             task.finished = !task.finished;
-            b_create.performClick();
-            showViewsForUser(NetWork.isAdmin());
+            save();
         });
 
-        b_create.setOnClickListener(_view -> {
-            task.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
-            task.description = e_description.getText().toString();
-            task.send(_view.getContext(), dbTasks.getDB());
+        b_create.setOnClickListener(view -> {
+            save();
         });
 
-        b_add_report.setOnClickListener(_view -> {
+        b_add_report.setOnClickListener(view -> {
             startActivity(new Intent(this, ReportActivity.class)
                     .putExtra("report", "{\"task_id\":\"" + task.id + "\"}"));
         });
@@ -235,29 +254,49 @@ public class TaskActivity extends AppCompatActivity {
         spin_master.setEnabled(admin); // пользователь не может изменить задание
         spin_spec.setEnabled(admin);
         e_description.setEnabled(admin);
+        e_reward.setEnabled(admin);
         l_date_start.setEnabled(admin);
         l_date_end.setEnabled(admin);
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
+        b_rewarded.setVisibility(task.finished ? View.VISIBLE : View.GONE);
+        i_reward_got.setImageResource(task.reward_got ? R.drawable.ic_ok : R.drawable.ic_not);
 
         if (!task.master_uid.equals("")) {
             String master = dbPeople.getPeople().findManById(task.master_uid).id;
             String currentUser = NetWork.user().getUid();
-            b_add_report.setVisibility(
-                    currentUser.equals(master) ? View.VISIBLE : View.GONE);
+            boolean owner = currentUser.equals(master);
+            b_add_report.setVisibility((owner || !task.finished) ? View.VISIBLE : View.GONE);
+
+            b_rewarded.setText(owner ? R.string.button_reward_got : R.string.button_rewarded);
+            b_rewarded.setOnClickListener(view -> {
+                if (owner) task.reward_got = true;
+                else task.rewarded = true;
+                save();
+            });
+            b_rewarded.setEnabled(owner ? !task.reward_got : !task.rewarded);
 
             e_description.setText(task.description);
+            e_reward.setText(String.format(Locale.ENGLISH, "%.2f", task.reward));
             t_date_start.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_start));
             t_date_finish.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_finish));
             b_create.setText("Изменить это задание");
             b_approve.setText(task.finished ? "Считать невыполненным" : "Считать выполненным");
         }
 
-        if (task.finished) {
-            b_add_report.setVisibility(View.GONE);
-            //TODO показать обещанную сумму оплаты за задание
-        }
+    }
+
+    /***
+     * сохранить задание в базу
+     * и обновить виджеты
+     */
+    private void save() {
+        task.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
+        task.description = e_description.getText().toString();
+        task.reward = Double.parseDouble(e_reward.getText().toString());
+        task.send(this, dbTasks.getDB());
+        showViewsForUser(NetWork.isAdmin());
     }
 
 

@@ -29,4 +29,8 @@
 	<string name="button_in_finished">In finished</string>
 	<string name="button_list_people">People</string>
     <string name="button_my_profile">Profile</string>
+    <string name="button_rewarded">Paid</string>
+	<string name="label_reward">"Payment: "</string>
+    <string name="button_reward_got">Received</string>
+    <string name="fill_please">Fill all fields please!</string>
 </resources>
