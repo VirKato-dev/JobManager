@@ -105,7 +105,7 @@ public class Task {
         AppUtil.showSystemWait(context, true);
         db.child(id).updateChildren(asMap(), (error, ref) -> {
             AppUtil.showSystemWait(context, false);
-            Log.e("ERROR", error.toString());
+//            Log.e("ERROR", error != null ? error.toString() : "ok");
         });
     }
 }
