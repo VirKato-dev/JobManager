@@ -5,10 +5,9 @@
     <string name="report_master">Отчитался:</string>
     <string name="label_master">Мастер:</string>
     <string name="label_phone">Телефон:</string>
-    <string name="hint_phone">номер телефона без \'+\'</string>
+    <string name="hint_phone">номер без \'+\'</string>
     <string name="button_check">Проверить</string>
     <string name="label_acception">Подтверждение:</string>
-    <string name="hint_otp">OTP</string>
     <string name="button_send">Подтвердить</string>
     <string name="label_fio">ФИО:</string>
     <string name="hint_fio">Фамилия, Имя, Отчество</string>
@@ -21,7 +20,6 @@
     <string name="button_add_report">Добавить отчёт / заявку</string>
     <string name="hint_description">Описание задания</string>
     <string name="label_start_task">Начало работ</string>
-    <string name="def_date">00.00.0000</string>
     <string name="label_end_task">Окончить работу</string>
     <string name="button_as_finished">Это задание выполнено</string>
     <string name="button_as_new_task">Создать это задание</string>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -136,4 +137,10 @@ public class PeopleActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // для предотвращения ложных срабатываний слушателя при повторном запуске приложения
+        dbUsers.stopReceiving();
+    }
 }

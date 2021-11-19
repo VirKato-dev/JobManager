@@ -84,6 +84,13 @@ public class TasksActivity extends AppCompatActivity {
         initVariables();
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dbUsers.stopReceiving();
+    }
+
     /***
      * Первоначальные настройки переменных
      */
@@ -192,5 +199,4 @@ public class TasksActivity extends AppCompatActivity {
             startActivity(new Intent(v.getContext(), TaskActivity.class).putExtra("task", ""));
         });
     }
-
 }
