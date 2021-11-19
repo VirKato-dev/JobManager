@@ -228,7 +228,6 @@ public class AppUtil {
     }
 
 
-    private static AlertDialog.Builder d_wait;
     private static AlertDialog adv;
 
     /***
@@ -238,9 +237,14 @@ public class AppUtil {
      */
     public static void showSystemWait(Context context, boolean _show) {
         if (context == null) return;
+        Context cntxt = context.getApplicationContext();
         if (_show) {
-            if (adv != null) adv.dismiss();
-            d_wait = new AlertDialog.Builder(context);
+            if (adv != null) {
+                if (cntxt.equals(adv.getContext().getApplicationContext())) {
+                    adv.dismiss();
+                }
+            }
+            AlertDialog.Builder d_wait = new AlertDialog.Builder(context);
             LayoutInflater design = LayoutInflater.from(context);
 
             View convertView = design.inflate(R.layout.loader, null);

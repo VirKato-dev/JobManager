@@ -67,6 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
         dbTasks.getTasks().setOnTasksUpdatedListener((tasks, removed, task) -> {
             updateStatistic(tasks);
         });
+        dbTasks.receiveNewData();
 
     }
 
