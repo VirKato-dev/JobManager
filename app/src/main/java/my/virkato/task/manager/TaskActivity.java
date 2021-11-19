@@ -254,14 +254,13 @@ public class TaskActivity extends AppCompatActivity {
         spin_master.setEnabled(admin); // пользователь не может изменить задание
         spin_spec.setEnabled(admin);
         e_description.setEnabled(admin);
-        e_reward.setEnabled(admin);
+        e_reward.setEnabled(admin && !task.finished);
         l_date_start.setEnabled(admin);
         l_date_end.setEnabled(admin);
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
-        b_rewarded.setVisibility(
-                (
+        b_rewarded.setVisibility((
                         (task.finished && NetWork.isAdmin()) ||
                         (task.master_uid.equals(NetWork.user().getUid()) && task.rewarded)
                 ) ? View.VISIBLE : View.GONE
