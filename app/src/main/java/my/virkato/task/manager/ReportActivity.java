@@ -37,62 +37,62 @@ public class ReportActivity extends AppCompatActivity {
     /***
      * описание отчёта
      */
-    EditText e_description;
+    private EditText e_description;
 
     /***
      * сохранить отчёт
      */
-    Button b_report_save;
+    private Button b_report_save;
 
     /***
      * собавить фотографию отчёта
      */
-    Button b_add_picture;
+    private Button b_add_picture;
 
     /***
      * адаптер для получения списка отчётов
      */
-    final NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
+    private final NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
 
     /***
      * текущий отчёт
      */
-    Report report;
+    private Report report;
 
     /***
      * список фотографий отчёта
      */
-    RecyclerView rv;
+    private RecyclerView rv;
 
     /***
      * картинки отчёта
      */
-    ArrayList<ReportImage> pictures;
+    private ArrayList<ReportImage> pictures;
 
     /***
      * период к течение которого мастер может отредактировать свой отчёт
      */
-    final long PERIOD = 5 * 60 * 60 * 1000;
+    private final long PERIOD = 5 * 60 * 60 * 1000;
 
     /***
      * мастер текущего задания
      */
-    String master = "";
+    private String master = "";
 
     /***
      * отчёт к этому заданию
      */
-    String taskId = "";
+    private String taskId = "";
 
     /***
      * можно ли изменять/создавать отчёт
      */
-    boolean canChange = false;
+    private boolean canChange = false;
 
     /***
      * приёмник выбранного файла
      */
-    final ActivityResultLauncher<String> mGetContent = registerForActivityResult(
+    private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             uri -> {
                 if (uri != null) {
