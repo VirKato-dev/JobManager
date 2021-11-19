@@ -37,7 +37,7 @@
 	<string name="task_not_finished">Task not done</string>
 	<string name="task_finished">The task is done</string>
     <string name="ad_title_remove_pict">Remove the image</string>
-	<string name="ad_message_remove_pict">This image will remove from application.\\nAre you want to do that?</string>
+	<string name="ad_message_remove_pict">This image will remove from application.\nAre you want to do that?</string>
 	<string name="ad_positive_button">Ok</string>
 	<string name="ad_negative_button">Cancel</string>
 </resources>
