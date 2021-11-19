@@ -34,4 +34,8 @@
     <string name="change_this_task">Изменить это задание</string>
     <string name="task_not_finished">Работа ещё не выполнена</string>
     <string name="task_finished">Работа принята</string>
+    <string name="ad_title_remove_pict">Удалить картинку</string>
+    <string name="ad_message_remove_pict">Эта картирка будет удалена полностью из приложения.\\nВы уверены, что она вам больше не понадобится?</string>
+    <string name="ad_positive_button">Ok</string>
+    <string name="ad_negative_button">Cancel</string>
 </resources>

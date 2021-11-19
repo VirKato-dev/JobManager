@@ -1,5 +1,6 @@
 package my.virkato.task.manager;
 
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -163,15 +164,8 @@ public class ReportActivity extends AppCompatActivity {
 
         ((Rv_picturesAdapter) rv.getAdapter()).setOnLongClickListener(v -> {
             int position = rv.getChildLayoutPosition(v);
-            if (!NetWork.isAdmin()) {
-                ReportImage item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
-                pictures.remove(position);
-                if (!item.url.equals("")) {
-                    dbReports.removeImageFromStorage(item);
-                    saveReport();
-                }
-                rv.getAdapter().notifyDataSetChanged();
-                report.send(rv.getContext(), dbReports);
+            if (position != RecyclerView.NO_POSITION && !NetWork.isAdmin()) {
+                removePicture(position);
             }
             return true;
         });
@@ -186,12 +180,29 @@ public class ReportActivity extends AppCompatActivity {
     /***
      * сохранить отчёт
      */
-    void saveReport() {
+    private void saveReport() {
         report.delete(dbReports);
         report.description = e_description.getText().toString();
         report.date = System.currentTimeMillis();
         report.master = NetWork.user().getUid();
         report.send(this, dbReports);
+    }
+
+    private void removePicture(int position) {
+        ReportImage item = ((Rv_picturesAdapter) rv.getAdapter()).getItem(position);
+        if (!item.url.equals("")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.ad_title_remove_pict);
+            builder.setMessage(R.string.ad_message_remove_pict);
+            builder.setPositiveButton(R.string.ad_positive_button, (dialog, which) -> {
+                pictures.remove(position);
+                dbReports.removeImageFromStorage(item);
+                saveReport();
+            });
+            builder.setNegativeButton(R.string.ad_negative_button, (dialog, which) -> {
+            });
+            builder.create().show();
+        }
     }
 
     /***
