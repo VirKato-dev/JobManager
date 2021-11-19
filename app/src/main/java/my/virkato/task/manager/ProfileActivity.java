@@ -14,10 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.entity.Man;
+import my.virkato.task.manager.entity.Task;
+import my.virkato.task.manager.entity.Tasks;
 
 /***
  * Страница профиля пользователя
@@ -36,6 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private final NetWork dbUsers = new NetWork(NetWork.Info.USERS);
     private final NetWork dbAdmins = new NetWork(NetWork.Info.ADMINS);
+    private final NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
 
 
     @Override
@@ -59,6 +64,17 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        dbTasks.getTasks().setOnTasksUpdatedListener((tasks, removed, task) -> {
+            updateStatistic(tasks);
+        });
+
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dbUsers.stopReceiving();
     }
 
 
@@ -130,4 +146,25 @@ public class ProfileActivity extends AppCompatActivity {
         AppUtil.showSystemWait(this, false);
     }
 
+    private void updateStatistic(ArrayList<Task> tasks) {
+        int tasks_total = 0;
+        int tasks_done = 0;
+        double pay_total = 0d;
+        double pay_done = 0d;
+
+        for (Task task : tasks) {
+            if (you != null && you.id.equals(task.master_uid)) {
+                tasks_total++;
+                tasks_done += task.rewarded ? 1 : 0;
+                pay_total += task.reward;
+                pay_done += task.reward_got ? task.reward : 0d;
+
+            }
+        }
+
+        ((TextView) findViewById(R.id.t_total_tasks)).setText(String.valueOf(tasks_total));
+        ((TextView) findViewById(R.id.t_finished_tasks)).setText(String.valueOf(tasks_done));
+        ((TextView) findViewById(R.id.t_total_pay)).setText(String.format(Locale.ENGLISH, "%.2f", pay_total));
+        ((TextView) findViewById(R.id.t_finished_pay)).setText(String.format(Locale.ENGLISH, "%.2f", pay_done));
+    }
 }

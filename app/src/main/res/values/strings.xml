@@ -40,4 +40,8 @@
 	<string name="ad_message_remove_pict">This image will remove from application.\nAre you want to do that?</string>
 	<string name="ad_positive_button">Ok</string>
 	<string name="ad_negative_button">Cancel</string>
+    <string name="head_total">Total</string>
+	<string name="head_finished">Done</string>
+	<string name="row_tasks">Tasks</string>
+	<string name="row_pay">Payments</string>
 </resources>
