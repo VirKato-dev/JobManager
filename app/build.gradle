@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
 	useLibrary 'org.apache.http.legacy'
-	compileSdkVersion 30
+	compileSdkVersion 31
 	
 	defaultConfig {
 		applicationId "my.virkato.task.manager"
 		minSdkVersion 21
-		targetSdkVersion 30
+		targetSdkVersion 31
 		versionCode 1
 		versionName "1.0"
 	}
