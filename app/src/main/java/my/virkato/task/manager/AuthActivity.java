@@ -49,7 +49,7 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
-        setContentView(R.layout.auth);
+        setContentView(R.layout.activity_auth);
 
         initialize(_savedInstanceState);
         initializeLogic();

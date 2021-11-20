@@ -247,7 +247,7 @@ public class AppUtil {
             AlertDialog.Builder d_wait = new AlertDialog.Builder(context);
             LayoutInflater design = LayoutInflater.from(context);
 
-            View convertView = design.inflate(R.layout.loader, null);
+            View convertView = design.inflate(R.layout.a_loader, null);
             d_wait.setView(convertView);
             d_wait.setCancelable(false);
             adv = d_wait.create();

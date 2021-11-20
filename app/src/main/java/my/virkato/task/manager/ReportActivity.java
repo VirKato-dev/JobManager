@@ -1,6 +1,5 @@
 package my.virkato.task.manager;
 
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -109,7 +108,7 @@ public class ReportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
-        setContentView(R.layout.report);
+        setContentView(R.layout.activity_report);
 
         dbReports.setContext(getApplicationContext());
 //        dbReports.receiveNewData();

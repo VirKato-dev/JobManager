@@ -66,7 +66,7 @@ public class TasksActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
-        setContentView(R.layout.tasks);
+        setContentView(R.layout.activity_tasks);
 
         dbAdmins.receiveNewData();
         dbUsers.receiveNewData();

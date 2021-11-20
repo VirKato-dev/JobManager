@@ -1,51 +1,51 @@
 <resources>
-	<string	name="app_name">Task Manager</string>
-	<string	name="id_test"	translatable="false">TestText</string>
+    <string name="app_name">Task Manager</string>
+    <string name="id_test" translatable="false">TestText</string>
     <string name="noname">noname</string>
-	<string name="report_master">From:</string>
-	<string name="label_master">Master:</string>
-	<string name="label_phone">Phone:</string>
-	<string name="hint_phone">number without \'+\'</string>
-	<string name="button_check">Request the OTP</string>
-	<string name="label_acception">Enter the OTP:</string>
-	<string name="hint_otp" translatable="false">OTP</string>
-	<string name="button_send">Send</string>
-	<string name="label_fio">Name:</string>
-	<string name="hint_fio">Name, Surname</string>
-	<string name="label_spec">Skill:</string>
-	<string name="hint_spec">Qualification</string>
-	<string name="button_save">Save</string>
-	<string name="label_description">Description</string>
-	<string name="button_save_report">Save the report</string>
-	<string name="button_add_photo">Add a picture</string>
-	<string name="button_add_report">Add a new report</string>
-	<string name="hint_description">Task description</string>
-	<string name="label_start_task">Start date:</string>
-	<string name="def_date" translatable="false">00.00.0000</string>
-	<string name="label_end_task">Finish date:</string>
-	<string name="button_as_finished">Task is done</string>
-	<string name="button_as_new_task">Create this task</string>
-	<string name="button_in_progress">In progress</string>
-	<string name="button_in_finished">In finished</string>
-	<string name="button_list_people">People</string>
+    <string name="report_master">From:</string>
+    <string name="label_master">Master:</string>
+    <string name="label_phone">Phone:</string>
+    <string name="hint_phone">number without \'+\'</string>
+    <string name="button_check">Request the OTP</string>
+    <string name="label_acception">Enter the OTP:</string>
+    <string name="hint_otp" translatable="false">OTP</string>
+    <string name="button_send">Send</string>
+    <string name="label_fio">Name:</string>
+    <string name="hint_fio">Name, Surname</string>
+    <string name="label_spec">Skill:</string>
+    <string name="hint_spec">Qualification</string>
+    <string name="button_save">Save</string>
+    <string name="label_description">Description</string>
+    <string name="button_save_report">Save the report</string>
+    <string name="button_add_photo">Add a picture</string>
+    <string name="button_add_report">Add a new report</string>
+    <string name="hint_description">Task description</string>
+    <string name="label_start_task">Start date:</string>
+    <string name="def_date" translatable="false">00.00.0000</string>
+    <string name="label_end_task">Finish date:</string>
+    <string name="button_as_finished">Task is done</string>
+    <string name="button_as_new_task">Create this task</string>
+    <string name="button_in_progress">In progress</string>
+    <string name="button_in_finished">In finished</string>
+    <string name="button_list_people">People</string>
     <string name="button_my_profile">Profile</string>
     <string name="button_rewarded">Paid</string>
-	<string name="label_reward">"Cost: "</string>
+    <string name="label_reward">"Cost: "</string>
     <string name="button_reward_got">Received</string>
     <string name="fill_please">Fill all fields please!</string>
     <string name="change_this_task">Change this task</string>
-	<string name="task_not_finished">Task not done</string>
-	<string name="task_finished">The task is done</string>
+    <string name="task_not_finished">Task not done</string>
+    <string name="task_finished">The task is done</string>
     <string name="ad_title_remove_pict">Remove the image</string>
-	<string name="ad_message_remove_pict">This image will remove from application.\nAre you want to do that?</string>
-	<string name="ad_positive_button">Ok</string>
-	<string name="ad_negative_button">Cancel</string>
+    <string name="ad_message_remove_pict">This image will remove from application.\nAre you want to do that?</string>
+    <string name="ad_positive_button">Ok</string>
+    <string name="ad_negative_button">Cancel</string>
     <string name="head_total">Total</string>
-	<string name="head_finished">Done</string>
-	<string name="row_tasks">Tasks</string>
-	<string name="row_pay">Payments</string>
+    <string name="head_finished">Done</string>
+    <string name="row_tasks">Tasks</string>
+    <string name="row_pay">Payments</string>
     <string name="spin_master">Имя мастера</string>
-	<string name="spin_spec">Специальзация мастера</string>
+    <string name="spin_spec">Специальзация мастера</string>
     <string name="label_payment">Payment:</string>
-	<string name="button_payment">Send</string>
+    <string name="button_payment">Send</string>
 </resources>

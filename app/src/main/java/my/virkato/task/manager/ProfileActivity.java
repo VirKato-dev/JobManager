@@ -21,7 +21,6 @@ import java.util.Locale;
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.entity.Man;
 import my.virkato.task.manager.entity.Task;
-import my.virkato.task.manager.entity.Tasks;
 
 /***
  * Страница профиля пользователя
@@ -46,7 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
-        setContentView(R.layout.profile);
+        setContentView(R.layout.activity_profile);
 
         AppUtil.showSystemWait(this, true);
         initialize(_savedInstanceState);

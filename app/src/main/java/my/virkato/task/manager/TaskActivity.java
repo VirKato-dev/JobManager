@@ -1,7 +1,6 @@
 package my.virkato.task.manager;
 
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -162,7 +161,7 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
-        setContentView(R.layout.task);
+        setContentView(R.layout.activity_task);
         initialize(_savedInstanceState);
         initializeLogic();
 
