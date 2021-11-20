@@ -147,6 +147,14 @@ public class TaskActivity extends AppCompatActivity {
     private ImageView i_date_start, i_date_finish;
 
     /***
+     * поля ввода очередного перевода/платежа
+     */
+    private LinearLayout l_payment;
+    private EditText e_payment;
+    private Button b_payment;
+    private ImageView i_payment_list;
+
+    /***
      * первичное заполнение данных для существующего задания
      */
     boolean init = true;
@@ -188,6 +196,11 @@ public class TaskActivity extends AppCompatActivity {
         t_date_finish = findViewById(R.id.t_date_finish);
         i_date_start = findViewById(R.id.i_date_start);
         i_date_finish = findViewById(R.id.i_date_finish);
+
+        l_payment = findViewById(R.id.l_payment);
+        e_payment = findViewById(R.id.e_payment);
+        b_payment = findViewById(R.id.b_payment);
+        i_payment_list = findViewById(R.id.i_payment_list);
 
 //        i_date_start.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
 //        i_date_finish.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
@@ -244,6 +257,14 @@ public class TaskActivity extends AppCompatActivity {
                 task.date_finish = time;
             });
         });
+
+        b_payment.setOnClickListener(v -> {
+            //TODO отправить очередной платёж/аванс
+        });
+
+        i_payment_list.setOnClickListener(v -> {
+            //TODO посмотреть и подтвердить историю платежей
+        });
     }
 
     /***
@@ -254,32 +275,32 @@ public class TaskActivity extends AppCompatActivity {
         spin_master.setEnabled(admin); // пользователь не может изменить задание
         spin_spec.setEnabled(admin);
         e_description.setEnabled(admin);
-        e_reward.setEnabled(admin && !task.finished);
+        e_reward.setEnabled(admin && !task.finished && task.reward==0);
         l_date_start.setEnabled(admin);
         l_date_end.setEnabled(admin);
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
-        b_rewarded.setVisibility((
-                        (task.finished && NetWork.isAdmin()) ||
-                        (task.master_uid.equals(NetWork.user().getUid()) && task.rewarded)
-                ) ? View.VISIBLE : View.GONE
-        );
+        b_rewarded.setVisibility(View.GONE);
+//        b_rewarded.setVisibility((
+//                        (task.finished && NetWork.isAdmin()) ||
+//                        (task.master_uid.equals(NetWork.user().getUid()) && task.rewarded)
+//                ) ? View.VISIBLE : View.GONE
+//        );
         i_reward_got.setImageResource(task.reward_got ? R.drawable.ic_ok : R.drawable.ic_not);
 
         if (!task.master_uid.equals("")) {
-            String master = dbPeople.getPeople().findManById(task.master_uid).id;
             String currentUser = NetWork.user().getUid();
-            boolean owner = currentUser.equals(master);
-            b_add_report.setVisibility((owner || !task.finished) ? View.VISIBLE : View.GONE);
+            boolean owner = currentUser.equals(task.master_uid);
+            b_add_report.setVisibility((owner && !task.finished) ? View.VISIBLE : View.GONE);
 
-            b_rewarded.setText(owner ? R.string.button_reward_got : R.string.button_rewarded);
-            b_rewarded.setOnClickListener(view -> {
-                if (owner) task.reward_got = true;
-                else task.rewarded = true;
-                save();
-            });
-            b_rewarded.setEnabled(owner ? !task.reward_got : !task.rewarded);
+//            b_rewarded.setText(owner ? R.string.button_reward_got : R.string.button_rewarded);
+//            b_rewarded.setOnClickListener(view -> {
+//                if (owner) task.reward_got = true;
+//                else task.rewarded = true;
+//                save();
+//            });
+//            b_rewarded.setEnabled(owner ? !task.reward_got : !task.rewarded);
 
             e_description.setText(task.description);
             e_reward.setText(String.format(Locale.ENGLISH, "%.2f", task.reward));
@@ -287,6 +308,9 @@ public class TaskActivity extends AppCompatActivity {
             t_date_finish.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_finish));
             b_create.setText(R.string.change_this_task);
             b_approve.setText(task.finished ? R.string.task_not_finished : R.string.task_finished);
+            l_payment.setVisibility(View.VISIBLE);
+        } else {
+            l_payment.setVisibility(View.GONE);
         }
 
     }
@@ -298,7 +322,8 @@ public class TaskActivity extends AppCompatActivity {
     private void save() {
         task.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
         task.description = e_description.getText().toString();
-        task.reward = Double.parseDouble(e_reward.getText().toString());
+        String num = e_reward.getText().toString().trim();
+        task.reward = num.equals("") ? 0 : Double.parseDouble(num);
         task.send(this, dbTasks.getDB());
         showViewsForUser(NetWork.isAdmin());
     }

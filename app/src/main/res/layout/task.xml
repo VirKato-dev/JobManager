@@ -85,8 +85,8 @@
 
 				<ImageView
 					android:id="@+id/i_date_start"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
 					android:contentDescription="@string/label_start_task"
 					app:srcCompat="@drawable/ic_calendar" />
 			</LinearLayout>
@@ -120,8 +120,8 @@
 
 				<ImageView
 					android:id="@+id/i_date_finish"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
 					android:contentDescription="@string/label_end_task"
 					app:srcCompat="@drawable/ic_calendar" />
 			</LinearLayout>
@@ -168,7 +168,52 @@
 					android:layout_width="30dp"
 					android:layout_height="30dp"
 					android:contentDescription="@string/label_reward"
-					tools:ignore="ImageContrastCheck" />
+					app:srcCompat="@drawable/ic_not" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/l_payment"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
+				android:gravity="center_vertical"
+				android:orientation="horizontal"
+				android:paddingStart="8dp"
+				android:paddingEnd="8dp"
+				android:rotationX="5">
+
+				<TextView
+					android:id="@+id/t_payment"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/label_payment"
+					android:textColor="#1976D2" />
+
+				<EditText
+					android:id="@+id/e_payment"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:ems="10"
+					android:importantForAutofill="no"
+					android:inputType="numberDecimal"
+					android:minHeight="48dp"
+					tools:ignore="SpeakableTextPresentCheck" />
+
+				<Button
+					android:id="@+id/b_payment"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/button_payment"
+					android:textColor="#00695C"
+					tools:ignore="TextContrastCheck" />
+
+				<ImageView
+					android:id="@+id/i_payment_list"
+					android:layout_width="30dp"
+					android:layout_height="30dp"
+					android:contentDescription="@string/label_reward"
+					app:srcCompat="@drawable/ic_payment_list" />
 			</LinearLayout>
 
 			<LinearLayout

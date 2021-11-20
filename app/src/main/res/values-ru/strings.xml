@@ -19,8 +19,8 @@
     <string name="button_add_photo">Добавить фото</string>
     <string name="button_add_report">Добавить отчёт / заявку</string>
     <string name="hint_description">Описание задания</string>
-    <string name="label_start_task">Начало работ</string>
-    <string name="label_end_task">Окончить работу</string>
+    <string name="label_start_task">Начало работ:</string>
+    <string name="label_end_task">Окончить работу:</string>
     <string name="button_as_finished">Это задание выполнено</string>
     <string name="button_as_new_task">Создать это задание</string>
     <string name="button_in_progress">В работе</string>
@@ -28,7 +28,7 @@
     <string name="button_list_people">Люди</string>
     <string name="button_my_profile">Профиль</string>
     <string name="button_rewarded">Оплачено</string>
-    <string name="label_reward">"Оплата: "</string>
+    <string name="label_reward">"Стоимость: "</string>
     <string name="button_reward_got">Получено</string>
     <string name="fill_please">Заполните все поля пожалуйста!</string>
     <string name="change_this_task">Изменить это задание</string>
@@ -44,4 +44,6 @@
     <string name="row_pay">Оплата</string>
     <string name="spin_master">Имя мастера</string>
     <string name="spin_spec">Специальзация мастера</string>
+    <string name="label_payment">Платёж:</string>
+    <string name="button_payment">Отправить</string>
 </resources>

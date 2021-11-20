@@ -20,9 +20,9 @@
 	<string name="button_add_photo">Add a picture</string>
 	<string name="button_add_report">Add a new report</string>
 	<string name="hint_description">Task description</string>
-	<string name="label_start_task">Start date</string>
+	<string name="label_start_task">Start date:</string>
 	<string name="def_date" translatable="false">00.00.0000</string>
-	<string name="label_end_task">Finish date</string>
+	<string name="label_end_task">Finish date:</string>
 	<string name="button_as_finished">Task is done</string>
 	<string name="button_as_new_task">Create this task</string>
 	<string name="button_in_progress">In progress</string>
@@ -30,7 +30,7 @@
 	<string name="button_list_people">People</string>
     <string name="button_my_profile">Profile</string>
     <string name="button_rewarded">Paid</string>
-	<string name="label_reward">"Payment: "</string>
+	<string name="label_reward">"Cost: "</string>
     <string name="button_reward_got">Received</string>
     <string name="fill_please">Fill all fields please!</string>
     <string name="change_this_task">Change this task</string>
@@ -46,4 +46,6 @@
 	<string name="row_pay">Payments</string>
     <string name="spin_master">Имя мастера</string>
 	<string name="spin_spec">Специальзация мастера</string>
+    <string name="label_payment">Payment:</string>
+	<string name="button_payment">Send</string>
 </resources>
