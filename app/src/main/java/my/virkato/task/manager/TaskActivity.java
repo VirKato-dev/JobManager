@@ -189,8 +189,8 @@ public class TaskActivity extends AppCompatActivity {
         i_date_start = findViewById(R.id.i_date_start);
         i_date_finish = findViewById(R.id.i_date_finish);
 
-        i_date_start.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
-        i_date_finish.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
+//        i_date_start.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
+//        i_date_finish.setColorFilter(R.color.colorAccent, PorterDuff.Mode.MULTIPLY);
 
         spin_master.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, masters));
         ((ArrayAdapter) spin_master.getAdapter()).notifyDataSetChanged();

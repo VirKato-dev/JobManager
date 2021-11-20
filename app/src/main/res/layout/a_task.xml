@@ -4,7 +4,8 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:rotationX="5">
 
 	<LinearLayout
 		android:layout_width="match_parent"

@@ -42,4 +42,6 @@
     <string name="head_finished">Готово</string>
     <string name="row_tasks">Заданий</string>
     <string name="row_pay">Оплата</string>
+    <string name="spin_master">Имя мастера</string>
+    <string name="spin_spec">Специальзация мастера</string>
 </resources>

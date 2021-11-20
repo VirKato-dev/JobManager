@@ -11,7 +11,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical"
-		android:padding="8dp">
+		android:padding="2dp">
 
 		<Spinner
 			android:id="@+id/spin_master"
@@ -19,16 +19,18 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
-			android:contentDescription="Имя мастера"
-			android:minHeight="48dp" />
+			android:contentDescription="@string/spin_master"
+			android:minHeight="48dp"
+			android:rotationX="5" />
 
 		<Spinner
 			android:id="@+id/spin_spec"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
-			android:contentDescription="Специальзация мастера"
+			android:contentDescription="@string/spin_spec"
 			android:minHeight="48dp"
+			android:rotationX="5"
 			tools:ignore="SpeakableTextPresentCheck" />
 
 		<EditText
@@ -40,7 +42,9 @@
 			android:lines="3"
 			android:minHeight="48dp"
 			android:padding="8dp"
+			android:rotationX="5"
 			android:textColor="#000000"
+			android:textColorHint="#1976D2"
 			android:textSize="16sp" />
 
 		<LinearLayout
@@ -53,32 +57,34 @@
 				android:id="@+id/l_date_start"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_weight="1"
 				android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 				android:gravity="center"
 				android:orientation="horizontal"
 				android:paddingStart="8dp"
-				android:paddingEnd="8dp">
+				android:paddingEnd="8dp"
+				android:rotationX="5">
 
 				<TextView
 					android:id="@+id/t_label_start"
-					android:layout_width="match_parent"
+					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
-					android:text="@string/label_start_task" />
+					android:text="@string/label_start_task"
+					android:textColor="#1976D2" />
 
 				<TextView
 					android:id="@+id/t_date_start"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_weight="1"
 					android:gravity="center_horizontal"
-					android:text="@string/def_date" />
+					android:text="@string/def_date"
+					android:textColor="#1976D2" />
 
 				<ImageView
 					android:id="@+id/i_date_start"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:contentDescription="@string/label_start_task"
 					app:srcCompat="@drawable/ic_calendar" />
 			</LinearLayout>
 
@@ -86,32 +92,34 @@
 				android:id="@+id/l_date_end"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_weight="1"
 				android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 				android:gravity="center"
 				android:orientation="horizontal"
 				android:paddingStart="8dp"
-				android:paddingEnd="8dp">
+				android:paddingEnd="8dp"
+				android:rotationX="5">
 
 				<TextView
 					android:id="@+id/t_label_finish"
-					android:layout_width="match_parent"
+					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
-					android:text="@string/label_end_task" />
+					android:text="@string/label_end_task"
+					android:textColor="#1976D2" />
 
 				<TextView
 					android:id="@+id/t_date_finish"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_weight="1"
 					android:gravity="center_horizontal"
-					android:text="@string/def_date" />
+					android:text="@string/def_date"
+					android:textColor="#1976D2" />
 
 				<ImageView
 					android:id="@+id/i_date_finish"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:contentDescription="@string/label_end_task"
 					app:srcCompat="@drawable/ic_calendar" />
 			</LinearLayout>
 
@@ -119,18 +127,19 @@
 				android:id="@+id/l_reward"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:layout_weight="1"
 				android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 				android:gravity="center_vertical"
 				android:orientation="horizontal"
 				android:paddingStart="8dp"
-				android:paddingEnd="8dp">
+				android:paddingEnd="8dp"
+				android:rotationX="5">
 
 				<TextView
 					android:id="@+id/t_reward"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="@string/label_reward" />
+					android:text="@string/label_reward"
+					android:textColor="#1976D2" />
 
 				<EditText
 					android:id="@+id/e_reward"
@@ -138,44 +147,48 @@
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
 					android:ems="10"
-					android:inputType="numberDecimal" />
+					android:importantForAutofill="no"
+					android:inputType="numberDecimal"
+					android:minHeight="48dp"
+					tools:ignore="SpeakableTextPresentCheck" />
 
 				<Button
 					android:id="@+id/b_rewarded"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_weight="0"
 					android:text="@string/button_rewarded" />
 
 				<ImageView
 					android:id="@+id/i_reward_got"
 					android:layout_width="30dp"
-					android:layout_height="30dp" />
+					android:layout_height="30dp"
+					android:contentDescription="@string/label_reward" />
 			</LinearLayout>
 
 			<LinearLayout
 				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_weight="1"
+				android:layout_height="wrap_content"
 				android:orientation="horizontal">
 
 				<Button
 					android:id="@+id/b_create"
+					style="?android:attr/buttonBarButtonStyle"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
 					android:text="@string/button_as_new_task"
+					android:textColor="#283593"
 					android:textSize="12sp" />
 
 				<Button
 					android:id="@+id/b_approve"
+					style="?android:attr/buttonBarButtonStyle"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
-					android:layout_gravity="right"
 					android:layout_weight="1"
 					android:padding="8dp"
 					android:text="@string/button_as_finished"
-					android:textColor="#000000"
+					android:textColor="#283593"
 					android:textSize="12sp" />
 			</LinearLayout>
 		</LinearLayout>
@@ -183,7 +196,7 @@
 		<ListView
 			android:id="@+id/lv_reports"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_height="0dp"
 			android:layout_weight="1"
 			android:choiceMode="none" />
 
@@ -191,7 +204,7 @@
 			android:id="@+id/b_add_report"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="right"
+			android:layout_gravity="end"
 			android:padding="8dp"
 			android:text="@string/button_add_report"
 			android:textColor="#000000"

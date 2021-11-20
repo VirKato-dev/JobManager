@@ -44,4 +44,6 @@
 	<string name="head_finished">Done</string>
 	<string name="row_tasks">Tasks</string>
 	<string name="row_pay">Payments</string>
+    <string name="spin_master">Имя мастера</string>
+	<string name="spin_spec">Специальзация мастера</string>
 </resources>
