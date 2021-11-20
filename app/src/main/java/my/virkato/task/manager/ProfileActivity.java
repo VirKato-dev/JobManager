@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.entity.Man;
+import my.virkato.task.manager.entity.Payment;
 import my.virkato.task.manager.entity.Task;
 
 /***
@@ -156,9 +157,13 @@ public class ProfileActivity extends AppCompatActivity {
             if (you != null && you.id.equals(task.master_uid)) {
                 tasks_total++;
                 tasks_done += task.rewarded ? 1 : 0;
-                pay_total += task.reward;
-                pay_done += task.reward_got ? task.reward : 0d;
 
+                pay_total += task.reward;
+                if (task.payments.size() > 0) {
+                    for (Payment pay : task.payments) {
+                        if (pay.received) pay_done += pay.cost;
+                    }
+                }
             }
         }
 

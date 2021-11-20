@@ -137,6 +137,12 @@ public class PeopleActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        delay.cancel();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         // для предотвращения ложных срабатываний слушателя при повторном запуске приложения

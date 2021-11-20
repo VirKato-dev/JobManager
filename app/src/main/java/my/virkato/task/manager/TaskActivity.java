@@ -169,20 +169,23 @@ public class TaskActivity extends AppCompatActivity {
 
 //        dbPeople.receiveNewData();
         dbTasks.receiveNewData();
-        dbTasks.getTasks().setOnTasksUpdatedListener((tasks, removed, t) -> {
-            if (dbTasks.getTasks().findTaskById(task.id) != null) {
-                task = dbTasks.getTasks().findTaskById(task.id);
-                showViewsForUser();
-            }
-        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        dbTasks.getTasks().setOnTasksUpdatedListener((tasks, removed, t) -> {
+            Task tmp = dbTasks.getTasks().findTaskById(task.id);
+            if (tmp != null) {
+                task = tmp;
+                showViewsForUser();
+            }
+        });
+
         if (NetWork.user() != null) {
-            receiveAllReports();
             showViewsForUser();
+            receiveAllReports();
         } else finish();
     }
 
@@ -267,7 +270,6 @@ public class TaskActivity extends AppCompatActivity {
         });
 
         b_payment.setOnClickListener(v -> {
-            //TODO отправить очередной платёж/аванс
             Payment curPay = new Payment();
             double cost = 0d;
             try {
