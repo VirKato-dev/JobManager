@@ -1,15 +1,18 @@
 package my.virkato.task.manager.entity;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
 import my.virkato.task.manager.AppUtil;
-import my.virkato.task.manager.adapter.NetWork;
 
 
 public class Task {
@@ -59,6 +62,11 @@ public class Task {
      */
     public boolean finished = false;
 
+    /***
+     * список платежей
+     */
+    public ArrayList<Payment> payments = new ArrayList<>();
+
 
     public Task(HashMap<String, Object> map) {
         if (map.containsKey("id")) id = map.get("id").toString();
@@ -70,6 +78,18 @@ public class Task {
         if (map.containsKey("date_start")) date_start = (long) Double.parseDouble(map.get("date_start").toString());
         if (map.containsKey("date_finish")) date_finish = (long) Double.parseDouble(map.get("date_finish").toString());
         if (map.containsKey("finished")) finished = Boolean.parseBoolean(map.get("finished").toString());
+        if (map.containsKey("payments")) {
+            ArrayList<LinkedTreeMap<String,String>> ltm = (ArrayList<LinkedTreeMap<String, String>>) map.get("payments");
+            Type type = new TypeToken<ArrayList<Payment>>(){}.getType();
+            payments = new Gson().fromJson(new Gson().toJson(ltm), type);
+        }
+
+    }
+
+
+    public Task(String json) {
+        this((HashMap<String, Object>) new Gson().fromJson(json, new TypeToken<HashMap<String, Object>>() {
+        }.getType()));
     }
 
 
@@ -87,6 +107,7 @@ public class Task {
         map.put("date_start", date_start);
         map.put("date_finish", date_finish);
         map.put("finished", finished);
+        map.put("payments", payments);
         return map;
     }
 
@@ -96,9 +117,9 @@ public class Task {
         return String.format(Locale.US,
                 "{\"id\":\"%s\", \"master_uid\":\"%s\", \"description\":\"%s\","+
                 "\"reward\": %.2f, \"rewarded\": %b, \"reward_got\": %b, \"date_start\": %d,"+
-                "\"date_finish\": %d, \"finished\": %b}",
+                "\"date_finish\": %d, \"finished\": %b, \"payments\": %s}",
                 id, master_uid, description.replaceAll("\"", "'"),
-                reward, rewarded, reward_got, date_start, date_finish, finished);
+                reward, rewarded, reward_got, date_start, date_finish, finished, new Gson().toJson(payments));
     }
 
     public void send(Context context, DatabaseReference db) {

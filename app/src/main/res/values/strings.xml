@@ -48,4 +48,9 @@
     <string name="spin_spec">Специальзация мастера</string>
     <string name="label_payment">Payment:</string>
     <string name="button_payment">Send</string>
+    <string name="cost_zero" translatable="false">0.00</string>
+    <string name="payment_received">payment received</string>
+    <string name="button_payment_apply">Apply</string>
+    <string name="label_payment_desc">Payment description:</string>
+    <string name="button_payment_make">Make</string>
 </resources>
