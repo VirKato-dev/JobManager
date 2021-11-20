@@ -39,13 +39,16 @@
 			android:layout_height="wrap_content"
 			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 			android:hint="@string/hint_description"
+			android:inputType="text"
 			android:lines="3"
 			android:minHeight="48dp"
 			android:padding="8dp"
 			android:rotationX="5"
 			android:textColor="#000000"
 			android:textColorHint="#1976D2"
-			android:textSize="16sp" />
+			android:textSize="16sp"
+			tools:ignore="TextContrastCheck"
+			android:importantForAutofill="no" />
 
 		<LinearLayout
 			android:id="@+id/l_dates"
@@ -156,13 +159,16 @@
 					android:id="@+id/b_rewarded"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="@string/button_rewarded" />
+					android:text="@string/button_rewarded"
+					android:textColor="#00695C"
+					tools:ignore="TextContrastCheck" />
 
 				<ImageView
 					android:id="@+id/i_reward_got"
 					android:layout_width="30dp"
 					android:layout_height="30dp"
-					android:contentDescription="@string/label_reward" />
+					android:contentDescription="@string/label_reward"
+					tools:ignore="ImageContrastCheck" />
 			</LinearLayout>
 
 			<LinearLayout
