@@ -27,10 +27,12 @@ import java.util.Locale;
 import my.virkato.task.manager.adapter.Lv_reportsAdapter;
 import my.virkato.task.manager.adapter.NetWork;
 import my.virkato.task.manager.entity.Man;
+import my.virkato.task.manager.entity.Payment;
 import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Report;
 import my.virkato.task.manager.entity.Reports;
 import my.virkato.task.manager.entity.Task;
+import my.virkato.task.manager.entity.Tasks;
 
 /***
  * Информация о задании
@@ -65,7 +67,7 @@ public class TaskActivity extends AppCompatActivity {
     /***
      * текущее задание
      */
-    private Task task;
+    private Task task = new Task();
 
     /***
      * адаптер для получения списка людей
@@ -167,6 +169,12 @@ public class TaskActivity extends AppCompatActivity {
 
 //        dbPeople.receiveNewData();
         dbTasks.receiveNewData();
+        dbTasks.getTasks().setOnTasksUpdatedListener((tasks, removed, t) -> {
+            if (dbTasks.getTasks().findTaskById(task.id) != null) {
+                task = dbTasks.getTasks().findTaskById(task.id);
+                showViewsForUser();
+            }
+        });
     }
 
     @Override
@@ -174,6 +182,7 @@ public class TaskActivity extends AppCompatActivity {
         super.onResume();
         if (NetWork.user() != null) {
             receiveAllReports();
+            showViewsForUser();
         } else finish();
     }
 
@@ -259,7 +268,14 @@ public class TaskActivity extends AppCompatActivity {
 
         b_payment.setOnClickListener(v -> {
             //TODO отправить очередной платёж/аванс
-
+            Payment curPay = new Payment();
+            double cost = 0d;
+            try {
+                cost = Double.parseDouble(e_payment.getText().toString().trim());
+            } catch (Exception ignore) {}
+            curPay.cost = cost;
+            task.payments.add(curPay);
+            task.send(this, dbTasks.getDB());
         });
 
         i_payment_list.setOnClickListener(v -> {
@@ -270,9 +286,9 @@ public class TaskActivity extends AppCompatActivity {
 
     /***
      * для пользователей и админов экран немного отличается
-     * @param admin админ?
      */
-    private void showViewsForUser(boolean admin) {
+    private void showViewsForUser() {
+        boolean admin = NetWork.isAdmin();
         spin_master.setEnabled(admin); // пользователь не может изменить задание
         spin_spec.setEnabled(admin);
         e_description.setEnabled(admin);
@@ -288,7 +304,6 @@ public class TaskActivity extends AppCompatActivity {
 //                        (task.master_uid.equals(NetWork.user().getUid()) && task.rewarded)
 //                ) ? View.VISIBLE : View.GONE
 //        );
-        i_reward_got.setImageResource(task.reward_got ? R.drawable.ic_ok : R.drawable.ic_not);
 
         if (!task.master_uid.equals("")) {
             String currentUser = NetWork.user().getUid();
@@ -304,7 +319,16 @@ public class TaskActivity extends AppCompatActivity {
 //            b_rewarded.setEnabled(owner ? !task.reward_got : !task.rewarded);
 
             e_description.setText(task.description);
-            e_reward.setText(String.format(Locale.ENGLISH, "%.2f", task.reward));
+            double total_pay = 0d;
+            boolean got = true;
+            if (task.payments.size() > 0) {
+                for (Payment pay : task.payments) {
+                    if (pay.received) total_pay += pay.cost;
+                    else got = false;
+                }
+            }
+            i_reward_got.setImageResource(got ? R.drawable.ic_ok : R.drawable.ic_not);
+            e_reward.setText(String.format(Locale.ENGLISH, "%.2f (%.2f)", task.reward, total_pay));
             t_date_start.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_start));
             t_date_finish.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_finish));
             b_create.setText(R.string.change_this_task);
@@ -326,7 +350,7 @@ public class TaskActivity extends AppCompatActivity {
         String num = e_reward.getText().toString().trim();
         task.reward = num.equals("") ? 0 : Double.parseDouble(num);
         task.send(this, dbTasks.getDB());
-        showViewsForUser(NetWork.isAdmin());
+        showViewsForUser();
     }
 
 
@@ -413,7 +437,7 @@ public class TaskActivity extends AppCompatActivity {
                 init = false;
             }
 
-            showViewsForUser(NetWork.isAdmin());
+            showViewsForUser();
         }
     }
 

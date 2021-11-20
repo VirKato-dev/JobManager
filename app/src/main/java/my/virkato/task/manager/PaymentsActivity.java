@@ -57,19 +57,21 @@ public class PaymentsActivity extends AppCompatActivity {
         rv = findViewById(R.id.rv_payments);
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Rv_paymentsAdapter(new ArrayList<>());
-        adapter.setUID(NetWork.user().getUid());
         rv.setAdapter(adapter);
         adapter.setOnChangeListener(position -> {
             task.send(this, dbTasks.getDB());
         });
         adapter.setOnClickListener(v -> {
-            position = rv.getChildAdapterPosition(v);
-            curPay = adapter.getItem(position);
-            editPeyment();
+            if (NetWork.isAdmin()) {
+                position = rv.getChildAdapterPosition(v);
+                curPay = adapter.getItem(position);
+                editPeyment();
+            }
         });
 
         dbTasks.getTasks().setOnTasksUpdatedListener((tasks, removed, t) -> {
             task = dbTasks.getTasks().findTaskById(task_id);
+            adapter.setUID(task.master_uid);
             showPaymentsList();
         });
 
@@ -87,7 +89,7 @@ public class PaymentsActivity extends AppCompatActivity {
 
 
     private void editPeyment() {
-        if (curPay != null) {
+        if (curPay.cost != 0) {
             b_payment_apply.setText(R.string.button_payment_apply);
         } else {
             b_payment_apply.setText(R.string.button_payment_make);

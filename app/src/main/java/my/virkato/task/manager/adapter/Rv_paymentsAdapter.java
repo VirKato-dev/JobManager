@@ -27,7 +27,7 @@ public class Rv_paymentsAdapter extends RecyclerView.Adapter<Rv_paymentsAdapter.
     private View.OnClickListener click;
     private View.OnLongClickListener longClick;
     private OnChanged changed;
-    private String UID;
+    private String UID = "";
 
 
     public Rv_paymentsAdapter(ArrayList<Payment> payments) {
