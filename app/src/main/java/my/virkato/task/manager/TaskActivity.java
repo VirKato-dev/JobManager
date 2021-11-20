@@ -266,7 +266,7 @@ public class TaskActivity extends AppCompatActivity {
             } catch (Exception ignore) {}
             curPay.cost = cost;
             task.payments.add(curPay);
-            task.send(this, dbTasks.getDB());
+            if (cost != 0) task.send(this, dbTasks.getDB());
         });
 
         i_payment_list.setOnClickListener(v -> {
@@ -294,20 +294,32 @@ public class TaskActivity extends AppCompatActivity {
             String currentUser = NetWork.user().getUid();
             boolean owner = currentUser.equals(task.master_uid);
             b_add_report.setVisibility((owner && !task.finished) ? View.VISIBLE : View.GONE);
+            e_payment.setEnabled(!owner);
+            b_payment.setVisibility(!owner ? View.VISIBLE : View.GONE);
 
             e_description.setText(task.description);
             double total_pay = 0d;
+            double total_pay_not = 0d;
             boolean got = true;
             if (task.payments.size() > 0) {
                 for (Payment pay : task.payments) {
                     if (pay.received) total_pay += pay.cost;
-                    else got = false;
+                    else {
+                        total_pay_not += pay.cost;
+                        got = false;
+                    }
                 }
+            } else {
+                got = false;
             }
+            if (owner) {
+                e_payment.setText(String.format(Locale.ENGLISH, "%.2f", total_pay_not));
+            }
+
             i_reward_got.setImageResource(got ? R.drawable.ic_ok : R.drawable.ic_not);
             e_reward.setText(String.format(Locale.ENGLISH, "%.2f (%.2f)", task.reward, total_pay));
-            t_date_start.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_start));
-            t_date_finish.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(task.date_finish));
+            t_date_start.setText(new SimpleDateFormat(getString(R.string.date_format), Locale.getDefault()).format(task.date_start));
+            t_date_finish.setText(new SimpleDateFormat(getString(R.string.date_format), Locale.getDefault()).format(task.date_finish));
             b_create.setText(R.string.change_this_task);
             b_approve.setText(task.finished ? R.string.task_not_finished : R.string.task_finished);
             l_payment.setVisibility(View.VISIBLE);
@@ -325,7 +337,13 @@ public class TaskActivity extends AppCompatActivity {
         task.master_uid = masters_uid.get(spin_master.getSelectedItemPosition());
         task.description = e_description.getText().toString();
         String num = e_reward.getText().toString().trim();
-        task.reward = num.equals("") ? 0 : Double.parseDouble(num);
+        int pos = num.indexOf('(');
+        if (pos >= 0) num = num.substring(0, pos-1);
+        double reward = 0d;
+        try {
+            reward = Double.parseDouble(num);
+        } catch (Exception ignore) {}
+        task.reward = reward;
         task.send(this, dbTasks.getDB());
         showViewsForUser();
     }

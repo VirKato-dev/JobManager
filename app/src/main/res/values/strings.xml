@@ -53,4 +53,7 @@
     <string name="button_payment_apply">Apply</string>
     <string name="label_payment_desc">Payment description:</string>
     <string name="button_payment_make">Make</string>
+    <string name="ad_title_remove_pay">Remove the payment</string>
+    <string name="ad_message_remove_pay">This payment wil remove from application.\nAre you want to do that?</string>
+    <string name="date_format" translatable="false">dd.MM.y</string>
 </resources>

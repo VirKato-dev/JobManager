@@ -1,11 +1,11 @@
 package my.virkato.task.manager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,8 +65,23 @@ public class PaymentsActivity extends AppCompatActivity {
             if (NetWork.isAdmin()) {
                 position = rv.getChildAdapterPosition(v);
                 curPay = adapter.getItem(position);
-                editPeyment();
+                editPayment();
             }
+        });
+
+        adapter.setOnLongClickListener(v -> {
+            position = rv.getChildAdapterPosition(v);
+            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+            builder.setTitle(R.string.ad_title_remove_pay);
+            builder.setMessage(R.string.ad_message_remove_pay);
+            builder.setPositiveButton(R.string.ad_positive_button, (dialog, which) -> {
+                task.payments.remove(position);
+                task.send(v.getContext(), dbTasks.getDB());
+            });
+            builder.setNegativeButton(R.string.ad_negative_button, (dialog, which) -> {
+            });
+            builder.create().show();
+            return true;
         });
 
         dbTasks.getTasks().setOnTasksUpdatedListener((tasks, removed, t) -> {
@@ -76,7 +91,7 @@ public class PaymentsActivity extends AppCompatActivity {
         });
 
         showPaymentsList();
-        editPeyment();
+        editPayment();
     }
 
 
@@ -88,7 +103,7 @@ public class PaymentsActivity extends AppCompatActivity {
     }
 
 
-    private void editPeyment() {
+    private void editPayment() {
         if (curPay.cost != 0) {
             b_payment_apply.setText(R.string.button_payment_apply);
         } else {
@@ -96,6 +111,11 @@ public class PaymentsActivity extends AppCompatActivity {
         }
         e_payment_cost.setText(String.format(Locale.ENGLISH, "%.2f", curPay.cost));
         e_description.setText(curPay.description);
+        if (task != null) {
+            if (task.master_uid.equals(NetWork.user().getUid())) {
+                l_current_payment.setVisibility(View.GONE);
+            }
+        }
     }
 
 
@@ -116,7 +136,7 @@ public class PaymentsActivity extends AppCompatActivity {
         task.payments.add(position, curPay);
         curPay = new Payment();
         position = -1;
-        editPeyment();
+        editPayment();
 
         task.send(this, dbTasks.getDB());
     }

@@ -67,7 +67,7 @@ public class Lv_reportsAdapter extends BaseAdapter {
         t_desc.setText(getItem(position).description);
 
         if (getItem(position).date > 0)
-            t_date.setText(new SimpleDateFormat("dd.MM.y", Locale.getDefault()).format(getItem(position).date));
+            t_date.setText(new SimpleDateFormat(cont.getString(R.string.date_format), Locale.getDefault()).format(getItem(position).date));
 
         String m_id = getItem(position).master;
         String name = cont.getString(R.string.noname);

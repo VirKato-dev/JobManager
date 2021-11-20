@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import my.virkato.task.manager.R;
 import my.virkato.task.manager.entity.Man;
+import my.virkato.task.manager.entity.Payment;
 import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Task;
 
@@ -64,9 +65,22 @@ public class Lv_tasksAdapter extends BaseAdapter {
 
         t_fio.setText(fio);
         t_description.setText(task.description);
-        t_task_date.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(task.date_start));
-        i_pay_check.setImageResource(task.reward_got ? R.drawable.ic_ok : R.drawable.ic_not);
-        i_pay_check.setVisibility(task.rewarded ? View.VISIBLE : View.INVISIBLE);
+        t_task_date.setText(new SimpleDateFormat(cont.getString(R.string.date_format), Locale.getDefault()).format(task.date_start));
+
+        boolean got = true;
+        if (task.payments.size() > 0) {
+            for (Payment pay : task.payments) {
+                if (!pay.received) {
+                    got = false;
+                    break;
+                }
+            }
+        } else {
+            got = false;
+        }
+
+        i_pay_check.setImageResource(got ? R.drawable.ic_ok : R.drawable.ic_not);
+//        i_pay_check.setVisibility(task.rewarded ? View.VISIBLE : View.INVISIBLE);
 
         return view;
     }

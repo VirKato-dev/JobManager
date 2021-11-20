@@ -20,7 +20,6 @@
 			android:layout_height="wrap_content"
 			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 			android:contentDescription="@string/spin_master"
-			android:minHeight="48dp"
 			android:rotationX="5" />
 
 		<Spinner
@@ -29,7 +28,6 @@
 			android:layout_height="wrap_content"
 			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 			android:contentDescription="@string/spin_spec"
-			android:minHeight="48dp"
 			android:rotationX="5"
 			tools:ignore="SpeakableTextPresentCheck" />
 
@@ -39,16 +37,15 @@
 			android:layout_height="wrap_content"
 			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 			android:hint="@string/hint_description"
-			android:inputType="text"
+			android:importantForAutofill="no"
+			android:inputType="textMultiLine"
 			android:lines="3"
 			android:minHeight="48dp"
 			android:padding="8dp"
 			android:rotationX="5"
 			android:textColor="#000000"
 			android:textColorHint="#1976D2"
-			android:textSize="16sp"
-			tools:ignore="TextContrastCheck"
-			android:importantForAutofill="no" />
+			android:textSize="16sp" />
 
 		<LinearLayout
 			android:id="@+id/l_task_dates"

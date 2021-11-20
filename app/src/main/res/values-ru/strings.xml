@@ -50,4 +50,6 @@
     <string name="button_payment_apply">Применить</string>
     <string name="label_payment_desc">Описание платежа:</string>
     <string name="button_payment_make">Создать</string>
+    <string name="ad_title_remove_pay">Удалить платёж</string>
+    <string name="ad_message_remove_pay">Этот платёж будет удалён полностью.\nВы уверены, что он вам больше не понадобится?</string>
 </resources>
