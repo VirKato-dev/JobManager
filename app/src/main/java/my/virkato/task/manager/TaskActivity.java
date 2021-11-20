@@ -15,12 +15,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -32,7 +28,6 @@ import my.virkato.task.manager.entity.People;
 import my.virkato.task.manager.entity.Report;
 import my.virkato.task.manager.entity.Reports;
 import my.virkato.task.manager.entity.Task;
-import my.virkato.task.manager.entity.Tasks;
 
 /***
  * Информация о задании
@@ -115,11 +110,6 @@ public class TaskActivity extends AppCompatActivity {
     private Button b_create;
 
     /***
-     * подтверждение отправки/получения платежа
-     */
-    private Button b_rewarded;
-
-    /***
      * сумма вознаграждения
      */
     private EditText e_reward;
@@ -142,7 +132,7 @@ public class TaskActivity extends AppCompatActivity {
     /***
      * поля ввода дат выполнения задания с помощью диалога
      */
-    private LinearLayout l_dates;
+    private LinearLayout l_task_dates;
     private LinearLayout l_date_start, l_date_end;
     private TextView t_date_start, t_date_finish;
     private ImageView i_date_start, i_date_finish;
@@ -195,12 +185,11 @@ public class TaskActivity extends AppCompatActivity {
         spin_spec = findViewById(R.id.spin_spec);
         b_approve = findViewById(R.id.b_approve);
         b_create = findViewById(R.id.b_create);
-        b_rewarded = findViewById(R.id.b_rewarded);
         e_reward = findViewById(R.id.e_reward);
         i_reward_got = findViewById(R.id.i_reward_got);
         lv_reports = findViewById(R.id.lv_reports);
         b_add_report = findViewById(R.id.b_add_report);
-        l_dates = findViewById(R.id.l_dates);
+        l_task_dates = findViewById(R.id.l_task_dates);
         l_date_start = findViewById(R.id.l_date_start);
         l_date_end = findViewById(R.id.l_date_end);
         t_date_start = findViewById(R.id.t_date_start);
@@ -300,25 +289,11 @@ public class TaskActivity extends AppCompatActivity {
         b_create.setVisibility(admin ? View.VISIBLE : View.GONE);
         b_add_report.setVisibility(admin ? View.GONE : View.VISIBLE);
         b_approve.setVisibility((admin && !task.master_uid.equals("")) ? View.VISIBLE : View.GONE);
-        b_rewarded.setVisibility(View.GONE);
-//        b_rewarded.setVisibility((
-//                        (task.finished && NetWork.isAdmin()) ||
-//                        (task.master_uid.equals(NetWork.user().getUid()) && task.rewarded)
-//                ) ? View.VISIBLE : View.GONE
-//        );
 
         if (!task.master_uid.equals("")) {
             String currentUser = NetWork.user().getUid();
             boolean owner = currentUser.equals(task.master_uid);
             b_add_report.setVisibility((owner && !task.finished) ? View.VISIBLE : View.GONE);
-
-//            b_rewarded.setText(owner ? R.string.button_reward_got : R.string.button_rewarded);
-//            b_rewarded.setOnClickListener(view -> {
-//                if (owner) task.reward_got = true;
-//                else task.rewarded = true;
-//                save();
-//            });
-//            b_rewarded.setEnabled(owner ? !task.reward_got : !task.rewarded);
 
             e_description.setText(task.description);
             double total_pay = 0d;

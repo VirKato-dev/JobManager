@@ -51,15 +51,17 @@
 			android:importantForAutofill="no" />
 
 		<LinearLayout
-			android:id="@+id/l_dates"
+			android:id="@+id/l_task_dates"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:orientation="vertical">
+			android:orientation="horizontal"
+			android:baselineAligned="false">
 
 			<LinearLayout
 				android:id="@+id/l_date_start"
-				android:layout_width="match_parent"
+				android:layout_width="0dp"
 				android:layout_height="wrap_content"
+				android:layout_weight="1"
 				android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 				android:gravity="center"
 				android:orientation="horizontal"
@@ -67,21 +69,26 @@
 				android:paddingEnd="8dp"
 				android:rotationX="5">
 
-				<TextView
-					android:id="@+id/t_label_start"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/label_start_task"
-					android:textColor="#1976D2" />
-
-				<TextView
-					android:id="@+id/t_date_start"
+				<LinearLayout
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:gravity="center_horizontal"
-					android:text="@string/def_date"
-					android:textColor="#1976D2" />
+					android:orientation="vertical">
+
+					<TextView
+						android:id="@+id/t_label_start"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/label_start_task"
+						android:textColor="#1976D2" />
+
+					<TextView
+						android:id="@+id/t_date_start"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center_horizontal"
+						android:text="@string/def_date"
+						android:textColor="#1976D2" />
+				</LinearLayout>
 
 				<ImageView
 					android:id="@+id/i_date_start"
@@ -93,8 +100,9 @@
 
 			<LinearLayout
 				android:id="@+id/l_date_end"
-				android:layout_width="match_parent"
+				android:layout_width="0dp"
 				android:layout_height="wrap_content"
+				android:layout_weight="1"
 				android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
 				android:gravity="center"
 				android:orientation="horizontal"
@@ -102,21 +110,26 @@
 				android:paddingEnd="8dp"
 				android:rotationX="5">
 
-				<TextView
-					android:id="@+id/t_label_finish"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/label_end_task"
-					android:textColor="#1976D2" />
-
-				<TextView
-					android:id="@+id/t_date_finish"
+				<LinearLayout
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:gravity="center_horizontal"
-					android:text="@string/def_date"
-					android:textColor="#1976D2" />
+					android:orientation="vertical">
+
+					<TextView
+						android:id="@+id/t_label_finish"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/label_end_task"
+						android:textColor="#1976D2" />
+
+					<TextView
+						android:id="@+id/t_date_finish"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center_horizontal"
+						android:text="@string/def_date"
+						android:textColor="#1976D2" />
+				</LinearLayout>
 
 				<ImageView
 					android:id="@+id/i_date_finish"
@@ -126,122 +139,115 @@
 					app:srcCompat="@drawable/ic_calendar" />
 			</LinearLayout>
 
-			<LinearLayout
-				android:id="@+id/l_reward"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
-				android:gravity="center_vertical"
-				android:orientation="horizontal"
-				android:paddingStart="8dp"
-				android:paddingEnd="8dp"
-				android:rotationX="5">
+		</LinearLayout>
 
-				<TextView
-					android:id="@+id/t_reward"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/label_reward"
-					android:textColor="#1976D2" />
+		<LinearLayout
+			android:id="@+id/l_reward"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:paddingStart="8dp"
+			android:paddingEnd="8dp"
+			android:rotationX="5">
 
-				<EditText
-					android:id="@+id/e_reward"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:ems="10"
-					android:importantForAutofill="no"
-					android:inputType="numberDecimal"
-					android:minHeight="48dp"
-					tools:ignore="SpeakableTextPresentCheck" />
-
-				<Button
-					android:id="@+id/b_rewarded"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/button_rewarded"
-					android:textColor="#00695C"
-					tools:ignore="TextContrastCheck" />
-
-				<ImageView
-					android:id="@+id/i_reward_got"
-					android:layout_width="30dp"
-					android:layout_height="30dp"
-					android:contentDescription="@string/label_reward"
-					app:srcCompat="@drawable/ic_not" />
-			</LinearLayout>
-
-			<LinearLayout
-				android:id="@+id/l_payment"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
-				android:gravity="center_vertical"
-				android:orientation="horizontal"
-				android:paddingStart="8dp"
-				android:paddingEnd="8dp"
-				android:rotationX="5">
-
-				<TextView
-					android:id="@+id/t_payment"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/label_payment"
-					android:textColor="#1976D2" />
-
-				<EditText
-					android:id="@+id/e_payment"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:ems="10"
-					android:importantForAutofill="no"
-					android:inputType="numberDecimal"
-					android:minHeight="48dp"
-					tools:ignore="SpeakableTextPresentCheck" />
-
-				<Button
-					android:id="@+id/b_payment"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/button_payment"
-					android:textColor="#00695C"
-					tools:ignore="TextContrastCheck" />
-
-				<ImageView
-					android:id="@+id/i_payment_list"
-					android:layout_width="30dp"
-					android:layout_height="30dp"
-					android:contentDescription="@string/label_reward"
-					app:srcCompat="@drawable/ic_payment_list" />
-			</LinearLayout>
-
-			<LinearLayout
-				android:layout_width="match_parent"
+			<TextView
+				android:id="@+id/t_reward"
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:orientation="horizontal">
+				android:text="@string/label_reward"
+				android:textColor="#1976D2" />
 
-				<Button
-					android:id="@+id/b_create"
-					style="?android:attr/buttonBarButtonStyle"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:text="@string/button_as_new_task"
-					android:textColor="#283593"
-					android:textSize="12sp" />
+			<EditText
+				android:id="@+id/e_reward"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:ems="10"
+				android:importantForAutofill="no"
+				android:inputType="numberDecimal"
+				android:minHeight="48dp"
+				tools:ignore="SpeakableTextPresentCheck" />
 
-				<Button
-					android:id="@+id/b_approve"
-					style="?android:attr/buttonBarButtonStyle"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:padding="8dp"
-					android:text="@string/button_as_finished"
-					android:textColor="#283593"
-					android:textSize="12sp" />
-			</LinearLayout>
+			<ImageView
+				android:id="@+id/i_reward_got"
+				android:layout_width="30dp"
+				android:layout_height="30dp"
+				android:contentDescription="@string/label_reward"
+				app:srcCompat="@drawable/ic_not" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/l_payment"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
+			android:gravity="center_vertical"
+			android:orientation="horizontal"
+			android:paddingStart="8dp"
+			android:paddingEnd="8dp"
+			android:rotationX="5">
+
+			<TextView
+				android:id="@+id/t_payment"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/label_payment"
+				android:textColor="#1976D2" />
+
+			<EditText
+				android:id="@+id/e_payment"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:ems="10"
+				android:importantForAutofill="no"
+				android:inputType="numberDecimal"
+				android:minHeight="48dp"
+				tools:ignore="SpeakableTextPresentCheck" />
+
+			<Button
+				android:id="@+id/b_payment"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/button_payment"
+				android:textColor="#00695C"
+				tools:ignore="TextContrastCheck" />
+
+			<ImageView
+				android:id="@+id/i_payment_list"
+				android:layout_width="30dp"
+				android:layout_height="30dp"
+				android:contentDescription="@string/label_reward"
+				app:srcCompat="@drawable/ic_payment_list" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/b_create"
+				style="?android:attr/buttonBarButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/button_as_new_task"
+				android:textColor="#283593"
+				android:textSize="12sp" />
+
+			<Button
+				android:id="@+id/b_approve"
+				style="?android:attr/buttonBarButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:padding="8dp"
+				android:text="@string/button_as_finished"
+				android:textColor="#283593"
+				android:textSize="12sp" />
 		</LinearLayout>
 
 		<ListView
