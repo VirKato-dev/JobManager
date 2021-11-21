@@ -289,7 +289,7 @@ public class TaskActivity extends AppCompatActivity {
         boolean admin = NetWork.isAdmin();
         spin_master.setEnabled(admin); // пользователь не может изменить задание
         spin_spec.setEnabled(admin);
-        e_description.setEnabled(admin);
+//        e_description.setEnabled(admin);
         e_reward.setEnabled(admin && !task.finished && task.reward == 0);
         l_date_start.setEnabled(admin);
         l_date_end.setEnabled(admin);
