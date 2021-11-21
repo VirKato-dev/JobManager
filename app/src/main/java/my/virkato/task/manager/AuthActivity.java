@@ -31,7 +31,6 @@ public class AuthActivity extends AppCompatActivity {
 
     private LinearLayout linear1;
     private LinearLayout l_reg;
-    private LinearLayout l_auth;
     private LinearLayout l_phone;
     private LinearLayout l_otp;
     private TextView textview1;
@@ -58,7 +57,6 @@ public class AuthActivity extends AppCompatActivity {
     private void initialize(Bundle _savedInstanceState) {
         linear1 = findViewById(R.id.linear1);
         l_reg = findViewById(R.id.l_reg);
-        l_auth = findViewById(R.id.l_auth);
         l_phone = findViewById(R.id.l_phone);
         l_otp = findViewById(R.id.l_otp);
         textview1 = findViewById(R.id.t_description);
@@ -128,7 +126,6 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     private void initializeLogic() {
-        l_auth.setVisibility(View.GONE);
         l_otp.setVisibility(View.GONE);
     }
 
