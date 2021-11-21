@@ -254,7 +254,7 @@ public class AppUtil {
             adv.show();
             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
             lp.copyFrom(adv.getWindow().getAttributes());
-            int size = (int) AppUtil.getDip(context, 100);
+            int size = (int) AppUtil.getDip(context, 200);
             lp.width = size;
             lp.height = size;
             adv.getWindow().setAttributes(lp);
