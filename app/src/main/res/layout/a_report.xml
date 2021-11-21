@@ -52,9 +52,7 @@
 				<TextView
 					android:id="@+id/t_repFIO"
 					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="0"
-					android:text="TextView" />
+					android:layout_height="wrap_content" />
 			</LinearLayout>
 
 		</LinearLayout>
@@ -66,7 +64,8 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom|end"
 		android:layout_marginTop="8dp"
-		android:text="00.00.0000"
-		android:textSize="10sp"
+		android:text="@string/def_date"
+		android:textSize="11sp"
 		android:textStyle="italic" />
+
 </FrameLayout>

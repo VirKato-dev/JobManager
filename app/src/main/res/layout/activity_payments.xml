@@ -11,7 +11,9 @@
         android:id="@+id/l_current_payment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/label_pay_desc"

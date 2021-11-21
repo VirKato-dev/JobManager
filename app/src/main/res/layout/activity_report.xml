@@ -3,35 +3,41 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="#00BCD4"
-	android:orientation="vertical" >
+	android:orientation="vertical">
 
-	<TextView
-		android:id="@+id/t_label"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="4dp"
-		android:layout_marginTop="4dp"
-		android:layout_marginEnd="4dp"
-		android:text="@string/label_description"
-		android:textColor="#263238" />
-
-	<EditText
-		android:id="@+id/e_description"
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
-		android:ems="10"
-		android:inputType="none"
-		android:lines="3"
-		android:padding="8dp"
-		android:singleLine="false" />
+		android:orientation="vertical"
+		android:padding="8dp">
 
-	<Button
-		android:id="@+id/b_report_save"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:text="@string/button_save_report" />
+		<TextView
+			android:id="@+id/t_label"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="4dp"
+			android:layout_marginTop="4dp"
+			android:layout_marginEnd="4dp"
+			android:text="@string/label_description"
+			android:textColor="#263238" />
+
+		<EditText
+			android:id="@+id/e_description"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ems="10"
+			android:inputType="textMultiLine"
+			android:lines="3"
+			android:padding="8dp"
+			android:singleLine="false" />
+
+		<Button
+			android:id="@+id/b_report_save"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/button_save_report" />
+	</LinearLayout>
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/rv_pictures"

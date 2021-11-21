@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Task Manager</string>
+    <string name="app_name" translatable="false">Stroy Sever</string>
     <string name="id_test" translatable="false">TestText</string>
     <string name="noname">noname</string>
     <string name="report_master">From:</string>
