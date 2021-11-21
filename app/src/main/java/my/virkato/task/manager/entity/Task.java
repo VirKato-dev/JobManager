@@ -37,15 +37,15 @@ public class Task {
      */
     public double reward = 0d;
 
-    /***
-     * состояние оплаты задания
-     */
-    public boolean rewarded = false;
-
-    /***
-     * состояние получения оплаты
-     */
-    public boolean reward_got = false;
+//    /***
+//     * состояние оплаты задания
+//     */
+//    public boolean rewarded = false;
+//
+//    /***
+//     * состояние получения оплаты
+//     */
+//    public boolean reward_got = false;
 
     /***
      * дата начала задания
@@ -73,8 +73,8 @@ public class Task {
         if (map.containsKey("master_uid")) master_uid = map.get("master_uid").toString();
         if (map.containsKey("description")) description = map.get("description").toString().replaceAll("\"", "'");
         if (map.containsKey("reward")) reward = Double.parseDouble(map.get("reward").toString());
-        if (map.containsKey("rewarded")) rewarded = Boolean.parseBoolean(map.get("rewarded").toString());
-        if (map.containsKey("reward_got")) reward_got = Boolean.parseBoolean(map.get("reward_got").toString());
+//        if (map.containsKey("rewarded")) rewarded = Boolean.parseBoolean(map.get("rewarded").toString());
+//        if (map.containsKey("reward_got")) reward_got = Boolean.parseBoolean(map.get("reward_got").toString());
         if (map.containsKey("date_start")) date_start = (long) Double.parseDouble(map.get("date_start").toString());
         if (map.containsKey("date_finish")) date_finish = (long) Double.parseDouble(map.get("date_finish").toString());
         if (map.containsKey("finished")) finished = Boolean.parseBoolean(map.get("finished").toString());
@@ -101,9 +101,9 @@ public class Task {
         map.put("id", id);
         map.put("master_uid", master_uid);
         map.put("description", description.replaceAll("\"", "'"));
-        map.put("reward_got", reward_got);
+//        map.put("reward_got", reward_got);
         map.put("reward", reward);
-        map.put("rewarded", rewarded);
+//        map.put("rewarded", rewarded);
         map.put("date_start", date_start);
         map.put("date_finish", date_finish);
         map.put("finished", finished);
@@ -118,8 +118,9 @@ public class Task {
                 "{\"id\":\"%s\", \"master_uid\":\"%s\", \"description\":\"%s\","+
                 "\"reward\": %.2f, \"rewarded\": %b, \"reward_got\": %b, \"date_start\": %d,"+
                 "\"date_finish\": %d, \"finished\": %b, \"payments\": %s}",
-                id, master_uid, description.replaceAll("\"", "'"),
-                reward, rewarded, reward_got, date_start, date_finish, finished, new Gson().toJson(payments));
+                id, master_uid, description.replaceAll("\"", "'"), reward,
+//                rewarded, reward_got,
+                date_start, date_finish, finished, new Gson().toJson(payments));
     }
 
     public void send(Context context, DatabaseReference db) {

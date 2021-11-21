@@ -156,7 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
         for (Task task : tasks) {
             if (you != null && you.id.equals(task.master_uid)) {
                 tasks_total++;
-                tasks_done += task.rewarded ? 1 : 0;
+                tasks_done += task.finished ? 1 : 0;
 
                 pay_total += task.reward;
                 if (task.payments.size() > 0) {
