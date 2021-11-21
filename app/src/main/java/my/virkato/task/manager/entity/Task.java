@@ -116,8 +116,9 @@ public class Task {
     public String toString() {
         return String.format(Locale.US,
                 "{\"id\":\"%s\", \"master_uid\":\"%s\", \"description\":\"%s\","+
-                "\"reward\": %.2f, \"rewarded\": %b, \"reward_got\": %b, \"date_start\": %d,"+
-                "\"date_finish\": %d, \"finished\": %b, \"payments\": %s}",
+                "\"reward\": %.2f,"+
+//                "\"rewarded\": %b, \"reward_got\": %b,"+
+                "\"date_start\": %d, \"date_finish\": %d, \"finished\": %b, \"payments\": %s}",
                 id, master_uid, description.replaceAll("\"", "'"), reward,
 //                rewarded, reward_got,
                 date_start, date_finish, finished, new Gson().toJson(payments));

@@ -150,6 +150,12 @@ public class TaskActivity extends AppCompatActivity {
      */
     boolean init = true;
 
+    /***
+     * владелец аккаунта?
+     */
+    private boolean owner = false;
+
+
     @Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
@@ -263,7 +269,8 @@ public class TaskActivity extends AppCompatActivity {
             double cost = 0d;
             try {
                 cost = Double.parseDouble(e_payment.getText().toString().trim());
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
             curPay.cost = cost;
             task.payments.add(curPay);
             if (cost != 0) task.send(this, dbTasks.getDB());
@@ -292,12 +299,10 @@ public class TaskActivity extends AppCompatActivity {
 
         if (!task.master_uid.equals("")) {
             String currentUser = NetWork.user().getUid();
-            boolean owner = currentUser.equals(task.master_uid);
+            owner = currentUser.equals(task.master_uid);
             b_add_report.setVisibility((owner && !task.finished) ? View.VISIBLE : View.GONE);
             e_payment.setEnabled(!owner);
             b_payment.setVisibility(!owner ? View.VISIBLE : View.GONE);
-            spin_master.setVisibility(!owner ? View.VISIBLE : View.GONE);
-            spin_spec.setVisibility(!owner ? View.VISIBLE : View.GONE);
 
             e_description.setText(task.description);
             double total_pay = 0d;
@@ -340,11 +345,12 @@ public class TaskActivity extends AppCompatActivity {
         task.description = e_description.getText().toString();
         String num = e_reward.getText().toString().trim();
         int pos = num.indexOf('(');
-        if (pos >= 0) num = num.substring(0, pos-1);
+        if (pos >= 0) num = num.substring(0, pos - 1);
         double reward = 0d;
         try {
             reward = Double.parseDouble(num);
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
         task.reward = reward;
         task.send(this, dbTasks.getDB());
         showViewsForUser();
@@ -432,6 +438,8 @@ public class TaskActivity extends AppCompatActivity {
                 spin_master.setSelection(masters_uid.indexOf(task.master_uid));
                 AppUtil.showSystemWait(this, false);
                 init = false;
+                spin_master.setVisibility(!owner ? View.VISIBLE : View.GONE);
+                spin_spec.setVisibility(!owner ? View.VISIBLE : View.GONE);
             }
 
             showViewsForUser();
