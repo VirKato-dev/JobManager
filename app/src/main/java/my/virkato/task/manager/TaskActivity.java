@@ -296,6 +296,8 @@ public class TaskActivity extends AppCompatActivity {
             b_add_report.setVisibility((owner && !task.finished) ? View.VISIBLE : View.GONE);
             e_payment.setEnabled(!owner);
             b_payment.setVisibility(!owner ? View.VISIBLE : View.GONE);
+            spin_master.setVisibility(!owner ? View.VISIBLE : View.GONE);
+            spin_spec.setVisibility(!owner ? View.VISIBLE : View.GONE);
 
             e_description.setText(task.description);
             double total_pay = 0d;
