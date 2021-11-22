@@ -292,4 +292,9 @@ public class AppUtil {
         void onPicked(long time);
     }
 
+
+    public static void startService(Context context) {
+        Intent intent = new Intent(context, AlertService.class);
+        context.startService(intent);
+    }
 }
