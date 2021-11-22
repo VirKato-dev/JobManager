@@ -294,7 +294,8 @@ public class AppUtil {
 
 
     public static void startService(Context context) {
-        Intent intent = new Intent(context, AlertService.class);
-        context.startService(intent);
+//        Intent intent = new Intent(context, AlertService.class);
+//        context.startService(intent);
+        new BootDeviceReceiver().startServiceByAlarm(context);
     }
 }

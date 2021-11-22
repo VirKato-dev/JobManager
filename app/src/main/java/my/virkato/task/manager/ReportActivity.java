@@ -110,7 +110,7 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(_savedInstanceState);
         setContentView(R.layout.activity_report);
 
-        dbReports.setContext(getApplicationContext());
+//        dbReports.setContext(getApplicationContext());
 //        dbReports.receiveNewData();
 
         e_description = findViewById(R.id.e_description);

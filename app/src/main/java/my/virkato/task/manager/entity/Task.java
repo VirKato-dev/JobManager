@@ -113,6 +113,12 @@ public class Task {
 
 
     @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+
+    @Override
     public String toString() {
         return String.format(Locale.US,
                 "{\"id\":\"%s\", \"master_uid\":\"%s\", \"description\":\"%s\","+

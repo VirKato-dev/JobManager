@@ -5,11 +5,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="false"
@@ -19,12 +19,16 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+
         <receiver
             android:name=".BootDeviceReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
@@ -32,25 +36,25 @@
             android:name=".AlertService"
             android:enabled="true"
             android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-        </service>
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" />
 
         <activity
             android:name=".PaymentsActivity"
-            android:exported="false" />
+            android:hardwareAccelerated="true"
+            android:screenOrientation="fullSensor"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:exported="true"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:supportsPictureInPicture="true"
             android:theme="@style/AppTheme.FullScreen"
             android:windowSoftInputMode="stateHidden"
             tools:targetApi="n">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -58,7 +62,7 @@
             android:name=".TasksActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="stateHidden"
             tools:targetApi="n" />
@@ -66,7 +70,7 @@
             android:name=".AuthActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="stateHidden"
             tools:targetApi="n" />
@@ -74,7 +78,7 @@
             android:name=".PeopleActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="stateHidden"
             tools:targetApi="n" />
@@ -82,7 +86,7 @@
             android:name=".ProfileActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="stateHidden"
             tools:targetApi="n" />
@@ -90,7 +94,7 @@
             android:name=".TaskActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="stateHidden"
             tools:targetApi="n" />
@@ -98,7 +102,7 @@
             android:name=".ReportActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:supportsPictureInPicture="true"
             android:windowSoftInputMode="stateHidden"
             tools:targetApi="n" />

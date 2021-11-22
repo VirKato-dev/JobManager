@@ -140,7 +140,6 @@ public class NetWork {
     private static Reports reports;
 
 
-    private Context context;
     private static File cacheDir;
 
 
@@ -459,7 +458,6 @@ public class NetWork {
      * @param context лучше использовать getApplicationContext()
      */
     public void setContext(Context context) {
-        this.context = context;
         cacheDir = context.getExternalCacheDir();
     }
 

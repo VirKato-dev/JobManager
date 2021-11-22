@@ -377,7 +377,7 @@ public class TaskActivity extends AppCompatActivity {
      * получаем список всех отчётов и выбираем из него только отчёты к текущему заданию
      */
     private void receiveAllReports() {
-        dbReports.setContext(getApplicationContext()); // для сохранения картинок на устройстве админа
+//        dbReports.setContext(getApplicationContext()); // для сохранения картинок на устройстве админа
         dbReports.receiveNewData(); // заново
 
         Reports.OnReportsUpdatedListener onReportsUpdatedListener = () -> {
