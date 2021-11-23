@@ -52,7 +52,7 @@ public class ReportActivity extends AppCompatActivity {
     /***
      * адаптер для получения списка отчётов
      */
-    private final NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
+    private final NetWork dbReports = NetWork.getInstance(NetWork.Info.REPORTS); //new NetWork(NetWork.Info.REPORTS);
 
     /***
      * текущий отчёт

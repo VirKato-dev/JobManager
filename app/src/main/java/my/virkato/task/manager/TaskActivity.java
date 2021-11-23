@@ -37,7 +37,7 @@ public class TaskActivity extends AppCompatActivity {
     /***
      * адаптер для получения списка отчётов
      */
-    private NetWork dbReports = new NetWork(NetWork.Info.REPORTS);
+    private NetWork dbReports = NetWork.getInstance(NetWork.Info.REPORTS); //new NetWork(NetWork.Info.REPORTS);
 
     /***
      * ссылка на отчёты
@@ -57,7 +57,7 @@ public class TaskActivity extends AppCompatActivity {
     /***
      * адаптер для получения списка заданий
      */
-    private NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
+    private NetWork dbTasks = NetWork.getInstance(NetWork.Info.TASKS); //new NetWork(NetWork.Info.TASKS);
 
     /***
      * текущее задание
@@ -67,7 +67,7 @@ public class TaskActivity extends AppCompatActivity {
     /***
      * адаптер для получения списка людей
      */
-    private NetWork dbPeople = new NetWork(NetWork.Info.USERS);
+    private NetWork dbPeople = NetWork.getInstance(NetWork.Info.USERS); //new NetWork(NetWork.Info.USERS);
 
     /***
      * имена мастеров текущей специализации

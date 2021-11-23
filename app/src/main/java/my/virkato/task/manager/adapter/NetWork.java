@@ -143,11 +143,32 @@ public class NetWork {
     private static File cacheDir;
 
 
+    private static NetWork usersInst, adminsInst, tasksIns, reportsInst;
+
+    public static NetWork getInstance(Info folder) {
+        switch (folder) {
+            case ADMINS:
+                if (adminsInst == null) adminsInst = new NetWork(folder);
+                return adminsInst;
+            case REPORTS:
+                if (reportsInst == null) reportsInst = new NetWork(folder);
+                return reportsInst;
+            case TASKS:
+                if (tasksIns == null) tasksIns = new NetWork(folder);
+                return tasksIns;
+            case USERS:
+                if (usersInst == null) usersInst = new NetWork(folder);
+                return usersInst;
+        }
+        return null;
+    }
+
+
     /***
      * настроить адаптер для получения данных из указанного источника
      * @param folder источник данных
      */
-    public NetWork(Info folder) {
+    private NetWork(Info folder) {
         this.folder = folder;
         fb_db = FirebaseDatabase.getInstance();
         db = fb_db.getReference(folder.path);

@@ -6,17 +6,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
-public class BootDeviceReceiver extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        Log.e("BROADCAST", "onReceive " + action);
         if (Intent.ACTION_BOOT_COMPLETED.equals(action) ||
-                Intent.ACTION_USER_PRESENT.equals(action) ||
-                Intent.ACTION_SCREEN_ON.equals(action)) {
+                "my.virkato.task.manager.START_SERVICE".equals(action)) {
 
-            Log.e("BROADCAST", "onReceive " + action);
+            Toast.makeText(context, "Stroy Sever запущен\n"+action, Toast.LENGTH_SHORT).show();
             startServiceByAlarm(context);
         }
     }

@@ -72,7 +72,7 @@ public class Lv_reportsAdapter extends BaseAdapter {
         String m_id = getItem(position).master;
         String name = cont.getString(R.string.noname);
         if (m_id != null && !m_id.equals("")) {
-            Man man = new NetWork(NetWork.Info.USERS).getPeople().findManById(m_id);
+            Man man = NetWork.getInstance(NetWork.Info.USERS).getPeople().findManById(m_id); //new NetWork(NetWork.Info.USERS).getPeople().findManById(m_id);
             if (man != null) {
                 name = man.fio;
             }

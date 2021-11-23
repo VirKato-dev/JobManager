@@ -24,7 +24,7 @@ public class PaymentsActivity extends AppCompatActivity {
 
     private RecyclerView rv;
     private Rv_paymentsAdapter adapter;
-    private final NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
+    private final NetWork dbTasks = NetWork.getInstance(NetWork.Info.TASKS); //new NetWork(NetWork.Info.TASKS);
     private Task task;
     private String task_id;
 

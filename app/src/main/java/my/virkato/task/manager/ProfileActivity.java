@@ -38,9 +38,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     private SharedPreferences sp;
 
-    private final NetWork dbUsers = new NetWork(NetWork.Info.USERS);
-    private final NetWork dbAdmins = new NetWork(NetWork.Info.ADMINS);
-    private final NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
+    private final NetWork dbUsers = NetWork.getInstance(NetWork.Info.USERS); //new NetWork(NetWork.Info.USERS);
+    private final NetWork dbAdmins = NetWork.getInstance(NetWork.Info.ADMINS); //new NetWork(NetWork.Info.ADMINS);
+    private final NetWork dbTasks = NetWork.getInstance(NetWork.Info.TASKS); //new NetWork(NetWork.Info.TASKS);
 
 
     @Override

@@ -39,9 +39,9 @@ public class TasksActivity extends AppCompatActivity {
     private String UID;
     private boolean finished = false;
 
-    private NetWork dbUsers = new NetWork(NetWork.Info.USERS);
-    private NetWork dbTasks = new NetWork(NetWork.Info.TASKS);
-    private NetWork dbAdmins = new NetWork(NetWork.Info.ADMINS);
+    private NetWork dbUsers = NetWork.getInstance(NetWork.Info.USERS); //new NetWork(NetWork.Info.USERS);
+    private NetWork dbTasks = NetWork.getInstance(NetWork.Info.TASKS); //new NetWork(NetWork.Info.TASKS);
+    private NetWork dbAdmins = NetWork.getInstance(NetWork.Info.ADMINS); //new NetWork(NetWork.Info.ADMINS);
 
     private People people = dbUsers.getPeople();
     private Tasks tasks = dbTasks.getTasks();

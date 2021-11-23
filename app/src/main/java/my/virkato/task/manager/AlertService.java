@@ -55,7 +55,7 @@ public class AlertService extends Service {
         Log.e("TASK LIST SIZE", "" + notifiedTask.size());
 
         FirebaseApp.initializeApp(this);
-        if (dbTasks == null) dbTasks = new NetWork(NetWork.Info.TASKS);
+        /*if (dbTasks == null)*/ dbTasks = NetWork.getInstance(NetWork.Info.TASKS); //new NetWork(NetWork.Info.TASKS);
 
         dbTasks.getTasks().setOnTasksUpdatedListener((tasks, removed, task) -> {
             for (Task t : tasks) {
@@ -82,6 +82,7 @@ public class AlertService extends Service {
     @Override
     public void onDestroy() {
         Log.e("SERVICE", "onDestroy");
+        sendBroadcast(new Intent().setAction("my.virkato.task.manager.START_SERVICE"));
         super.onDestroy();
     }
 

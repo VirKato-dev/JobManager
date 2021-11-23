@@ -31,8 +31,8 @@ public class PeopleActivity extends AppCompatActivity {
     private final Intent tasks = new Intent();
     private final Intent profile = new Intent();
     private final Intent authentication = new Intent();
-    private final NetWork dbAdmins = new NetWork(NetWork.Info.ADMINS);
-    private final NetWork dbUsers = new NetWork(NetWork.Info.USERS);
+    private final NetWork dbAdmins = NetWork.getInstance(NetWork.Info.ADMINS); //new NetWork(NetWork.Info.ADMINS);
+    private final NetWork dbUsers = NetWork.getInstance(NetWork.Info.USERS); //new NetWork(NetWork.Info.USERS);
     private final ArrayList<Man> lm_people = dbUsers.getPeople().getList();
     private SharedPreferences sp;
 

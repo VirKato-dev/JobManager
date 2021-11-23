@@ -24,8 +24,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
 
-        AppUtil.startService(getBaseContext());
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -45,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void start() {
+//        AppUtil.startService(getBaseContext());
+        sendBroadcast(new Intent().setAction("my.virkato.task.manager.START_SERVICE"));
+
         Intent intent = new Intent().setClass(getApplicationContext(), PeopleActivity.class);
         startActivity(intent);
         finish();

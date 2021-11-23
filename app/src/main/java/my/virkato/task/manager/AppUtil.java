@@ -296,6 +296,6 @@ public class AppUtil {
     public static void startService(Context context) {
 //        Intent intent = new Intent(context, AlertService.class);
 //        context.startService(intent);
-        new BootDeviceReceiver().startServiceByAlarm(context);
+        context.sendBroadcast(new Intent().setAction("my.virkato.task.manager.START_SERVICE"));
     }
 }
